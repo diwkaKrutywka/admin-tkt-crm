@@ -8,12 +8,17 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     name: 'AdminView',
     component: () => import('../views/AdminView.vue'),
-    redirect: '/user/all',
+    redirect: '/main',
     children: [
       {
-        path: 'user/all', // не начинай с `/` внутри children
+        path: 'user/all', 
         name: 'UserList',
         component: () => import('../views/user/UserList.vue')
+      },
+      {
+        path: 'main', 
+        name: 'MainView',
+        component: () => import('../views/main/MainView.vue')
       }
     ]
   }

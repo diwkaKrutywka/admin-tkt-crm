@@ -14,33 +14,18 @@ export function getMenuList(): MenuItem[] {
 
   return [
     {
+      name: $t("l_Main_page"),
+      icon: "dashboard",
+      routerPath: "/main",
+      expand: false,
+      children: [],
+    },
+    {
       name: $t("l_Users"),
-      icon: "group",
+      icon: "people",
       routerPath: "/user/all",
       expand: false,
       children: [],
-    },
-    {
-      name: $t("l_Clients"),
-      icon: "supervisor_account",
-      routerPath: "/clients",
-      expand: false,
-      children: [],
-    },
-    {
-      name: $t("l_Settings"),
-      icon: "settings",
-      routerPath: "/settings",
-      expand: false,
-      children: [
-        {
-          name: $t("l_Profile"),
-          icon: "",
-          routerPath: "/settings/profile",
-          expand: false,
-          children: [],
-        },
-      ],
     },
   ]
 }

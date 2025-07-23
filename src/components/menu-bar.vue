@@ -3,7 +3,7 @@
       <div v-for="(menu, index) in menuList" :key="index">
         <div
           class="flex items-start gap-1 p-2 cursor-pointer mx-1 rounded overflow-hidden"
-          :class="menu.routerPath === menuPath ? 'bg-blue-200 text-blue-500 font-bold' : 'text-gray-500'"
+          :class="menu.routerPath === menuPath ? 'bg-blue-100 text-blue-400 font-semibold' : 'text-gray-400 font-medium'"
           @click="() => {
             if (menu.children.length > 0) {
               toggleMenu(menu.routerPath)
