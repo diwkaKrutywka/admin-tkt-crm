@@ -1,12 +1,12 @@
 <template>
-    <div class="grid gap-3 my-3 w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 border border-gray-200 p-4 rounded-md bg-white">
+    <div class="grid gap-3 my-3 w-full grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 border border-gray-100 p-4 rounded-lg bg-white">
       <!-- Сортировка -->
       <div class="grid grid-cols-[auto_1fr_1fr] items-center gap-1">
         <span class="whitespace-nowrap">{{ $t("l_Sort") }}</span>
-        <a-select size="small" v-model:value="sortList[0].name">
+        <a-select  v-model:value="sortList[0].name">
           <a-select-option value="createTime">{{ $t("l_Create_time") }}</a-select-option>
         </a-select>
-        <a-select size="small" v-model:value="sortList[0].orderBy">
+        <a-select  v-model:value="sortList[0].orderBy">
           <a-select-option value="DESC">{{ $t("l_Descending") }}</a-select-option>
           <a-select-option value="ASC">{{ $t("l_Ascending") }}</a-select-option>
         </a-select>
@@ -16,7 +16,7 @@
       <div class="grid grid-cols-[auto_1fr] items-center gap-1">
         <span class="whitespace-nowrap">{{ $t("l_Create_time") }}</span>
         <a-range-picker
-          size="small"
+          
           :value="createTime"
           @change="onCreateTimeChange"
           :allow-empty="[true, true]"
@@ -30,7 +30,7 @@
       <div class="grid grid-cols-[auto_1fr] items-center gap-1">
         <span class="whitespace-nowrap">{{ $t("l_Last_login") }}</span>
         <a-range-picker
-          size="small"
+          
           :value="lastLogin"
           @change="onLastLoginChange"
           :allow-empty="[true, true]"
@@ -43,19 +43,19 @@
       <!-- Телефон -->
       <div class="grid grid-cols-[auto_1fr] items-center gap-1">
         <span class="whitespace-nowrap">{{ $t("l_Organization") }}</span>
-        <a-input v-model:value="info.phone" allow-clear size="small" />
+        <a-input v-model:value="info.phone" allow-clear  />
       </div>
   
       <!-- Имя пользователя -->
       <div class="grid grid-cols-[auto_1fr] items-center gap-1">
         <span class="whitespace-nowrap">{{ $t("l_Username") }}</span>
-        <a-input v-model:value="info.username" allow-clear size="small" />
+        <a-input v-model:value="info.username" allow-clear  />
       </div>
   
       <!-- Кнопки -->
       <div class=" flex items-center gap-2 col-span-full mt-2">
-        <a-button size="small" type="primary" @click="onSearch">{{ $t("l_Search") }}</a-button>
-        <a-button size="small" @click="onReset">{{ $t("l_Reset") }}</a-button>
+        <a-button  type="primary" @click="onSearch">{{ $t("l_Search") }}</a-button>
+        <a-button  @click="onReset">{{ $t("l_Reset") }}</a-button>
       </div>
     </div>
   </template>
