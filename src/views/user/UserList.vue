@@ -9,6 +9,7 @@
         </a-button>
       </template>
     </a-page-header>
+    <filter-user></filter-user>
     <a-table
       bordered
       :dataSource="tableData"
@@ -16,17 +17,35 @@
       :pagination="pagination"
       rowKey="id"
     >
+    <template #bodyCell="{ column, index }">
+      <template v-if="column.key === 'Action'">
+                            <a-space>
+                                <span style="color: black; font-size: 21px" class="icon material-symbols-outlined" > edit </span>
+                                <a-popconfirm  placement="leftBottom" title="Сіз расымен қолданушыны тоқтатқыңыз келеді ме?" :ok-text="$t('l_Yes')" :cancel-text="$t('l_No')" @confirm="onRecover(index)">
+                                    <span style="color: rgb(0, 100, 250); font-size: 21px" class="icon material-symbols-outlined"> cancel </span>
+                                </a-popconfirm>
+                                <a-popconfirm  placement="leftBottom" title="Сіз расымен қолданушыны өшіргіңіз келеді ме?" :ok-text="$t('l_Yes')" :cancel-text="$t('l_No')" @confirm="onRecover(index)">
+                                    <span style="color: red; font-size: 21px" class="icon material-symbols-outlined"> delete </span>
+                                </a-popconfirm>
+                            </a-space>
+                        </template>
+      </template>
     </a-table>
+
+    <add-edit-user   v-model:open="modalVisible"
+    :user="editingUser"
+    @submit="saveUser"></add-edit-user>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, h } from "vue";
-import { Avatar, Tag } from "ant-design-vue";
+import { Avatar, message, Tag } from "ant-design-vue";
 import { SafetyOutlined, BankOutlined } from "@ant-design/icons-vue";
 import type { User } from "../../types/user";
 import type { TableRenderProps } from "../../types/table";
-
+import FilterUser from "./FilterUser.vue";
+import AddEditUser from "./AddEditUser.vue";
 // Sample data
 const tableData = ref<User[]>([
   {
@@ -122,6 +141,13 @@ const columns = [
     title: "Последний вход",
     dataIndex: "last_login_at",
   },
+  {
+                    title:"Действия",
+                    key: "Action",
+                    width: 110,
+                    align: "center",
+                    // fixed: "right"
+                },
 ];
 
 // Pagination config
@@ -134,6 +160,14 @@ const pagination = {
   showQuickJumper: true,
   showTotal: (total: number) => `Всего ${total} записей`,
 };
+const modalVisible = ref(false);
+const editingUser = ref();
 
-function onAdd() {}
+function onAdd() {
+  editingUser.value = null;
+  modalVisible.value = true;
+  }
+  const saveUser = (userData: any)=>{
+    message.success('You added user')
+  }
 </script>

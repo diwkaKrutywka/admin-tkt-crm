@@ -8,5 +8,15 @@ export default {
   l_Sign_in: "Вход",
   l_Enter_detail: "Введите данные для входа",
   l_Add_user: "Добавить пользователя",
-  l_Main_page:"Главная"
+  l_Main_page: "Главная",
+  l_Sort: "Сортировка",
+  l_Create_time: "Время создания",
+  l_Last_login: "Последний вход",
+  l_Organization: "Организация",
+  l_Descending: "По убыванию",
+  l_Ascending: "По возрастанию",
+  l_Search: "Поиск",
+  l_Reset: "Сброс",
+   l_Yes:"Да",
+  l_No:"Нет"
 };
