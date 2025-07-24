@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <a-page-header :title="$t('l_Main_page')">
+  <div>
+    <a-page-header :title="$t('l_Main_page')">
       <template #extra>
         <a-button type="primary" @click="onAdd()">
           <span class="material-symbols-outlined">
@@ -9,7 +9,13 @@
         </a-button>
       </template>
     </a-page-header>
-    </div>
+    <CardsList />
+
+  </div>
 </template>
-<script lang="ts">
+<script setup lang="ts">
+import CardsList from '../../components/CardsList.vue'
+const onAdd = () => {
+
+}
 </script>

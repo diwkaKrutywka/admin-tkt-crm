@@ -1,66 +1,66 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
+import type {
+  UserDto,
+  UserView,
+  pagination,
+} from "../interfaces/user.interface";
+import { paginationConfig } from "ant-design-vue/es/pagination";
 
-// Типы для карточек на дашборде
-interface DashboardCard {
-  id: string
-  title: string
-  value: string | number
-  category: 'statistics' | 'information' | string
-  [key: string]: any
-}
-
-// Тип структуры данных дашборда
-interface DashboardData {
-  cards: DashboardCard[]
-  [key: string]: any
-}
-
-// Тип пользователя
-interface User {
-  username?: string
-  email?: string
-  avatar?: string
-  [key: string]: any
-}
-
-// Тип данных при входе
-interface UserPayload {
-  user: User
-  access_token: string
-}
-
-export const useUserStore = defineStore('userInfo', {
+export const useUserStore = defineStore("userInfo", {
   state: () => ({
-    user: {} as User,
-    statisticsDashboardData: [] as DashboardCard[],
-    informationDashboardData: [] as DashboardCard[],
-    dashboardData: {} as DashboardData,
-    usersList: [] as User[],
+    pagination: {} as pagination,
+    user: {},
+    statisticsDashboardData: [],
+    informationDashboardData: [],
+    dashboardData: {},
+    activeUsers: [],
+    usersList: [] as UserDto[],
+    inactiveUsers: [],
+    organizations: [],
   }),
-
+  getters: {
+    userViews: (state): UserView[] => {
+      return state.usersList.map((user) => ({
+        id: user.id,
+        fullName: user.full_name,
+        role: user.user_role,
+        organization: user.organization_name,
+        isActive: user.is_active,
+        lastLogin: user.last_login_at,
+        organization_id: user.organization_id,
+      }));
+    },
+  },
   actions: {
-    setDashboardData(data: { dashboardData: DashboardData }) {
+    setDashboardData(data) {
       this.statisticsDashboardData = data.dashboardData.cards?.filter(
-        (card) => card.category === 'statistics'
-      )
+        (card) => card.category === "statistics"
+      );
       this.informationDashboardData = data.dashboardData.cards?.filter(
-        (card) => card.category === 'information'
-      )
-      this.dashboardData = data.dashboardData
+        (card) => card.category === "information"
+      );
     },
 
     signOut() {
-      this.user = {}
-      localStorage.removeItem('accessToken')
+      this.user = {};
     },
+    setUser(user) {
+      this.user = user.user; // Save the whole object
+      localStorage.setItem("accessToken", user.access_token);
+     },
+    setUsersList(data) {
+      // сохраняем мете данные для пагинаций
+      const { users, ...metaData } = data;
+      this.pagination = metaData;
 
-    setUser(payload: UserPayload) {
-      this.user = payload.user
-      localStorage.setItem('accessToken', payload.access_token)
-    },
+      this.usersList = data.users;
 
-    setUsersList(users: User[]) {
-      this.usersList = users
+      // сортируем активных и неактивных пользователей, а так же их организаций
+      this.activeUsers = data.users.filter((item) => item.is_active);
+      this.inactiveUsers = data.users.filter((item) => !item.is_active);
+      this.organizations = [
+        ...new Set(data.users.map((item) => item.organization_name)),
+      ];
     },
   },
-})
+});

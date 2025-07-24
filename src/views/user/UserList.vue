@@ -2,138 +2,107 @@
   <div>
     <a-page-header :title="$t('l_Users')">
       <template #extra>
-        <a-button type="primary" @click="onAdd()">
+        <a-button type="primary">
           <span class="material-symbols-outlined">
             add <span class="ml-2"> {{ $t("l_Add_user") }}</span>
           </span>
         </a-button>
       </template>
     </a-page-header>
-    <a-table
-      bordered
-      :dataSource="tableData"
-      :columns="columns"
-      :pagination="pagination"
-      rowKey="id"
-    >
-    </a-table>
+    <div class="flex h-screen w-full overflow-hidden">
+
+
+      <div class="flex-1 flex flex-col h-screen overflow-x-auto">
+
+        <div class="p-3 flex-1 overflow-y-auto">
+          <UsersList v-model:visible="editModalVisible" :usersList="usersList" :activeUsers="activeUsers"
+            :inactiveUsers="inactiveUsers" :organizations="organizations" />
+          <EditUserModal v-model:visible="editModalVisible" @openEditModal="openEditModal(record)"
+            :initial-data="selectedUser" "
+            @submit="handleUpdateUser" @cancel="handleCancel" />
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
   </div>
 </template>
+<script>
+import UsersList from '../../components/users/users-list.vue';
+import MenuBox from "../../components/menu-bar.vue"
+import AdminTopBox from "../../components/top-box.vue"
+import EditUserModal from '../../components/users/userForm.vue'
+import { useUserStore } from '../../store/index.ts'
+import { users } from "../../api/users.js"
 
-<script setup lang="ts">
-import { ref, h } from "vue";
-import { Avatar, Tag } from "ant-design-vue";
-import { SafetyOutlined, BankOutlined } from "@ant-design/icons-vue";
-import type { User } from "../../types/user";
-import type { TableRenderProps } from "../../types/table";
-
-// Sample data
-const tableData = ref<User[]>([
-  {
-    id: "1",
-    username: "diana",
-    full_name: "Omarbayeva Diana",
-    user_role: "Администратор",
-    organization_id: "1",
-    organization_name: "Jana Post",
-    department: "IT",
-    position: "Разработчик",
-    is_active: true,
-    is_locked: false,
-    must_change_password: false,
-    last_login_at: "2025-07-22",
-    created_at: "2025-01-01",
-    updated_at: "2025-07-01",
+export default {
+  components: {
+    EditUserModal,
+    AdminTopBox,
+    MenuBox,
+    UsersList,
+    userStore: '',
   },
-]);
-
-// Columns
-const columns = [
-  {
-    title: "#",
-    key: "index",
-    width: "50px",
-    customRender: ({ index }: { index: number }) => {
-      return (pagination.current - 1) * pagination.pageSize + index + 1;
+  data() {
+    return {
+      editModalVisible: false
+    }
+  },
+  methods: {
+    openEditModal(record) {
+      this.editModalVisible = true
+      console.log('Редактировать:', record);
     },
-  },
+    async getUsers() {
 
-  {
-    title: "Пользователь",
-    dataIndex: "full_name",
-    customRender: ({ text }: TableRenderProps<User>) => {
-      const initials = (text as string)
-        .split(" ")
-        .map((word) => word[0])
-        .slice(0, 2)
-        .join("")
-        .toUpperCase();
+      const page = this.$route.query.page || 1;
+      try {
 
-      return h("div", { class: "flex items-center gap-2" }, [
-        h(
-          Avatar,
-          {
-            style: {
-              backgroundColor: "#E5EDFF",
-              color: "#2B4EFF",
-              fontWeight: "600",
-            },
-          },
-          () => initials
-        ),
-        h("span", text),
-      ]);
-    },
-  },
-  {
-    title: "Роль",
-    dataIndex: "user_role",
-    customRender: ({ text }: TableRenderProps<User>) => {
-      return h(
-        "div",
-        {
-          class:
-            "inline-flex items-center px-3 py-1 rounded-full border border-gray-300 text-gray-800 text-sm gap-2",
-        },
-        [h(SafetyOutlined, { style: { color: "#2B4EFF" } }), h("span", text)]
-      );
-    },
-  },
-  {
-    title: "Организация",
-    dataIndex: "organization_name",
-    customRender: ({ text }: TableRenderProps<User>) => {
-      return h("div", { class: "flex items-center gap-2 text-gray-800" }, [
-        h(BankOutlined, { style: { color: "#2B4EFF" } }),
-        h("span", text),
-      ]);
-    },
-  },
-  {
-    title: "Статус",
-    dataIndex: "is_active",
-    customRender: ({ text }: TableRenderProps<User>) => {
-      return text
-        ? h(Tag, { color: "green" }, () => "Активен")
-        : h(Tag, { color: "red" }, () => "Неактивен");
-    },
-  },
-  {
-    title: "Последний вход",
-    dataIndex: "last_login_at",
-  },
-];
+        const res = await users(`?page=${page}&page_size=5`, null, 'GET');
+        this.state.setUsersList(res);
 
-// Pagination config
-const pagination = {
-  current: 1,
-  pageSize: 10,
-  total: tableData.value.length,
-  showSizeChanger: true,
-  pageSizeOptions: ["10", "20", "50"],
-  showQuickJumper: true,
-  showTotal: (total: number) => `Всего ${total} записей`,
-};
+      } catch (error) {
+        console.error('Ошибка запроса:', error);
+      }
+    }
+  },
+  computed: {
+    state() {
+      return useUserStore()
+    },
+    usersList() {
+      const store = useUserStore(); // <-- правильно
 
-function onAdd() {}
+      return store.usersList
+    },
+    activeUsers() {
+      const store = useUserStore(); // <-- правильно
+
+      return store.activeUsers
+
+    },
+    inactiveUsers() {
+      const store = useUserStore(); // <-- правильно
+
+      return store.inactiveUsers
+
+    },
+    organizations() {
+      const store = useUserStore(); // <-- правильно
+
+      return store.organizations
+
+    }
+  },
+  mounted() {
+    this.$router.push({ query: { page: 1 } })
+    this.userStore = useUserStore();
+    this.getUsers()
+  }
+
+}
 </script>
