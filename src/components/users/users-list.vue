@@ -53,22 +53,40 @@
                 showTotal: total => `Всего ${total} записей`,
                 onChange: onPageChange
 
-            }" />
+            }">
+            <template #bodyCell="{ column, index }">
+                <template v-if="column.key === 'Action'">
+                    <a-space>
+                        <span style="color: black; font-size: 21px" class="icon material-symbols-outlined"> edit </span>
+                        <a-popconfirm placement="leftBottom" title="Сіз расымен қолданушыны тоқтатқыңыз келеді ме?"
+                            :ok-text="$t('l_Yes')" :cancel-text="$t('l_No')" @confirm="onRecover(index)">
+                            <span style="color: rgb(0, 100, 250); font-size: 21px"
+                                class="icon material-symbols-outlined"> cancel </span>
+                        </a-popconfirm>
+                        <a-popconfirm placement="leftBottom" title="Сіз расымен қолданушыны өшіргіңіз келеді ме?"
+                            :ok-text="$t('l_Yes')" :cancel-text="$t('l_No')" @confirm="onRecover(index)">
+                            <span style="color: red; font-size: 21px" class="icon material-symbols-outlined"> delete
+                            </span>
+                        </a-popconfirm>
+                    </a-space>
+                </template>
+            </template>
+        </a-table>
+
 
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, defineEmits } from 'vue'
 import BaseCard from '../../common/BaseCard.vue'
 import { useUserStore } from '../../store/index';
 import { h } from 'vue';
-import { Tag } from 'ant-design-vue';
-import { Avatar } from 'ant-design-vue';
+import { Avatar, Tag } from "ant-design-vue";
 import { SafetyOutlined, BankOutlined } from '@ant-design/icons-vue';
 import { users } from '../../api/users';
 import { useRouter } from "vue-router";
-import { Dropdown, Menu, Button, Tooltip } from 'ant-design-vue';
+import { Button, Tooltip } from 'ant-design-vue';
 import { EditOutlined, DeleteOutlined, UserDeleteOutlined, EllipsisOutlined } from '@ant-design/icons-vue';
 
 
@@ -169,7 +187,7 @@ const columns = [
     },
     {
         title: 'Действия',
-        key: 'actions',
+        key: 'Action',
         width: 120,
         customRender: ({ record }) => {
             return h('div', { class: 'flex items-center gap-2' }, [
@@ -196,15 +214,20 @@ const columns = [
                 }),
 
                 // Кнопка "Удалить"
-                h(Tooltip, { title: 'Удалить' }, {
-                    default: () => h(Button, {
-                        type: 'text',
-                        size: 'small',
-                        icon: h(DeleteOutlined),
-                        onClick: () => handleDelete(record),
-                        class: 'text-red-600 hover:text-red-800'
-                    })
-                }),
+             h(Tooltip, { title: 'Удалить' }, {
+  default: () => h('div', {
+    class: 'cursor-pointer inline-block'
+  }, [
+    h(Button, {
+      type: 'text',
+      size: 'small',
+      icon: h(DeleteOutlined),
+      onClick: () => handleDelete(record),
+      danger: true
+    })
+  ])
+})
+
             ]);
         }
     }

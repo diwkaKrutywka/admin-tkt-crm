@@ -46,6 +46,8 @@ export const useUserStore = defineStore("userInfo", {
     },
     setUser(user) {
       this.user = user.user; // Save the whole object
+      console.log(user, 'user');
+      
       localStorage.setItem("accessToken", user.access_token);
      },
     setUsersList(data) {

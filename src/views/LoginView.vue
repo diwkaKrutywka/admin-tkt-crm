@@ -28,15 +28,15 @@
   import { ref } from 'vue'
   import { useRouter } from 'vue-router'
   // import your store
-  // import { useUserStore } from '@/stores/user'
-  import {ApiApi} from '../api/auth' // Adjust the path to your ApiApi function
+  import { useUserStore } from '../store/index'
+  import {auth} from '../api/auth' // Adjust the path to your ApiApi function
   
   const router = useRouter()
-  // const userStore = useUserStore()
+  const userStore = useUserStore()
   
   const info = ref({
-    username: '',
-    password: ''
+    username: 'admin',
+    password: 'admin_EKC1'
   })
   
   const passwordVisible = ref(false)
@@ -53,9 +53,9 @@
     if (!info.value.username || !info.value.password) return
   
     try {
-      const res = await ApiApi('login', info.value, 'POST')
+      const res = await auth('login', info.value, 'POST')
       if (res.data.success === true) {
-        // userStore.setUser(res)
+        userStore.setUser(res.data)
         router.push('/')
       } else {
         console.error('Login error:', res)

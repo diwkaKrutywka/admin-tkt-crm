@@ -1,13 +1,13 @@
 import http from '../utils/https'
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 
-export function ApiApi<T = any>(
+export function users<T = any>(
   url: string,
   data?: Record<string, any>,
   method: 'GET' | 'POST' = 'POST'
 ): Promise<AxiosResponse<T>> {
   const config: AxiosRequestConfig = {
-    url: `auth/${url}`,
+    url: `users/${url}`,
     method,
   }
 
