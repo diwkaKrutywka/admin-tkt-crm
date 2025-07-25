@@ -19,4 +19,8 @@ export default {
   l_Reset: "Тазарту",
   l_Yes: "Иа",
   l_No: "Жоқ",
+  l_Lock_user: "Қолданушыны бұғаттау",
+  l_Cancel: "Бас тарту",
+  l_Reason: "Себебі",
+  l_Lock:"Бұғаттау"
 };

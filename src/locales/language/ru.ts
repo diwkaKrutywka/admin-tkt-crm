@@ -18,5 +18,9 @@ export default {
   l_Search: "Поиск",
   l_Reset: "Сброс",
    l_Yes:"Да",
-  l_No:"Нет"
+  l_No:"Нет",
+  l_Lock_user: "Заблокировать пользователя",
+  l_Cancel: "Отмена",
+  l_Reason: "Причина",
+  l_Lock:"Заблокировать"
 };

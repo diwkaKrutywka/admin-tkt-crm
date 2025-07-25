@@ -27,12 +27,11 @@
   <script setup lang="ts">
   import { ref } from 'vue'
   import { useRouter } from 'vue-router'
-  // import your store
-  // import { useUserStore } from '@/stores/user'
-  import {ApiApi} from '../api/auth' // Adjust the path to your ApiApi function
+  import { useUserStore } from '../store/index'
+  import { ApiApi } from '../api/auth'
   
   const router = useRouter()
-  // const userStore = useUserStore()
+  const userStore = useUserStore()
   
   const info = ref({
     username: '',
@@ -46,16 +45,16 @@
   }
   
   const onLogin = async () => {
-    // Optional: mock admin login values
-    // info.value.username = 'admin'
-    // info.value.password = 'admin_EKC1'
-  
     if (!info.value.username || !info.value.password) return
   
     try {
       const res = await ApiApi('login', info.value, 'POST')
+  
       if (res.data.success === true) {
-        // userStore.setUser(res)
+        // ✅ Save to Pinia
+        userStore.setUser(res.data)
+  
+        // ✅ Navigate
         router.push('/')
       } else {
         console.error('Login error:', res)
@@ -65,7 +64,4 @@
     }
   }
   </script>
-  
-  <style scoped>
-  </style>
   
