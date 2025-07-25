@@ -1,21 +1,7 @@
 <!-- UserManagement.vue -->
 <template>
-    <div class=" ">
-        <!-- Заголовок -->
-        <!-- <div class="flex justify-between items-start mb-8">
-            <div>
-                <h1 class="text-3xl font-semibold text-gray-900 mb-1">Управление пользователями</h1>
-                <p class="text-base text-gray-600">Администрирование учетных записей системы</p>
-            </div>
-            <button @click="showCreateModal = true"
-                class="inline-flex items-center gap-2 px-5 py-3 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-                Добавить пользователя
-            </button>
-        </div> -->
+    <div>
+
         <!-- Статистика -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <BaseCard v-for="stat in stats" :key="stat.title" :title="stat.title">
@@ -57,15 +43,18 @@
             <template #bodyCell="{ column, index }">
                 <template v-if="column.key === 'Action'">
                     <a-space>
-                        <span style="color: black; font-size: 21px" class="icon material-symbols-outlined"> edit </span>
+                        <span style="color: black; font-size: 21px"
+                            class="icon material-symbols-outlined cursor-pointer" @click="handleEdit(index)"> edit
+                        </span>
                         <a-popconfirm placement="leftBottom" title="Сіз расымен қолданушыны тоқтатқыңыз келеді ме?"
                             :ok-text="$t('l_Yes')" :cancel-text="$t('l_No')" @confirm="onRecover(index)">
                             <span style="color: rgb(0, 100, 250); font-size: 21px"
-                                class="icon material-symbols-outlined"> cancel </span>
+                                class="icon material-symbols-outlined cursor-pointer"> cancel </span>
                         </a-popconfirm>
                         <a-popconfirm placement="leftBottom" title="Сіз расымен қолданушыны өшіргіңіз келеді ме?"
                             :ok-text="$t('l_Yes')" :cancel-text="$t('l_No')" @confirm="onRecover(index)">
-                            <span style="color: red; font-size: 21px" class="icon material-symbols-outlined"> delete
+                            <span style="color: red; font-size: 21px"
+                                class="icon material-symbols-outlined cursor-pointer"> delete
                             </span>
                         </a-popconfirm>
                     </a-space>
@@ -189,47 +178,7 @@ const columns = [
         title: 'Действия',
         key: 'Action',
         width: 120,
-        customRender: ({ record }) => {
-            return h('div', { class: 'flex items-center gap-2' }, [
-                // Кнопка "Редактировать"
-                h(Tooltip, { title: 'Редактировать' }, {
-                    default: () => h(Button, {
-                        type: 'text',
-                        size: 'small',
-                        icon: h(EditOutlined),
-                        onClick: () => handleEdit(record),
-                        class: 'text-blue-600 hover:text-blue-800'
-                    })
-                }),
 
-                // Кнопка "Деактивировать"
-                h(Tooltip, { title: 'Деактивировать' }, {
-                    default: () => h(Button, {
-                        type: 'text',
-                        size: 'small',
-                        icon: h(UserDeleteOutlined),
-                        onClick: () => handleDeactivate(record),
-                        class: 'text-orange-600 hover:text-orange-800'
-                    })
-                }),
-
-                // Кнопка "Удалить"
-             h(Tooltip, { title: 'Удалить' }, {
-  default: () => h('div', {
-    class: 'cursor-pointer inline-block'
-  }, [
-    h(Button, {
-      type: 'text',
-      size: 'small',
-      icon: h(DeleteOutlined),
-      onClick: () => handleDelete(record),
-      danger: true
-    })
-  ])
-})
-
-            ]);
-        }
     }
 ];
 const props = defineProps({
