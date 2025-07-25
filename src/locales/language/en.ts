@@ -9,4 +9,14 @@ export default {
   l_Enter_detail: "Enter info to authentification",
   l_Add_user: "Add users",
   l_Main_page: "Main page",
+  l_Sort:"Sort",
+  l_Create_time:"Create time",
+  l_Last_login:"Last login",
+  l_Organization:"Organization",
+  l_Descending:"Descending",
+  l_Ascending:"Ascending",
+  l_Search:"Search",
+  l_Reset:"Reset",
+  l_Yes:"Yes",
+  l_No:"No"
 };
