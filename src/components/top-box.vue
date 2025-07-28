@@ -26,7 +26,7 @@
       <div class="relative" ref="dropdownRef">
         <div class="flex items-center gap-2 cursor-pointer" @click="toggleUserDropdown">
   <span class="text-xl material-symbols-outlined">person</span>
-  <span class="font-medium">Omarbayeva Diana</span>
+  <span class="font-medium">{{ userStore.user?.full_name }}</span>
 </div>
 
         <div
@@ -44,13 +44,13 @@
               >
             </div>
             <div class="font-bold text-lg mb-1">
-              {{ userInfo.user.value.username || "User" }}
+              {{userStore.user?.full_name || "User" }}
             </div>
             <div
               class="text-sm text-gray-500 mb-2"
-              v-if="userInfo.user.value.email"
+              v-if="userStore.user?.email"
             >
-              {{ userInfo.user.value.email }}
+              {{ userStore.user?.email }}
             </div>
             <div class="flex flex-col gap-1 w-full">
               <template v-for="(value, key) in userInfo.user.value" :key="key">
@@ -93,13 +93,13 @@ import { onMounted, onUnmounted } from "vue";
 const emit = defineEmits(["toggle-drawer"]);
 const userStore = useUserStore();
 const userInfo = storeToRefs(userStore);
-const hasLogin = computed(() => !!userInfo.user.value.username);
+const hasLogin = computed(() => !!userStore.user?.full_name);
 const isUserDropdownOpen = ref(false);
 const toggleUserDropdown = () => {
   isUserDropdownOpen.value = !isUserDropdownOpen.value;
 };
 const onSignOut = () => {
-  userStore.signOut();
+  //userStore.signOut();
   isUserDropdownOpen.value = false;
 };
 const dropdownRef = ref<HTMLElement | null>(null);

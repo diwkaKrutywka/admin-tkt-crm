@@ -47,7 +47,7 @@
   import { ref, reactive, watch, computed } from 'vue';
   import type { FormInstance } from 'ant-design-vue';
   import { message } from 'ant-design-vue';
-  
+      import { UserApi } from '../../api/user'
   interface User {
     username: string;
     full_name: string;
@@ -130,23 +130,34 @@
     user_role: [{ required: true, message: 'Please select user role' }],
   };
   
-  const handleOk = async () => {
-    try {
-      await formRef.value?.validate();
-      loading.value = true;
-  
-      const payload = { ...form };
-      if (isEdit.value) delete payload.password;
-  
+
+const handleOk = async () => {
+  try {
+    await formRef.value?.validate();
+    loading.value = true;
+
+    const payload = { ...form };
+
+    if (isEdit.value) {
+      delete payload.password;
       emit('submit', payload as User);
-      loading.value = false;
-      visible.value = false;
-    } catch (err) {
-      message.error('Please fix validation errors.');
-    } finally {
-      loading.value = false;
+    } else {
+      const response = await UserApi('' /* endpoint suffix */, payload, 'POST');
+      message.success('User created successfully');
+      emit('submit', response.data);
     }
-  };
+
+    visible.value = false;
+  } catch (err: any) {
+    if (err?.response?.data?.detail) {
+      message.error(err.response.data.detail);
+    } else {
+      message.error('Please fix validation errors or check API.');
+    }
+  } finally {
+    loading.value = false;
+  }
+};
   
   const handleCancel = () => {
     visible.value = false;

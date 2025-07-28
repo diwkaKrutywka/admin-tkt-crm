@@ -46,10 +46,6 @@
   }
   
   const onLogin = async () => {
-    // Optional: mock admin login values
-    // info.value.username = 'admin'
-    // info.value.password = 'admin_EKC1'
-  
     if (!info.value.username || !info.value.password) return
   
     try {
@@ -65,7 +61,4 @@
     }
   }
   </script>
-  
-  <style scoped>
-  </style>
   

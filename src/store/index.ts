@@ -64,5 +64,11 @@ export const useUserStore = defineStore("userInfo", {
         ...new Set(data.users.map((item) => item.organization_name)),
       ];
     },
+    clearUser() {
+      this.accessToken = ''
+      this.refreshToken = ''
+      this.sessionToken = ''
+      this.user = null
+    }
   },
 });

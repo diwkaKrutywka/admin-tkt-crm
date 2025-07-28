@@ -18,5 +18,9 @@ export default {
   l_Search:"Search",
   l_Reset:"Reset",
   l_Yes:"Yes",
-  l_No:"No"
+  l_No:"No",
+  l_Lock_user:"Lock user",
+  l_Cancel:"Cancel",
+  l_Reason:"Reason",
+  l_Lock:"Lock"
 };

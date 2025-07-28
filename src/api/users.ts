@@ -1,7 +1,7 @@
 import http from '../utils/https'
 import type { AxiosRequestConfig, AxiosResponse } from 'axios'
 
-export function users<T = any>(
+export function UserApi<T = any>(
   url: string,
   data?: Record<string, any>,
   method: 'GET' | 'POST' = 'POST'
