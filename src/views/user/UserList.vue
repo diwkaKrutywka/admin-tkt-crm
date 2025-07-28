@@ -9,53 +9,33 @@
         </a-button>
       </template>
     </a-page-header>
-
+    <!-- Статистика -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <BaseCard v-for="stat in stats" :key="stat.title" :title="stat.title">
+        <template #content>
+          <div class="text-2xl font-bold text-gray-900">{{ stat.value }}</div>
+        </template>
+      </BaseCard>
+    </div>
     <filter-user></filter-user>
 
-    <a-table
-      bordered
-      :dataSource="tableData"
-      :columns="columns"
-      :pagination="pagination"
-      rowKey="id"
-      :loading="loading"
-      @change="handleTableChange"
-    >
+    <a-table bordered :dataSource="tableData" :columns="columns" :pagination="pagination" rowKey="id" :loading="loading"
+      @change="handleTableChange">
       <template #bodyCell="{ column, index }">
         <template v-if="column.key === 'Action'">
           <a-space>
-            <span
-              style="color: black; font-size: 21px"
-              class="icon material-symbols-outlined"
-              @click="onEdit(index)"
-            >
+            <span style="color: black; font-size: 21px" class="icon material-symbols-outlined" @click="onEdit(index)">
               edit
             </span>
-            <a-popconfirm
-              placement="leftBottom"
-              title="Сіз расымен қолданушыны тоқтатқыңыз келеді ме?"
-              :ok-text="$t('l_Yes')"
-              :cancel-text="$t('l_No')"
-              @confirm="onDeactivate(index)"
-            >
-              <span
-                style="color: rgb(0, 100, 250); font-size: 21px"
-                class="icon material-symbols-outlined"
-              >
+            <a-popconfirm placement="leftBottom" title="Сіз расымен қолданушыны тоқтатқыңыз келеді ме?"
+              :ok-text="$t('l_Yes')" :cancel-text="$t('l_No')" @confirm="onDeactivate(index)">
+              <span style="color: rgb(0, 100, 250); font-size: 21px" class="icon material-symbols-outlined">
                 cancel
               </span>
             </a-popconfirm>
-            <a-popconfirm
-              placement="leftBottom"
-              title="Сіз расымен қолданушыны өшіргіңіз келеді ме?"
-              :ok-text="$t('l_Yes')"
-              :cancel-text="$t('l_No')"
-              @confirm="onDelete(index)"
-            >
-              <span
-                style="color: red; font-size: 21px"
-                class="icon material-symbols-outlined"
-              >
+            <a-popconfirm placement="leftBottom" title="Сіз расымен қолданушыны өшіргіңіз келеді ме?"
+              :ok-text="$t('l_Yes')" :cancel-text="$t('l_No')" @confirm="onDelete(index)">
+              <span style="color: red; font-size: 21px" class="icon material-symbols-outlined">
                 delete
               </span>
             </a-popconfirm>
@@ -64,20 +44,11 @@
       </template>
     </a-table>
 
-    <add-edit-user
-      v-model:open="modalVisible"
-      :user="editingUser"
-      @submit="fetchUsers"
-    />
+    <add-edit-user v-model:open="modalVisible" :user="editingUser" @submit="fetchUsers" />
   </div>
 
-  <a-modal
-    v-model:open="open"
-    :title="$t('l_Lock_user')"
-    :ok-text="$t('l_Lock')"
-    :cancel-text="$t('l_Cancel')"
-    @ok="lockUser"
-  >
+  <a-modal v-model:open="open" :title="$t('l_Lock_user')" :ok-text="$t('l_Lock')" :cancel-text="$t('l_Cancel')"
+    @ok="lockUser">
     <a-form layout="vertical">
       <a-form-item :label="$t('l_Reason')">
         <a-input v-model:value="reason" />
@@ -86,22 +57,44 @@
   </a-modal>
 </template>
 <script setup lang="ts">
-import { ref, h, onMounted } from "vue";
+import { ref, h, computed, onMounted } from "vue";
 import { Avatar, message, Tag } from "ant-design-vue";
 import { SafetyOutlined, BankOutlined } from "@ant-design/icons-vue";
-import type { User } from "../../types/user";
-import type { TableRenderProps } from "../../types/table";
+import { UserApi } from "../../api/users.ts";
+import type { User } from "../../types/user.ts";
+import type { TableRenderProps } from "../../types/table.ts";
+import BaseCard from '../../common/BaseCard.vue'
+import { useUserStore } from '../../store/index'
+
 import FilterUser from "./FilterUser.vue";
 import AddEditUser from "./AddEditUser.vue";
-import { UserApi } from "../../api/user"; // ← your API utility
+
 const open = ref<boolean>(false);
 const reason = ref<string>("");
+
+const userStore = useUserStore();
+
 // State
 const tableData = ref<User[]>([]);
 const loading = ref(false);
 const modalVisible = ref(false);
 const editingUser = ref<User | null>(null);
 const lockingUserId = ref<string | null>(null);
+
+
+// Статистика для basecard
+
+const usersList = computed(() => userStore.usersList);
+const activeUsers = computed(() => userStore.activeUsers);
+const inactiveUsers = computed(() => userStore.inactiveUsers);
+const organizations = computed(() => userStore.organizations);
+
+const stats = computed(() => [
+  { title: 'Всего пользователей', value: usersList.value.length },
+  { title: 'Активные', value: activeUsers.value.length },
+  { title: 'Неактивные', value: inactiveUsers.value.length },
+  { title: 'Организаций', value: organizations.value.length },
+]);
 
 // Pagination
 const pagination = ref({
@@ -213,6 +206,8 @@ const fetchUsers = async () => {
 
     tableData.value = Object.values(data.users);
     pagination.value.total = data.total;
+    userStore.setUsersList(data);
+
   } catch (error) {
     message.error("Не удалось загрузить список пользователей");
     console.error(error);

@@ -5,11 +5,20 @@ import type {
   pagination,
 } from "../interfaces/user.interface";
 import { paginationConfig } from "ant-design-vue/es/pagination";
+interface User {
+  id: string;
+  username: string;
+  full_name: string;
+  department: string;
+  position: string;
+  user_role: string;
+  organization_name: string;
+  [key: string]: any; // For other optional props
+}
 
 export const useUserStore = defineStore("userInfo", {
   state: () => ({
     pagination: {} as pagination,
-    user: {},
     statisticsDashboardData: [],
     informationDashboardData: [],
     dashboardData: {},
@@ -17,6 +26,10 @@ export const useUserStore = defineStore("userInfo", {
     usersList: [] as UserDto[],
     inactiveUsers: [],
     organizations: [],
+    accessToken: "",
+    refreshToken: "",
+    sessionToken: "",
+    user: null as User | null,
   }),
   getters: {
     userViews: (state): UserView[] => {
@@ -46,15 +59,15 @@ export const useUserStore = defineStore("userInfo", {
     },
     setUser(user) {
       this.user = user.user; // Save the whole object
-      console.log(user, 'user');
-      
+      console.log(user, "user");
+      this.accessToken = user.access_token;
+      this.refreshToken = user.refresh_token;
       localStorage.setItem("accessToken", user.access_token);
-     },
+    },
     setUsersList(data) {
       // сохраняем мете данные для пагинаций
       const { users, ...metaData } = data;
       this.pagination = metaData;
-
       this.usersList = data.users;
 
       // сортируем активных и неактивных пользователей, а так же их организаций
@@ -65,10 +78,10 @@ export const useUserStore = defineStore("userInfo", {
       ];
     },
     clearUser() {
-      this.accessToken = ''
-      this.refreshToken = ''
-      this.sessionToken = ''
-      this.user = null
-    }
+      this.accessToken = "";
+      this.refreshToken = "";
+      this.sessionToken = "";
+      this.user = null;
+    },
   },
 });
