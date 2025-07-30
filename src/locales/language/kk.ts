@@ -25,4 +25,6 @@ export default {
   l_Lock: "Бұғаттау",
   l_Unlock: "Бұғаттан шығару",
   l_Unlock_user: "Қолданушыны бұғаттан шығару",
+  l_Contacts: "Ақпараттар",
+  l_Filter: "Фильтр",
 };

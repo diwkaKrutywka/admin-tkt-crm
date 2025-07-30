@@ -24,7 +24,7 @@ app.use(createPinia())
 // Глобальная функция форматирования ISO-даты в формате dd.mm.yyyy H:mm
 app.config.globalProperties.$formatIsoDate = (isoString: string): string => {
   if (!isoString) return '—'
-  return dayjs.utc(isoString).format('DD.MM.YYYY H:mm')
+  return dayjs.utc(isoString).format('DD.MM.YYYY')
 }
 
 app.mount('#app')

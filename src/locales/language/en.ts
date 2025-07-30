@@ -27,5 +27,6 @@ export default {
   l_Unlock_user:"Unlock user",
   l_Position:"Position",
   l_Department:"Department",
-  
+  l_Contacts:"Contacts",
+  l_Filter:"Filter"
 };

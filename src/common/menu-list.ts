@@ -27,5 +27,12 @@ export function getMenuList(): MenuItem[] {
       expand: false,
       children: [],
     },
+    {
+      name: $t("l_Contacts"),
+      icon: "assignment_ind",
+      routerPath: "/contacts",
+      expand: false,
+      children: [],
+    },
   ]
 }

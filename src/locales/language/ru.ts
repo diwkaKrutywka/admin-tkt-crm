@@ -25,4 +25,6 @@ export default {
   l_Lock: "Заблокировать",
   l_Unlock: "Разблокировать",
   l_Unlock_user: "Разблокировать пользователя",
+  l_Contacts: "Контакты",
+  l_Filter: "Фильтр",
 };
