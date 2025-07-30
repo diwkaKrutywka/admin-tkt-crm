@@ -22,5 +22,10 @@ export default {
   l_Lock_user:"Lock user",
   l_Cancel:"Cancel",
   l_Reason:"Reason",
-  l_Lock:"Lock"
+  l_Lock:"Lock",
+  l_Unlock:"Unlock",
+  l_Unlock_user:"Unlock user",
+  l_Position:"Position",
+  l_Department:"Department",
+  
 };

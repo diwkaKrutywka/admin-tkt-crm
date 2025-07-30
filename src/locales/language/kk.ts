@@ -22,5 +22,7 @@ export default {
   l_Lock_user: "Қолданушыны бұғаттау",
   l_Cancel: "Бас тарту",
   l_Reason: "Себебі",
-  l_Lock:"Бұғаттау"
+  l_Lock: "Бұғаттау",
+  l_Unlock: "Бұғаттан шығару",
+  l_Unlock_user: "Қолданушыны бұғаттан шығару",
 };

@@ -2,15 +2,29 @@
   <div>
     <a-page-header :title="$t('l_Users')">
       <template #extra>
+        <div>
+          <a-input-search
+            v-model:value="search"
+            placeholder="Search by username, fullname"
+            style="width: 400px;"
+            @search="fetchUsers"
+          />
+        </div>
+        <a-button @click="onAdd()">
+          <span class="material-symbols-outlined">
+            filter_alt <span class="ml-2"> {{ $t("l_Filter") }}</span>
+          </span>
+        </a-button>
         <a-button type="primary" @click="onAdd()">
           <span class="material-symbols-outlined">
             add <span class="ml-2"> {{ $t("l_Add_user") }}</span>
           </span>
         </a-button>
       </template>
+      <br/>
     </a-page-header>
 
-    <filter-user></filter-user>
+    <!-- <filter-user></filter-user> -->
 
     <a-table
       bordered
@@ -21,7 +35,7 @@
       :loading="loading"
       @change="handleTableChange"
     >
-      <template #bodyCell="{ column, index }">
+      <template #bodyCell="{ record, column, index }">
         <template v-if="column.key === 'Action'">
           <a-space>
             <span
@@ -32,20 +46,36 @@
               edit
             </span>
             <a-popconfirm
+              v-if="!record.is_locked"
               placement="leftBottom"
               title="Сіз расымен қолданушыны тоқтатқыңыз келеді ме?"
               :ok-text="$t('l_Yes')"
               :cancel-text="$t('l_No')"
-              @confirm="onDeactivate(index)"
+              @confirm="onDeactivate(index, 'true')"
             >
               <span
                 style="color: rgb(0, 100, 250); font-size: 21px"
                 class="icon material-symbols-outlined"
               >
-                cancel
+                lock_open_right
               </span>
             </a-popconfirm>
             <a-popconfirm
+              v-if="record.is_locked"
+              placement="leftBottom"
+              title="Сіз расымен қолданушыны қайта қосқыңыз келеді ме?"
+              :ok-text="$t('l_Yes')"
+              :cancel-text="$t('l_No')"
+              @confirm="onDeactivate(index, 'false')"
+            >
+              <span
+                style="color: rgb(0, 100, 250); font-size: 21px"
+                class="icon material-symbols-outlined"
+              >
+                lock
+              </span>
+            </a-popconfirm>
+            <!-- <a-popconfirm
               placement="leftBottom"
               title="Сіз расымен қолданушыны өшіргіңіз келеді ме?"
               :ok-text="$t('l_Yes')"
@@ -58,7 +88,7 @@
               >
                 delete
               </span>
-            </a-popconfirm>
+            </a-popconfirm> -->
           </a-space>
         </template>
       </template>
@@ -66,15 +96,15 @@
 
     <add-edit-user
       v-model:open="modalVisible"
-      :user="editingUser"
+      :user_id="editingUser?.id"
       @submit="fetchUsers"
     />
   </div>
 
   <a-modal
     v-model:open="open"
-    :title="$t('l_Lock_user')"
-    :ok-text="$t('l_Lock')"
+    :title="!lockingStatus ? $t('l_Lock_user') : $t('l_Unlock_user')"
+    :ok-text="!lockingStatus ? $t('l_Lock') : $t('l_Unlock')"
     :cancel-text="$t('l_Cancel')"
     @ok="lockUser"
   >
@@ -92,18 +122,20 @@ import { Avatar, message, Tag } from "ant-design-vue";
 import { SafetyOutlined, BankOutlined } from "@ant-design/icons-vue";
 import type { User } from "../../types/user";
 import type { TableRenderProps } from "../../types/table";
-import FilterUser from "./FilterUser.vue";
+// import FilterUser from "./FilterUser.vue";
 import AddEditUser from "./AddEditUser.vue";
 import { UserApi } from "../../api/user"; // ← your API utility
 const open = ref<boolean>(false);
 const reason = ref<string>("");
+const search = ref<string>("");
+const lockingStatus = ref<string>("");
 // State
 const tableData = ref<User[]>([]);
 const loading = ref(false);
 const modalVisible = ref(false);
 const editingUser = ref<User | null>(null);
 const lockingUserId = ref<string | null>(null);
-
+import { useGlobal } from "../../composables/useGlobal";
 // Pagination
 const pagination = ref({
   current: 1,
@@ -190,6 +222,10 @@ const columns = [
   {
     title: "Последний вход",
     dataIndex: "last_login_at",
+    customRender: ({ text }: TableRenderProps<User>) => {
+      const { $formatIsoDate } = useGlobal();
+      return $formatIsoDate(text);
+    },
   },
   {
     title: "Действия",
@@ -240,20 +276,14 @@ function onEdit(index: number) {
   modalVisible.value = true;
 }
 
-function onDelete(index: number) {
-  const user = tableData.value[index];
-  message.success(`Пользователь ${user.full_name} удалён`);
-  // TODO: API call to delete
-}
-
-function onDeactivate(index: number) {
+function onDeactivate(index: number, bool: string) {
   const user = tableData.value[index];
   console.log(user);
   if (!user || !user.id) {
     message.error("Пользователь не найден");
     return;
   }
-
+  lockingStatus.value = bool;
   lockingUserId.value = user.id;
   open.value = true;
 }
@@ -267,7 +297,7 @@ const lockUser = async () => {
   try {
     await UserApi(
       `${lockingUserId.value}/lock`,
-      { reason: reason.value, is_locked: true },
+      { reason: reason.value, is_locked: lockingStatus.value },
       "POST"
     );
     message.success("Пользователь деактивирован");

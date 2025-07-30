@@ -23,7 +23,7 @@
     <div class="flex-1 flex flex-col h-screen overflow-x-auto">
       <TopBox @toggle-drawer="isDrawerOpen = !isDrawerOpen" />
       <div class="p-3 flex-1 overflow-y-auto">
-        <div class="bg-gray-50 rounded-xl p-10 h-full w-full">
+        <div class="bg-gray-10+0 rounded-xl p-10 h-full w-full">
           <router-view />
         </div>
       </div>
