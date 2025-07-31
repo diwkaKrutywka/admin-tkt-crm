@@ -41,4 +41,6 @@ export default {
   l_Sort_order: "Сұрыптау",
   l_From: "Бастап",
   l_To: "Дейін",
+  l_Contacts: "Ақпараттар",
+  l_Filter: "Фильтр",
 };

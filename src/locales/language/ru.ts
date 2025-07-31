@@ -41,4 +41,6 @@ export default {
   l_Sort_order: "Сорт",
   l_From: "От",
   l_To: "До",
+  l_Contacts: "Контакты",
+  l_Filter: "Фильтр",
 };

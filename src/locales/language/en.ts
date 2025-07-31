@@ -43,4 +43,6 @@ export default {
   l_Sort_order: "Sort",
   l_From: "From",
   l_To: "To",
+  l_Contacts:"Contacts",
+  l_Filter:"Filter"
 };
