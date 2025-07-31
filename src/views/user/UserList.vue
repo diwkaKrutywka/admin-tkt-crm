@@ -2,15 +2,17 @@
   <div>
     <a-page-header :title="$t('l_Users')">
       <template #extra>
-        <div>
+        <div style="display: flex; justify-content: center; align-items: center;">
           <a-input-search
             v-model:value="search"
             placeholder="Search by username, fullname"
-            style="width: 400px;"
+            style="width: 400px; vertical-align: middle;"
+            class="align-middle search-input"
             @search="fetchUsers"
+            allowClear
           />
         </div>
-        <a-button @click="onAdd()">
+        <a-button @click="openFilter">
           <span class="material-symbols-outlined">
             filter_alt <span class="ml-2"> {{ $t("l_Filter") }}</span>
           </span>
@@ -99,6 +101,12 @@
       :user_id="editingUser?.id"
       @submit="fetchUsers"
     />
+
+    <!-- Filter Modal -->
+    <filter-modal
+      v-model:open="filterModalVisible"
+      @filter="applyFilter"
+    />
   </div>
 
   <a-modal
@@ -124,6 +132,7 @@ import type { User } from "../../types/user";
 import type { TableRenderProps } from "../../types/table";
 // import FilterUser from "./FilterUser.vue";
 import AddEditUser from "./AddEditUser.vue";
+import FilterModal from "../../components/filter.vue";
 import { UserApi } from "../../api/user"; // ← your API utility
 const open = ref<boolean>(false);
 const reason = ref<string>("");
@@ -133,8 +142,10 @@ const lockingStatus = ref<string>("");
 const tableData = ref<User[]>([]);
 const loading = ref(false);
 const modalVisible = ref(false);
+const filterModalVisible = ref(false);
 const editingUser = ref<User | null>(null);
 const lockingUserId = ref<string | null>(null);
+const currentFilters = ref<any>({});
 import { useGlobal } from "../../composables/useGlobal";
 // Pagination
 const pagination = ref({
@@ -239,12 +250,15 @@ const columns = [
 const fetchUsers = async () => {
   loading.value = true;
   try {
+    const params = {
+      page: pagination.value.current,
+      page_size: pagination.value.pageSize,
+      search: search.value, // Добавляем фильтры к запросу
+    };
+
     const { data } = await UserApi<{ users: User[]; total: number }>(
       "",
-      {
-        page: pagination.value.current,
-        page_size: pagination.value.pageSize,
-      },
+      params,
       "GET"
     );
 
@@ -310,8 +324,35 @@ const lockUser = async () => {
   }
 };
 
+// Filter functions
+const openFilter = () => {
+  filterModalVisible.value = true;
+};
+
+const applyFilter = (filters: any) => {
+  currentFilters.value = filters;
+  pagination.value.current = 1; // Сброс на первую страницу при применении фильтра
+  fetchUsers();
+};
+
 // Fetch on mount
 onMounted(() => {
   fetchUsers();
 });
 </script>
+
+<style scoped>
+.search-input :deep(.ant-input-search-button) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-input :deep(.ant-input-search-button .anticon) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>
+
+
