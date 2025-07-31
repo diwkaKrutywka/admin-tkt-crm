@@ -42,8 +42,8 @@
           :placeholder="$t('l_Select_status')"
           allow-clear
         >
-          <a-select-option :value="true">{{ $t('l_Active') }}</a-select-option>
-          <a-select-option :value="false">{{ $t('l_Inactive') }}</a-select-option>
+          <a-select-option value="true">{{ $t('l_Active') }}</a-select-option>
+          <a-select-option value="false">{{ $t('l_Inactive') }}</a-select-option>
         </a-select>
       </a-form-item>
 
@@ -94,15 +94,16 @@
 import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
+import type { Dayjs } from 'dayjs'
 
 const { t: $t } = useI18n()
 
 interface FilterForm {
   organization_id: string
   user_role: string
-  is_active: boolean | null
-  create_date: [any, any] | null
-  last_login: [any, any] | null
+  is_active: string | null
+  create_date: [Dayjs, Dayjs] | null
+  last_login: [Dayjs, Dayjs] | null
 }
 
 const props = defineProps<{

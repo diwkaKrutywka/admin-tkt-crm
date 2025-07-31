@@ -250,12 +250,60 @@ const columns = [
 const fetchUsers = async () => {
   loading.value = true;
   try {
-    const params = {
+    // Базовые параметры
+    const params: any = {
       page: pagination.value.current,
       page_size: pagination.value.pageSize,
-      search: search.value, // Добавляем фильтры к запросу
     };
 
+    // Добавляем поиск если есть
+    if (search.value.trim()) {
+      params.search = search.value.trim();
+    }
+
+    // Добавляем фильтры если есть
+    if (currentFilters.value) {
+      const filters = currentFilters.value;
+      
+      // Organization ID
+      if (filters.organization_id && filters.organization_id.trim()) {
+        params.organization_id = filters.organization_id.trim();
+      }
+      
+      // User Role
+      if (filters.user_role && filters.user_role.trim()) {
+        params.user_role = filters.user_role;
+      }
+      
+      // Is Active
+      if (filters.is_active !== null && filters.is_active !== undefined) {
+        params.is_active = filters.is_active === 'true';
+      }
+      
+      // Create Date Range
+      if (filters.create_date && filters.create_date.length === 2) {
+        const [startDate, endDate] = filters.create_date;
+        if (startDate) {
+          params.created_at_from = startDate.format('YYYY-MM-DD');
+        }
+        if (endDate) {
+          params.created_at_to = endDate.format('YYYY-MM-DD');
+        }
+      }
+      
+      // Last Login Range
+      if (filters.last_login && filters.last_login.length === 2) {
+        const [startDate, endDate] = filters.last_login;
+        if (startDate) {
+          params.last_login_from = startDate.format('YYYY-MM-DD');
+        }
+        if (endDate) {
+          params.last_login_to = endDate.format('YYYY-MM-DD');
+        }
+      }
+    }
+
+    console.log(params);
     const { data } = await UserApi<{ users: User[]; total: number }>(
       "",
       params,
@@ -332,6 +380,13 @@ const openFilter = () => {
 const applyFilter = (filters: any) => {
   currentFilters.value = filters;
   pagination.value.current = 1; // Сброс на первую страницу при применении фильтра
+  fetchUsers();
+};
+
+const resetFilters = () => {
+  currentFilters.value = {};
+  search.value = '';
+  pagination.value.current = 1;
   fetchUsers();
 };
 
