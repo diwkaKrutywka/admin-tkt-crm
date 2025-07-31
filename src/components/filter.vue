@@ -6,35 +6,38 @@
     :confirm-loading="loading"
     @cancel="handleCancel"
     destroyOnClose
-    width="700px"
+    :width="modalWidth"
     :getContainer="false"
     :wrapClassName="'filter-modal-wrapper'"
   >
     <a-form :model="form" layout="vertical">
-      <!-- Organization ID -->
-      <a-form-item label="Organization ID" name="organization_id">
-        <a-input 
-          v-model:value="form.organization_id" 
-          :placeholder="$t('l_Enter_org_id')"
-          allow-clear
-        />
-      </a-form-item>
-
-      <!-- User Role -->
-      <a-form-item :label="$t('l_User_role')" name="user_role">
-        <a-select 
-          v-model:value="form.user_role" 
-          :placeholder="$t('l_Select_role')"
-          allow-clear
-        >
-          <a-select-option value="system_admin">System Admin</a-select-option>
-          <a-select-option value="senior_doctor">Senior Doctor</a-select-option>
-          <a-select-option value="dispatcher">Dispatcher</a-select-option>
-          <a-select-option value="manager">Manager</a-select-option>
-          <a-select-option value="employee">Employee</a-select-option>
-        </a-select>
-      </a-form-item>
-
+      <!-- Organization ID и User Role в одной строке -->
+      <a-row :gutter="[8, 8]">
+        <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+          <a-form-item label="Organization ID" name="organization_id">
+            <a-input 
+              v-model:value="form.organization_id" 
+              :placeholder="$t('l_Enter_org_id')"
+              allow-clear
+            />
+          </a-form-item>
+        </a-col>
+        <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+          <a-form-item :label="$t('l_User_role')" name="user_role">
+            <a-select 
+              v-model:value="form.user_role" 
+              :placeholder="$t('l_Select_status')"
+              allow-clear
+            >
+              <a-select-option value="system_admin">System Admin</a-select-option>
+              <a-select-option value="senior_doctor">Senior Doctor</a-select-option>
+              <a-select-option value="dispatcher">Dispatcher</a-select-option>
+              <a-select-option value="manager">Manager</a-select-option>
+              <a-select-option value="employee">Employee</a-select-option>
+            </a-select>
+          </a-form-item>
+        </a-col>
+      </a-row>
       <!-- Is Active -->
       <a-form-item :label="$t('l_Active_status')" name="is_active">
         <a-select 
@@ -50,6 +53,7 @@
       <!-- Даты в одной строке на больших экранах -->
       <a-row :gutter="[8, 8]">
         <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+          <!--
           <a-form-item :label="$t('l_Create_time')" name="create_date">
             <a-range-picker
               v-model:value="form.create_date"
@@ -59,8 +63,10 @@
               style="width: 100%"
             />
           </a-form-item>
+          -->
         </a-col>
         <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
+          <!--
           <a-form-item :label="$t('l_Last_login')" name="last_login">
             <a-range-picker
               v-model:value="form.last_login"
@@ -70,6 +76,7 @@
               style="width: 100%"
             />
           </a-form-item>
+          -->
         </a-col>
       </a-row>
     </a-form>
@@ -182,6 +189,10 @@ const handleReset = () => {
   message.info($t('l_Filter_reset'))
 }
 
+const modalWidth = computed(() => {
+  return window.innerWidth < 768 ? '95vw' : '700px'
+})
+
 // Позиционирование модального окна под кнопкой фильтра
 onMounted(() => {
   // Добавляем стили для позиционирования модального окна
@@ -197,6 +208,15 @@ onMounted(() => {
       z-index: 1000 !important;
       max-height: 80vh !important;
       overflow-y: auto !important;
+      width: 700px !important;
+    }
+    @media (max-width: 767px) {
+      .filter-modal-wrapper .ant-modal {
+        width: 95vw !important;
+        right: 2.5vw !important;
+        left: 2.5vw !important;
+        top: 10vw !important;
+      }
     }
     .filter-modal-wrapper .ant-modal-mask {
       position: fixed !important;
