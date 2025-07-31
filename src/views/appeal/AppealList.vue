@@ -190,6 +190,11 @@ const columns = [
         );
       }
 
+      if (record.healthcare_facility_id) {
+        parts.push(
+          h("div", [h("span", "Поликлиника: "), h("strong", record.healthcare_facility_id)])
+        );
+      }
       return parts.length > 0
         ? h("div", { class: "text-gray-800 space-y-1" }, parts)
         : null;
