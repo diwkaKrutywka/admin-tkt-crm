@@ -63,5 +63,17 @@ export default {
   l_Email: "Email",
   l_Phone: "Телефон",
   l_Birth_date: "Туған күні",
-  l_Created_at: "Құрылған күні"
+  l_Created_at: "Құрылған күні",
+  l_User: "Қолданушы",
+  l_Role: "Рөл",
+  l_Status: "Күй",
+  l_Actions: "Әрекеттер",
+  l_Full_name: "Аты-жөні",
+  l_Phone_number: "Телефон нөмірі",
+  l_IIN: "ЖСН",
+  l_Create_request: "Қолданушы қосу",
+  l_Ticket_system: "Тикет жүйесі",
+  l_Search_placeholder: "Логин немесе аты-жөні бойынша іздеу",
+  l_Total_records: "Барлығы {total} жазба",
+  l_Organization_ID: "Ұйым ID",
 };

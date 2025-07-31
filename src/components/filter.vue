@@ -14,7 +14,7 @@
       <!-- Organization ID и User Role в одной строке -->
       <a-row :gutter="[8, 8]">
         <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-          <a-form-item label="Organization ID" name="organization_id">
+          <a-form-item :label="$t('l_Organization_ID')" name="organization_id">
             <a-input 
               v-model:value="form.organization_id" 
               :placeholder="$t('l_Enter_org_id')"

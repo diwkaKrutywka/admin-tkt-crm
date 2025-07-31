@@ -7,7 +7,7 @@
         >
           <a-input-search
             v-model:value="search"
-            placeholder="Search by username, fullname"
+            :placeholder="$t('l_Search_placeholder')"
             style="width: 400px; vertical-align: middle"
             class="align-middle search-input"
             @search="fetchUsers"
@@ -67,6 +67,8 @@ import FilterContact from "./FilterContact.vue";
 import type { TableRenderProps } from "../../types/table";
 import EditContact from "./EditContact.vue";
 import { ContactApi } from "../../api/contact"; // ← your API utility
+import { useI18n } from "vue-i18n";
+const { t: $t } = useI18n();
 const open = ref<boolean>(false);
 const filterModalVisible = ref<boolean>(false);
 const reason = ref<string>("");
@@ -86,7 +88,7 @@ const pagination = ref({
   showSizeChanger: true,
   pageSizeOptions: ["10", "20", "50"],
   showQuickJumper: true,
-  showTotal: (total: number) => `Всего ${total} записей`,
+  showTotal: (total: number) => $t('l_Total_records', { total }),
 });
 
 // Columns
@@ -102,7 +104,7 @@ const columns = [
     },
   },
   {
-    title: "ФИО",
+    title: $t("l_Full_name"),
     dataIndex: "full_name",
     customRender: ({ text }: TableRenderProps<Contact>) => {
       const initials = (text as string)
@@ -129,7 +131,7 @@ const columns = [
     },
   },
   {
-    title: "Phone number",
+    title: $t("l_Phone_number"),
     dataIndex: "phone_number",
     customRender: ({ text }: TableRenderProps<Contact>) => {
       return h(
@@ -143,12 +145,11 @@ const columns = [
     },
   },
   {
-    title: "ИИН",
+    title: $t("l_IIN"),
     dataIndex: "iin",
   },
-
   {
-    title: "Birth date",
+    title: $t("l_Birth_date"),
     dataIndex: "birth_date",
     customRender: ({ text }: TableRenderProps<Contact>) => {
       const { $formatIsoDate } = useGlobal();
@@ -156,20 +157,20 @@ const columns = [
     },
   },
   {
-    title: "Gender",
+    title: $t("l_Gender"),
     dataIndex: "gender",
     customRender: ({ text }: TableRenderProps<Contact>) => {
       if (text === "male") {
-        return h(Tag, { color: "blue" }, () => "Male");
+        return h(Tag, { color: "blue" }, () => $t("l_Male"));
       } else if (text === "female") {
-        return h(Tag, { color: "pink" }, () => "Female");
+        return h(Tag, { color: "pink" }, () => $t("l_Female"));
       } else {
-        return h(Tag, { color: "gray" }, () => "Other");
+        return h(Tag, { color: "gray" }, () => $t("l_Other"));
       }
     },
   },
   {
-    title: "Действия",
+    title: $t("l_Actions"),
     key: "Action",
     width: 110,
     align: "center",

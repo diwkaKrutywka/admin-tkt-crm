@@ -63,5 +63,17 @@ export default {
   l_Email: "Email",
   l_Phone: "Телефон",
   l_Birth_date: "Дата рождения",
-  l_Created_at: "Дата создания"
+  l_Created_at: "Дата создания",
+  l_User: "Пользователь",
+  l_Role: "Роль",
+  l_Status: "Статус",
+  l_Actions: "Действия",
+  l_Full_name: "ФИО",
+  l_Phone_number: "Телефон",
+  l_IIN: "ИИН",
+  l_Create_request: "Создать обращение",
+  l_Ticket_system: "Тикетная Система",
+  l_Search_placeholder: "Поиск по логину или ФИО",
+  l_Total_records: "Всего {total} записей",
+  l_Organization_ID: "ID организации",
 };

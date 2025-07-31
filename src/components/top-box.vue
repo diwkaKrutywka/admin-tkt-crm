@@ -15,7 +15,7 @@
       </div>
       <div class="flex items-center gap-1 h-full">
         <div class="flex flex-col">
-          <span class="font-bold">Тикетнея Система</span>
+          <span class="font-bold">{{ $t('l_Ticket_system') }}</span>
         </div>
       </div>
     </div>
@@ -89,6 +89,8 @@ import { useUserStore } from "../store/index";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 import { onMounted, onUnmounted } from "vue";
+import { useI18n } from "vue-i18n";
+const { t: $t } = useI18n();
 
 const emit = defineEmits(["toggle-drawer"]);
 const userStore = useUserStore();
