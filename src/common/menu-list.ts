@@ -14,6 +14,13 @@ export function getMenuList(): MenuItem[] {
 
   return [
     {
+      name: $t("l_Appeals"),
+      icon: "assignment",
+      routerPath: "/appeals",
+      expand: false,
+      children: [],
+    },
+    {
       name: $t("l_Main_page"),
       icon: "dashboard",
       routerPath: "/main",
