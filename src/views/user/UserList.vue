@@ -130,6 +130,7 @@ import { Avatar, message, Tag } from "ant-design-vue";
 import { SafetyOutlined, BankOutlined } from "@ant-design/icons-vue";
 import type { User } from "../../types/user";
 import type { TableRenderProps } from "../../types/table";
+import AddEditUser from "./AddEditUser.vue";
 
 import FilterModal from "../../components/filter.vue";
 import { UserApi } from "../../api/user"; // ← your API utility
@@ -139,7 +140,7 @@ const search = ref<string>("");
 const lockingStatus = ref<string>("");
 // State
 const tableData = ref<User[]>([]);
-const loading = ref(false);
+const loading = ref<boolean>(false);;
 const modalVisible = ref(false);
 const filterModalVisible = ref(false);
 const editingUser = ref<User | null>(null);
@@ -303,7 +304,7 @@ const fetchUsers = async () => {
     }
 
     console.log(params);
-    const { data } = await UserApi<{ users: User[]; total: number }>(
+    const { data } = await UserApi<{ items: User[]; total: number }>(
       "",
       params,
       "GET"
