@@ -44,5 +44,26 @@ export default {
   l_From: "From",
   l_To: "To",
   l_Contacts:"Contacts",
-  l_Filter:"Filter"
+  l_Filter:"Filter",
+  // Contact filter translations
+  l_Filter_contacts: "Filter Contacts",
+  l_Order_by: "Order By",
+  l_Order: "Order",
+  l_Gender: "Gender",
+  l_Birth_date_from: "Birth Date From",
+  l_Birth_date_to: "Birth Date To",
+  l_Created_date_from: "Created Date From",
+  l_Created_date_to: "Created Date To",
+  l_Select_order_by: "Select order by",
+  l_Select_order: "Select order",
+  l_Select_gender: "Select gender",
+  l_Male: "Male",
+  l_Female: "Female",
+  l_Other: "Other",
+  l_ID: "ID",
+  l_Name: "Name",
+  l_Email: "Email",
+  l_Phone: "Phone",
+  l_Birth_date: "Birth Date",
+  l_Created_at: "Created At"
 };

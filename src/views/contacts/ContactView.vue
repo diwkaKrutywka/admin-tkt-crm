@@ -48,6 +48,7 @@
     <filter-contact
       v-model:open="filterModalVisible"
       @filter="applyFilter"
+      @reset="resetFilters"
     ></filter-contact>
     <edit-contact
       v-model:open="modalVisible"
@@ -58,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, h, onMounted } from "vue";
+import { ref, h, onMounted, watch, computed } from "vue";
 import { Avatar, message, Tag } from "ant-design-vue";
 import { SafetyOutlined } from "@ant-design/icons-vue";
 import type { Contact } from "../../types/contacts";
@@ -175,7 +176,45 @@ const columns = [
   },
 ];
 const applyFilter = (filters: any) => {
-  currentFilters.value = filters;
+  // Преобразуем данные фильтра в правильный формат для API
+  const processedFilters: any = {};
+  
+  // Обрабатываем order_by и order
+  if (filters.order_by) {
+    processedFilters.order_by = filters.order_by;
+  }
+  if (filters.order) {
+    processedFilters.order = filters.order;
+  }
+  
+  // Обрабатываем gender
+  if (filters.gender_eq) {
+    processedFilters.gender_eq = filters.gender_eq;
+  }
+  
+  // Обрабатываем даты рождения
+  if (filters.birth_date_gte) {
+    processedFilters.birth_date_gte = filters.birth_date_gte.format('YYYY-MM-DD');
+  }
+  if (filters.birth_date_lte) {
+    processedFilters.birth_date_lte = filters.birth_date_lte.format('YYYY-MM-DD');
+  }
+  
+  // Обрабатываем даты создания
+  if (filters.created_at_gte) {
+    processedFilters.created_at_gte = filters.created_at_gte.format('YYYY-MM-DD');
+  }
+  if (filters.created_at_lte) {
+    processedFilters.created_at_lte = filters.created_at_lte.format('YYYY-MM-DD');
+  }
+  
+  currentFilters.value = processedFilters;
+  pagination.value.current = 1;
+  fetchUsers();
+};
+
+const resetFilters = () => {
+  currentFilters.value = {};
   pagination.value.current = 1;
   fetchUsers();
 };
@@ -183,16 +222,28 @@ const applyFilter = (filters: any) => {
 const fetchUsers = async () => {
   loading.value = true;
   try {
+    // Собираем все параметры запроса
+    const queryParams: any = {
+      page: pagination.value.current,
+      page_size: pagination.value.pageSize,
+    };
+    
+    // Добавляем поисковый запрос, если есть
+    if (search.value) {
+      queryParams.q = search.value;
+    }
+    
+    // Добавляем фильтры, если есть
+    if (Object.keys(currentFilters.value).length > 0) {
+      Object.assign(queryParams, currentFilters.value);
+    }
+    
     const { data } = await ContactApi<{
       items: Contact[];
       total_count: number;
     }>(
       "",
-      {
-        page: pagination.value.current,
-        page_size: pagination.value.pageSize,
-        q: search.value,
-      },
+      queryParams,
       "GET"
     );
 
@@ -224,6 +275,18 @@ const openFilter = () => {
 // Fetch on mount
 onMounted(() => {
   fetchUsers();
+});
+
+// Следим за изменением поиска
+watch(search, (newValue) => {
+  if (!newValue) {
+    // Если поиск очищен, сбрасываем фильтры
+    resetFilters();
+  } else {
+    // Если есть поисковый запрос, обновляем данные
+    pagination.value.current = 1;
+    fetchUsers();
+  }
 });
 </script>
 <style scoped>
