@@ -130,8 +130,7 @@ import { Avatar, message, Tag } from "ant-design-vue";
 import { SafetyOutlined, BankOutlined } from "@ant-design/icons-vue";
 import type { User } from "../../types/user";
 import type { TableRenderProps } from "../../types/table";
-// import FilterUser from "./FilterUser.vue";
-import AddEditUser from "./AddEditUser.vue";
+
 import FilterModal from "../../components/filter.vue";
 import { UserApi } from "../../api/user"; // ← your API utility
 const open = ref<boolean>(false);
@@ -256,13 +255,13 @@ const fetchUsers = async () => {
       search: search.value, // Добавляем фильтры к запросу
     };
 
-    const { data } = await UserApi<{ users: User[]; total: number }>(
+    const { data } = await UserApi<{ items: User[]; total: number }>(
       "",
       params,
       "GET"
     );
 
-    tableData.value = Object.values(data.users);
+    tableData.value = Object.values(data.items);
     pagination.value.total = data.total;
   } catch (error) {
     message.error("Не удалось загрузить список пользователей");

@@ -1,41 +1,24 @@
 <template>
   <div>
     <a-page-header :title="$t('l_Contacts')">
-        <template #extra>
-        <div>
+      <template #extra>
+        <div
+          style="display: flex; justify-content: center; align-items: center"
+        >
           <a-input-search
             v-model:value="search"
             placeholder="Search by username, fullname"
-            style="width: 400px;"
+            style="width: 400px; vertical-align: middle"
+            class="align-middle search-input"
             @search="fetchUsers"
+            allowClear
           />
         </div>
-        <a-dropdown placement="bottomRight">
-            <a-button type="primary" @click="onFilter()">
+        <a-button type="primary" @click="openFilter">
           <span class="material-symbols-outlined">
             filter_alt <span class="ml-2"> {{ $t("l_Filter") }}</span>
           </span>
         </a-button>
-        <template #overlay>
-          <a-menu>
-            <a-menu-item>
-              <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">
-                1st menu item
-              </a>
-            </a-menu-item>
-            <a-menu-item>
-              <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
-                2nd menu item
-              </a>
-            </a-menu-item>
-            <a-menu-item>
-              <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
-                3rd menu item
-              </a>
-            </a-menu-item>
-          </a-menu>
-        </template>
-      </a-dropdown>
       </template>
       <br />
     </a-page-header>
@@ -62,7 +45,10 @@
         </template>
       </template>
     </a-table>
-
+    <filter-contact
+      v-model:open="filterModalVisible"
+      @filter="applyFilter"
+    ></filter-contact>
     <edit-contact
       v-model:open="modalVisible"
       :id="editingUser?.id"
@@ -76,14 +62,16 @@ import { ref, h, onMounted } from "vue";
 import { Avatar, message, Tag } from "ant-design-vue";
 import { SafetyOutlined } from "@ant-design/icons-vue";
 import type { Contact } from "../../types/contacts";
+import FilterContact from "./FilterContact.vue";
 import type { TableRenderProps } from "../../types/table";
 import EditContact from "./EditContact.vue";
 import { ContactApi } from "../../api/contact"; // ← your API utility
 const open = ref<boolean>(false);
+const filterModalVisible = ref<boolean>(false);
 const reason = ref<string>("");
 const search = ref<string>("");
 const lockingStatus = ref<string>("");
-// State
+const currentFilters = ref<any>({});
 const tableData = ref<Contact[]>([]);
 const loading = ref(false);
 const modalVisible = ref(false);
@@ -186,8 +174,12 @@ const columns = [
     align: "center",
   },
 ];
+const applyFilter = (filters: any) => {
+  currentFilters.value = filters;
+  pagination.value.current = 1;
+  fetchUsers();
+};
 
-// Fetch Users
 const fetchUsers = async () => {
   loading.value = true;
   try {
@@ -199,7 +191,7 @@ const fetchUsers = async () => {
       {
         page: pagination.value.current,
         page_size: pagination.value.pageSize,
-        q: search.value
+        q: search.value,
       },
       "GET"
     );
@@ -224,11 +216,26 @@ const handleTableChange = (pag: any) => {
 function onEdit(index: number) {
   editingUser.value = tableData.value[index];
   modalVisible.value = true;
-  console.log(editingUser)
+  console.log(editingUser);
 }
-
+const openFilter = () => {
+  filterModalVisible.value = true;
+};
 // Fetch on mount
 onMounted(() => {
   fetchUsers();
 });
 </script>
+<style scoped>
+.search-input :deep(.ant-input-search-button) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-input :deep(.ant-input-search-button .anticon) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>
