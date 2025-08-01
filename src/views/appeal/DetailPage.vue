@@ -3,7 +3,7 @@
     v-model:open="visible"
     :title="$t('l_Appeal_details')"
     placement="right"
-    size="large"
+    :width="drawerWidth"
     :closable="true"
     @close="handleClose"
   >
@@ -23,13 +23,10 @@
       <!-- Основная информация об обращении -->
       <a-descriptions
         :title="$t('l_Appeal_information')"
-        :column="2"
+        :column="screenWidth < 768 ? 1 : 2"
         bordered
-        class="mb-6"
+        class="mb-6 mt-4"
       >
-        <a-descriptions-item :label="$t('l_Appeal_id')">
-          {{ appealData.id }}
-        </a-descriptions-item>
         <a-descriptions-item :label="$t('l_Creation_date')">
           {{ formatDate(appealData.date) }}
         </a-descriptions-item>
@@ -38,10 +35,10 @@
             {{ getStatusText(appealData.status) }}
           </a-tag>
         </a-descriptions-item>
-        <a-descriptions-item :label="$t('l_Manager')">
+        <a-descriptions-item :label="$t('l_Manager')" :span="screenWidth < 768 ? 1 : 2">
           {{ appealData.employee_id }}
         </a-descriptions-item>
-        <a-descriptions-item :label="$t('l_Reason')" :span="2">
+        <a-descriptions-item :label="$t('l_Reason')" :span="screenWidth < 768 ? 1 : 2">
           <div class="max-h-32 overflow-y-auto">
             {{ appealData.reason || $t('l_Not_specified_f') }}
           </div>
@@ -51,9 +48,9 @@
       <!-- Типы обращений -->
       <a-descriptions
         :title="$t('l_Appeal_types')"
-        :column="2"
+        :column="screenWidth < 768 ? 1 : 2"
         bordered
-        class="mb-6"
+        class="mb-6 mt-8"
       >
         <a-descriptions-item :label="$t('l_Call_type')">
           {{ appealData.call_type_id || $t('l_Not_specified_m') }}
@@ -74,7 +71,7 @@
         :title="$t('l_Address_information')"
         :column="1"
         bordered
-        class="mb-6"
+        class="mb-6 mt-8"
       >
         <a-descriptions-item :label="$t('l_City')">
           {{ appealData.city_id || $t('l_Not_specified_m') }}
@@ -91,15 +88,10 @@
       <a-descriptions
         v-if="appealData.contact"
         :title="$t('l_Contact_information')"
-        :column="2"
+        :column="screenWidth < 768 ? 1 : 2"
         bordered
+        class="mt-8"
       >
-        <a-descriptions-item :label="$t('l_Contact_id')">
-          {{ appealData.contact.id }}
-        </a-descriptions-item>
-        <a-descriptions-item :label="$t('l_Caller_id')">
-          {{ appealData.contact.caller_id }}
-        </a-descriptions-item>
         <a-descriptions-item :label="$t('l_Full_name')">
           {{ appealData.contact.full_name || $t('l_Not_specified') }}
         </a-descriptions-item>
@@ -125,12 +117,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
 import { AppealApi } from '../../api/appeal'
 import type { Appeal } from '../../types/appeal'
 import { useI18n } from 'vue-i18n'
+
+// Реактивная ширина экрана
+const screenWidth = ref(window.innerWidth)
+
+// Адаптивная ширина drawer в зависимости от размера экрана
+const drawerWidth = computed(() => {
+  const width = screenWidth.value
+  if (width < 576) return '100%' // xs - мобильные устройства
+  if (width < 768) return '90%'  // sm - планшеты
+  if (width < 992) return '70%'  // md - маленькие экраны
+  if (width < 1200) return '50%' // lg - средние экраны
+  return '40%' // xl - большие экраны
+})
 
 interface Props {
   open: boolean
@@ -260,6 +265,20 @@ watch(
   },
   { immediate: true }
 )
+
+// Слушатель изменения размера окна для адаптивности drawer
+const handleResize = () => {
+  screenWidth.value = window.innerWidth
+}
+
+// Добавляем и удаляем слушатель события resize
+onMounted(() => {
+  window.addEventListener('resize', handleResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+})
 </script>
 
 <style scoped>
@@ -271,6 +290,8 @@ watch(
   font-weight: 600;
   font-size: 16px;
   margin-bottom: 12px;
+  margin-top: 8px;
+  padding-top: 8px;
 }
 
 .appeal-detail :deep(.ant-descriptions-item-label) {

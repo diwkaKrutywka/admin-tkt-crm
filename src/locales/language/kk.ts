@@ -80,7 +80,6 @@ export default {
   // Appeal detail translations
   l_Appeal_details: "Апелляция туралы мәліметтер",
   l_Appeal_information: "Апелляция туралы ақпарат",
-  l_Appeal_id: "Апелляция ID",
   l_Creation_date: "Құрылған күні",
   l_Manager: "Менеджер",
   l_Not_specified: "Көрсетілмеген",
@@ -96,8 +95,6 @@ export default {
   l_District: "Аудан",
   l_Polyclinic: "Поликлиника",
   l_Contact_information: "Байланыс ақпараты",
-  l_Contact_id: "Байланыс ID",
-  l_Caller_id: "Қоңырау ID",
   l_Loading_error: "Жүктеу қатесі",
   l_Load_error_message: "Апелляция туралы мәліметтерді жүктеу мүмкін емес",
   l_New: "Жаңа",
@@ -109,4 +106,8 @@ export default {
   l_Call_sub_type_id: "Қоңырау кіші түрі",
   l_Address: "Мекенжай",
   l_Create_date: "Құрылған күні",
+  l_Appeal_types_label: "Апелляция түрлері",
+  l_All: "Барлығы",
+  l_Unprocessed: "Өңделмеген",
+  l_Processed: "Өңделген",
 };

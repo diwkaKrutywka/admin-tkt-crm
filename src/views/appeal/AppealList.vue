@@ -20,10 +20,24 @@
           </span>
         </a-button>
       </template>
-      <br />
+      <!-- Добавляем select для фильтрации по статусу -->
+      <div style="margin-top: -8px; margin-bottom: 8px;">
+        <span style="margin-right: 8px;">{{ $t('l_Appeal_types_label') }}:</span>
+        <a-select
+          v-model:value="statusFilter"
+          style="width: 10rem;"
+          placeholder="Выберите статус"
+          @change="handleStatusChange"
+        >
+          <a-select-option value="">{{ $t('l_All') }}</a-select-option>
+          <a-select-option value="new">{{ $t('l_Unprocessed') }}</a-select-option>
+          <a-select-option value="in_progress">{{ $t('l_Processed') }}</a-select-option>
+        </a-select>
+      </div>
     </a-page-header>
     <a-table
       bordered
+      :scroll="{ x: 'max-content' }"
       :dataSource="tableData"
       :columns="columns"
       :pagination="pagination"
@@ -79,6 +93,7 @@ const filterModalVisible = ref<boolean>(false);
 const reason = ref<string>("");
 const search = ref<string>("");
 const lockingStatus = ref<string>("");
+const statusFilter = ref<string>(""); // Добавляем переменную для фильтра статуса
 const currentFilters = ref<any>({});
 const tableData = ref<Appeal[]>([]);
 const loading = ref(false);
@@ -236,16 +251,23 @@ const applyFilter = (filters: any) => {
 const fetchUsers = async () => {
   loading.value = true;
   try {
+    const params: any = {
+      page: pagination.value.current,
+      page_size: pagination.value.pageSize,
+      q: search.value,
+    };
+
+    // Добавляем фильтр по статусу если он выбран
+    if (statusFilter.value) {
+      params.status_in = statusFilter.value;
+    }
+
     const { data } = await AppealApi<{
       items: Appeal[];
       total_count: number;
     }>(
       "",
-      {
-        page: pagination.value.current,
-        page_size: pagination.value.pageSize,
-        q: search.value,
-      },
+      params,
       "GET"
     );
 
@@ -279,6 +301,12 @@ const openDetail = (appealId: string) => {
 
 const openFilter = () => {
   filterModalVisible.value = true;
+};
+
+const handleStatusChange = (value: string) => {
+  statusFilter.value = value;
+  pagination.value.current = 1;
+  fetchUsers();
 };
 // Fetch on mount
 onMounted(() => {

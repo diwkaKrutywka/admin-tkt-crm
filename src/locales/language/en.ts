@@ -82,7 +82,6 @@ export default {
   // Appeal detail translations
   l_Appeal_details: "Appeal Details",
   l_Appeal_information: "Appeal Information",
-  l_Appeal_id: "Appeal ID",
   l_Creation_date: "Creation Date",
   l_Manager: "Manager",
   l_Not_specified: "Not specified",
@@ -98,8 +97,6 @@ export default {
   l_District: "District",
   l_Polyclinic: "Polyclinic",
   l_Contact_information: "Contact Information",
-  l_Contact_id: "Contact ID",
-  l_Caller_id: "Caller ID",
   l_Loading_error: "Loading Error",
   l_Load_error_message: "Failed to load appeal details",
   l_New: "New",
@@ -111,4 +108,8 @@ export default {
   l_Call_sub_type_id: "Call Subtype",
   l_Address: "Address",
   l_Create_date: "Create Date",
+  l_Appeal_types_label: "Appeal Types",
+  l_All: "All",
+  l_Unprocessed: "Unprocessed",
+  l_Processed: "Processed",
 };

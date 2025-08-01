@@ -79,7 +79,6 @@ export default {
   // Appeal detail translations
   l_Appeal_details: "Детали обращения",
   l_Appeal_information: "Информация об обращении",
-  l_Appeal_id: "ID обращения",
   l_Creation_date: "Дата создания",
   l_Manager: "Менеджер",
   l_Not_specified: "Не указано",
@@ -95,13 +94,11 @@ export default {
   l_District: "Район",
   l_Polyclinic: "Поликлиника",
   l_Contact_information: "Контактная информация",
-  l_Contact_id: "ID контакта",
-  l_Caller_id: "ID звонящего",
   l_Phone_number: "Номер телефона",
   l_Loading_error: "Ошибка загрузки",
   l_Load_error_message: "Не удалось загрузить детали обращения",
   l_New: "Новый",
-  l_In_process: "В обработке",
+  l_In_process: "В обработке",  
   l_Completed: "Завершен",
   l_Cancelled: "Отменен",
   // Appeal list table columns
@@ -109,4 +106,8 @@ export default {
   l_Call_sub_type_id: "Подтип звонка",
   l_Address: "Адрес",
   l_Create_date: "Дата создания",
+  l_Appeal_types_label: "Виды обращения",
+  l_All: "Все",
+  l_Unprocessed: "Необработанные",
+  l_Processed: "Обработанные",
 };
