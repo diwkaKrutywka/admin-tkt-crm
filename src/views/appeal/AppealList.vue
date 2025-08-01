@@ -65,8 +65,8 @@
       @filter="applyFilter"
 
     ></filter-appeal>
-    <edit-appeal
 
+    <edit-appeal
       v-model:open="modalVisible"
       :id="editingUser"
       @submit="fetchUsers"
@@ -80,8 +80,7 @@
 
 <script setup lang="ts">
 import { ref, h, onMounted } from "vue";
-import { Avatar, message, Tag } from "ant-design-vue";
-import { SafetyOutlined, BankOutlined } from "@ant-design/icons-vue";
+import {message, Tag } from "ant-design-vue";
 import type { Appeal } from "../../types/appeal";
 import FilterAppeal from "./FilterAppeal.vue";
 import type { TableRenderProps } from "../../types/table";
@@ -89,19 +88,13 @@ import EditAppeal from "./EditAppeal.vue";
 import DetailPage from "./DetailPage.vue";
 import { AppealApi } from "../../api/appeal"; // ← your API utility
 import { useI18n } from "vue-i18n";
-
+import { useRoute, useRouter } from "vue-router";
 const { t } = useI18n();
-const open = ref<boolean>(false);
-const filterModalVisible = ref<boolean>(false);
-const reason = ref<string>("");
 const search = ref<string>("");
-const lockingStatus = ref<string>("");
 const statusFilter = ref<string>(""); // Добавляем переменную для фильтра статуса
-const currentFilters = ref<any>({});
 const tableData = ref<Appeal[]>([]);
 const loading = ref(false);
-const modalVisible = ref(false);
-const editingUser = ref<Appeal | null>(null);
+const router = useRouter()
 const detailModalVisible = ref(false);
 const selectedAppealId = ref<string | null>(null);
 import { useGlobal } from "../../composables/useGlobal";
@@ -131,55 +124,14 @@ onMounted(async () => {
   console.log(id)
   await fetchUsers();
   if (id) {
-   
-    console.log(id)
       editingUser.value = id;
       modalVisible.value = true;
-      
+     // router.replace({path:'/appeals'})
     
   }
 });
 
-const fetchUsers = async () => {
-  loading.value = true;
-  try {
-    const { data } = await AppealApi<{
-      items: Appeal[];
-      total_count: number;
-    }>(
-      "",
-      {
-        page: pagination.value.current,
-        page_size: pagination.value.pageSize,
-        q: search.value,
-      },
-      "GET"
-    );
-    tableData.value = Object.values(data.items);
-    pagination.value.total = data.total_count;
-  } catch (error) {
-    message.error("Не удалось загрузить обращения");
-    console.error(error);
-  } finally {
-    loading.value = false;
-  }
-};
 
-const handleTableChange = (pag: any) => {
-  pagination.value.current = pag.current;
-  pagination.value.pageSize = pag.pageSize;
-  fetchUsers();
-};
-
-const applyFilter = (filters: any) => {
-  currentFilters.value = filters;
-  pagination.value.current = 1;
-  fetchUsers();
-};
-
-const openFilter = () => {
-  filterModalVisible.value = true;
-};
 
 const toggleReasonExpansion = (id: string) => {
   if (expandedReasons.value.includes(id)) {
@@ -359,11 +311,6 @@ const handleTableChange = (pag: any) => {
   fetchUsers();
 };
 
-function onEdit(index: number) {
-  editingUser.value = tableData.value[index];
-  modalVisible.value = true;
-  console.log(editingUser);
-}
 
 const openDetail = (appealId: string) => {
   selectedAppealId.value = appealId;

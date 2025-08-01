@@ -26,11 +26,19 @@
 
       <div class="top-item">
         <a-dropdown placement="bottomRight" trigger="click">
-          <span
-            class="text-xl material-symbols-outlined text-blue-400 cursor-pointer"
-          >
-            notifications
-          </span>
+          <template #default>
+            <div class="relative cursor-pointer">
+              <span class="text-xl material-symbols-outlined text-blue-400">
+                notifications
+              </span>
+              <span
+                v-if="notificationStore.messages.length > 0"
+                class="absolute -top-1 -right-2 bg-red-500 text-white text-[10px] leading-none rounded-full px-[6px] py-[1px] min-w-[16px] text-center"
+              >
+                {{ notificationStore.messages.length }}
+              </span>
+            </div>
+          </template>
 
           <template #overlay>
             <div

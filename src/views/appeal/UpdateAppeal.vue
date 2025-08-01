@@ -86,14 +86,6 @@ const genderOptions = [
   { label: 'Не указано', value: 'not_specified' },
 ]
 
-//   const rules: FormRules = {
-//     full_name: [{ required: true, message: 'Full name is required', trigger: 'blur' }],
-//     iin: [{ required: true, message: 'IIN is required', trigger: 'blur' }],
-//     gender: [{ required: true, message: 'Gender is required', trigger: 'change' }],
-//     home_address: [{ required: true, message: 'Address is required', trigger: 'blur' }],
-//     birth_date: [{ required: true, message: 'Birth date is required', trigger: 'change' }],
-//   }
-
 const formRef = ref<FormInstance>()
 const loading = ref(false)
 
@@ -127,8 +119,8 @@ watch(
       await fetchUser()
     } else if (val) {
       Object.assign(form, {
-        caller_id: '',
-        called_by: '',
+   
+        reason: '',
         full_name: '',
         birth_date: null,
         iin: '',
