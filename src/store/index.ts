@@ -47,3 +47,24 @@ export const useLanguageStore = defineStore('language', {
     }
   }
 })
+
+interface NotificationMessage {
+  title?: string
+  body?: string
+  data?: any
+  timestamp: number
+}
+
+export const useNotificationStore = defineStore('notification', {
+  state: () => ({
+    messages: [] as NotificationMessage[],
+  }),
+  actions: {
+    addMessage(message: NotificationMessage) {
+      this.messages.unshift({ ...message, timestamp: Date.now() })
+    },
+    clearMessages() {
+      this.messages = []
+    },
+  },
+})

@@ -77,4 +77,6 @@ export default {
   l_Total_records: "Барлығы {total} жазба",
   l_Organization_ID: "Ұйым ID",
   l_Appeals:"Апелляциялар",
+  l_Notification:"Хабарлама",
+  l_There_is_nothing:"Хабарлама жоқ",
 };

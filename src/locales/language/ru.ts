@@ -77,4 +77,6 @@ export default {
   l_Total_records: "Всего {total} записей",
   l_Organization_ID: "ID организации",
   l_Appeals:"Обращения",
+  l_Notification:"Уведомление",
+  l_There_is_nothing:"Нет уведомлений",
 };

@@ -44,6 +44,7 @@ export default {
   l_Sort_order: "Sort",
   l_From: "From",
   l_Appeals:"Appeals",
+  l_Notification:"Notification",
   l_To: "To",
   l_Contacts:"Contacts",
   l_Filter:"Filter",
@@ -79,4 +80,5 @@ export default {
   l_Ticket_system: "Ticket System",
   l_Search_placeholder: "Search by username, fullname",
   l_Total_records: "Total {total} records",
+  l_There_is_nothing:"There is nothing",
 };

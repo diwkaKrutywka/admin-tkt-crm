@@ -37,7 +37,7 @@
             <span
               style="color: black; font-size: 21px"
               class="icon material-symbols-outlined"
-              @click="toDetails(index)"
+           
             >
               expand_content
             </span>
@@ -49,9 +49,9 @@
       v-model:open="filterModalVisible"
       @filter="applyFilter"
     ></filter-contact>
-    <edit-contact
+    <update-appeal
       v-model:open="modalVisible"
-      :id="editingUser?.id"
+      :id="editingUser"
       @submit="fetchUsers"
     />
   </div>
@@ -59,25 +59,18 @@
 
 <script setup lang="ts">
 import { ref, h, onMounted } from "vue";
-import { Avatar, message, Tag } from "ant-design-vue";
-import { SafetyOutlined, BankOutlined } from "@ant-design/icons-vue";
-import type { Appeal } from "../../types/appeal";
+import { useRoute, useRouter } from "vue-router";
+import { message, Tag } from "ant-design-vue";
+import { AppealApi } from "../../api/appeal";
 import FilterContact from "./FilterContact.vue";
+import UpdateAppeal from "./UpdateAppeal.vue";
+import type { Appeal } from "../../types/appeal";
 import type { TableRenderProps } from "../../types/table";
-import EditContact from "./EditContact.vue";
-import { AppealApi } from "../../api/appeal"; // ← your API utility
-const open = ref<boolean>(false);
-const filterModalVisible = ref<boolean>(false);
-const reason = ref<string>("");
+import { useGlobal } from "../../composables/useGlobal";
+
 const search = ref<string>("");
-const lockingStatus = ref<string>("");
-const currentFilters = ref<any>({});
 const tableData = ref<Appeal[]>([]);
 const loading = ref(false);
-const modalVisible = ref(false);
-const editingUser = ref<Appeal | null>(null);
-import { useGlobal } from "../../composables/useGlobal";
-// Pagination
 const pagination = ref({
   current: 1,
   pageSize: 10,
@@ -87,8 +80,70 @@ const pagination = ref({
   showQuickJumper: true,
   showTotal: (total: number) => `Всего ${total} записей`,
 });
-
+const filterModalVisible = ref(false);
+const modalVisible = ref(false);
+const editingUser = ref<string>("");
 const expandedReasons = ref<string[]>([]);
+const currentFilters = ref<any>({});
+
+const route = useRoute();
+const { $formatIsoDate } = useGlobal();
+
+// --- Автоматическое открытие модалки по ID из query
+onMounted(async () => {
+  const id = route.query.id as string;
+  console.log(id)
+  await fetchUsers();
+  if (id) {
+   
+    console.log(id)
+      editingUser.value = id;
+      modalVisible.value = true;
+      
+    
+  }
+});
+
+const fetchUsers = async () => {
+  loading.value = true;
+  try {
+    const { data } = await AppealApi<{
+      items: Appeal[];
+      total_count: number;
+    }>(
+      "",
+      {
+        page: pagination.value.current,
+        page_size: pagination.value.pageSize,
+        q: search.value,
+      },
+      "GET"
+    );
+    tableData.value = Object.values(data.items);
+    pagination.value.total = data.total_count;
+  } catch (error) {
+    message.error("Не удалось загрузить обращения");
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleTableChange = (pag: any) => {
+  pagination.value.current = pag.current;
+  pagination.value.pageSize = pag.pageSize;
+  fetchUsers();
+};
+
+const applyFilter = (filters: any) => {
+  currentFilters.value = filters;
+  pagination.value.current = 1;
+  fetchUsers();
+};
+
+const openFilter = () => {
+  filterModalVisible.value = true;
+};
 
 const toggleReasonExpansion = (id: string) => {
   if (expandedReasons.value.includes(id)) {
@@ -98,7 +153,6 @@ const toggleReasonExpansion = (id: string) => {
   }
 };
 
-// Columns
 const columns = [
   {
     title: "#",
@@ -112,10 +166,10 @@ const columns = [
   },
   {
     title: "Phone number",
-    dataIndex: ["contact","called_by"],
-    key: ["contact","called_by"],
+    dataIndex: ["contact", "called_by"],
+    key: ["contact", "called_by"],
     customRender: ({ text, record }: TableRenderProps<Appeal>) => {
-      if (!text) return null; // если номера нет — ничего не выводим
+      if (!text) return null;
 
       let color = "blue";
       if (record.status === "new") color = "red";
@@ -135,19 +189,13 @@ const columns = [
       );
     },
   },
-  {
-    title: "call_type_id",
-    dataIndex: "call_type_id",
-  },
-  {
-    title: "call_sub_type_id",
-    dataIndex: "call_sub_type_id",
-  },
+  { title: "call_type_id", dataIndex: "call_type_id" },
+  { title: "call_sub_type_id", dataIndex: "call_sub_type_id" },
   {
     title: "Reason",
     dataIndex: "reason",
     customRender: ({ text, record }: TableRenderProps<Appeal>) => {
-      const reasonText = text ?? ""; // ← если null, будет пустая строка
+      const reasonText = text ?? "";
       const id = String(record.id);
       const isExpanded = expandedReasons.value.includes(id);
       const displayText = isExpanded ? reasonText : reasonText.slice(0, 100);
@@ -166,11 +214,7 @@ const columns = [
       ]);
     },
   },
-
-  {
-    title: "Manager",
-    dataIndex: "employee_id",
-  },
+  { title: "Manager", dataIndex: "employee_id" },
   {
     title: "Address",
     key: "address",
@@ -178,16 +222,11 @@ const columns = [
       const parts = [];
 
       if (record.city_id) {
-        parts.push(
-          h("div", [h("span", "Город: "), h("strong", record.city_id)])
-        );
+        parts.push(h("div", [h("span", "Город: "), h("strong", record.city_id)]));
       }
 
-
       if (record.district_id) {
-        parts.push(
-          h("div", [h("span", "Район: "), h("strong", record.district_id)])
-        );
+        parts.push(h("div", [h("span", "Район: "), h("strong", record.district_id)]));
       }
 
       if (record.healthcare_facility_id) {
@@ -195,6 +234,7 @@ const columns = [
           h("div", [h("span", "Поликлиника: "), h("strong", record.healthcare_facility_id)])
         );
       }
+
       return parts.length > 0
         ? h("div", { class: "text-gray-800 space-y-1" }, parts)
         : null;
@@ -204,7 +244,6 @@ const columns = [
     title: "Create date",
     dataIndex: "date",
     customRender: ({ text }: TableRenderProps<Appeal>) => {
-      const { $formatIsoDate } = useGlobal();
       return $formatIsoDate(text);
     },
   },
@@ -215,58 +254,8 @@ const columns = [
     align: "center",
   },
 ];
-const applyFilter = (filters: any) => {
-  currentFilters.value = filters;
-  pagination.value.current = 1;
-  fetchUsers();
-};
-
-const fetchUsers = async () => {
-  loading.value = true;
-  try {
-    const { data } = await AppealApi<{
-      items: Appeal[];
-      total_count: number;
-    }>(
-      "",
-      {
-        page: pagination.value.current,
-        page_size: pagination.value.pageSize,
-        q: search.value,
-      },
-      "GET"
-    );
-
-    tableData.value = Object.values(data.items);
-    pagination.value.total = data.total_count;
-  } catch (error) {
-    message.error("Не удалось загрузить список контактов");
-    console.error(error);
-  } finally {
-    loading.value = false;
-  }
-};
-
-// Table Events
-const handleTableChange = (pag: any) => {
-  pagination.value.current = pag.current;
-  pagination.value.pageSize = pag.pageSize;
-  fetchUsers();
-};
-
-function onEdit(index: number) {
-  editingUser.value = tableData.value[index];
-  modalVisible.value = true;
-  console.log(editingUser);
-}
-const openFilter = () => {
-  filterModalVisible.value = true;
-};
-// Fetch on mount
-onMounted(() => {
-  fetchUsers();
-});
 </script>
+
 <style scoped>
 .search-input :deep(.ant-input-search-button) {
   display: flex;
