@@ -7,7 +7,7 @@
         >
           <a-input-search
             v-model:value="search"
-            placeholder="Search by username, fullname"
+            :placeholder="$t('l_Search_placeholder')"
             style="width: 400px; vertical-align: middle"
             class="align-middle search-input"
             @search="fetchUsers"
@@ -20,10 +20,24 @@
           </span>
         </a-button>
       </template>
-      <br />
+      <!-- Добавляем select для фильтрации по статусу -->
+      <div style="margin-top: -8px; margin-bottom: 8px;">
+        <span style="margin-right: 8px;">{{ $t('l_Appeal_types_label') }}:</span>
+        <a-select
+          v-model:value="statusFilter"
+          style="width: 10rem;"
+          placeholder="Выберите статус"
+          @change="handleStatusChange"
+        >
+          <a-select-option value="">{{ $t('l_All') }}</a-select-option>
+          <a-select-option value="new">{{ $t('l_Unprocessed') }}</a-select-option>
+          <a-select-option value="in_progress">{{ $t('l_Processed') }}</a-select-option>
+        </a-select>
+      </div>
     </a-page-header>
     <a-table
       bordered
+      :scroll="{ x: 'max-content' }"
       :dataSource="tableData"
       :columns="columns"
       :pagination="pagination"
@@ -35,9 +49,10 @@
         <template v-if="column.key === 'Action'">
           <a-space>
             <span
-              style="color: black; font-size: 21px"
+              style="color: black; font-size: 21px; cursor: pointer;"
               class="icon material-symbols-outlined"
-           
+              @click="openDetail(tableData[index].id)"
+
             >
               expand_content
             </span>
@@ -45,32 +60,53 @@
         </template>
       </template>
     </a-table>
-    <filter-contact
+    <filter-appeal
       v-model:open="filterModalVisible"
       @filter="applyFilter"
-    ></filter-contact>
-    <update-appeal
+
+    ></filter-appeal>
+    <edit-appeal
+
       v-model:open="modalVisible"
       :id="editingUser"
       @submit="fetchUsers"
+    />
+    <detail-page
+      v-model:open="detailModalVisible"
+      :appeal-id="selectedAppealId || undefined"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, h, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { message, Tag } from "ant-design-vue";
-import { AppealApi } from "../../api/appeal";
-import FilterContact from "./FilterContact.vue";
-import UpdateAppeal from "./UpdateAppeal.vue";
+import { Avatar, message, Tag } from "ant-design-vue";
+import { SafetyOutlined, BankOutlined } from "@ant-design/icons-vue";
 import type { Appeal } from "../../types/appeal";
+import FilterAppeal from "./FilterAppeal.vue";
 import type { TableRenderProps } from "../../types/table";
-import { useGlobal } from "../../composables/useGlobal";
+import EditAppeal from "./EditAppeal.vue";
+import DetailPage from "./DetailPage.vue";
+import { AppealApi } from "../../api/appeal"; // ← your API utility
+import { useI18n } from "vue-i18n";
 
+const { t } = useI18n();
+const open = ref<boolean>(false);
+const filterModalVisible = ref<boolean>(false);
+const reason = ref<string>("");
 const search = ref<string>("");
+const lockingStatus = ref<string>("");
+const statusFilter = ref<string>(""); // Добавляем переменную для фильтра статуса
+const currentFilters = ref<any>({});
 const tableData = ref<Appeal[]>([]);
 const loading = ref(false);
+const modalVisible = ref(false);
+const editingUser = ref<Appeal | null>(null);
+const detailModalVisible = ref(false);
+const selectedAppealId = ref<string | null>(null);
+import { useGlobal } from "../../composables/useGlobal";
+// Pagination
+
 const pagination = ref({
   current: 1,
   pageSize: 10,
@@ -78,7 +114,7 @@ const pagination = ref({
   showSizeChanger: true,
   pageSizeOptions: ["10", "20", "50"],
   showQuickJumper: true,
-  showTotal: (total: number) => `Всего ${total} записей`,
+  showTotal: (total: number) => t("l_Total_records", { total }),
 });
 const filterModalVisible = ref(false);
 const modalVisible = ref(false);
@@ -165,9 +201,10 @@ const columns = [
     },
   },
   {
-    title: "Phone number",
-    dataIndex: ["contact", "called_by"],
-    key: ["contact", "called_by"],
+    title: t("l_Phone_number"),
+    dataIndex: ["contact","called_by"],
+    key: ["contact","called_by"],
+
     customRender: ({ text, record }: TableRenderProps<Appeal>) => {
       if (!text) return null;
 
@@ -183,16 +220,25 @@ const columns = [
             fontSize: "13px",
             padding: "2px 10px",
             borderRadius: "10px",
+            cursor: "pointer",
           },
+          onClick: () => openDetail(record.id),
         },
         { default: () => text }
       );
     },
   },
-  { title: "call_type_id", dataIndex: "call_type_id" },
-  { title: "call_sub_type_id", dataIndex: "call_sub_type_id" },
   {
-    title: "Reason",
+    title: t("l_Call_type_id"),
+    dataIndex: "call_type_id",
+  },
+  {
+    title: t("l_Call_sub_type_id"),
+    dataIndex: "call_sub_type_id",
+  },
+
+  {
+    title: t("l_Reason"),
     dataIndex: "reason",
     customRender: ({ text, record }: TableRenderProps<Appeal>) => {
       const reasonText = text ?? "";
@@ -214,24 +260,37 @@ const columns = [
       ]);
     },
   },
-  { title: "Manager", dataIndex: "employee_id" },
+
+
   {
-    title: "Address",
+    title: t("l_Manager"),
+    dataIndex: "employee_id",
+  },
+
+  {
+    title: t("l_Address"),
     key: "address",
     customRender: ({ record }: TableRenderProps<Appeal>) => {
       const parts = [];
 
       if (record.city_id) {
-        parts.push(h("div", [h("span", "Город: "), h("strong", record.city_id)]));
+
+        parts.push(
+          h("div", [h("span", t("l_City") + ": "), h("strong", record.city_id)])
+        );
+
       }
 
       if (record.district_id) {
-        parts.push(h("div", [h("span", "Район: "), h("strong", record.district_id)]));
+        parts.push(
+          h("div", [h("span", t("l_District") + ": "), h("strong", record.district_id)])
+        );
+
       }
 
       if (record.healthcare_facility_id) {
         parts.push(
-          h("div", [h("span", "Поликлиника: "), h("strong", record.healthcare_facility_id)])
+          h("div", [h("span", t("l_Polyclinic") + ": "), h("strong", record.healthcare_facility_id)])
         );
       }
 
@@ -241,19 +300,90 @@ const columns = [
     },
   },
   {
-    title: "Create date",
+    title: t("l_Create_date"),
     dataIndex: "date",
     customRender: ({ text }: TableRenderProps<Appeal>) => {
       return $formatIsoDate(text);
     },
   },
   {
-    title: "Действия",
+    title: t("l_Actions"),
     key: "Action",
     width: 110,
     align: "center",
   },
 ];
+const applyFilter = (filters: any) => {
+  currentFilters.value = filters;
+  pagination.value.current = 1;
+  fetchUsers();
+};
+
+const fetchUsers = async () => {
+  loading.value = true;
+  try {
+    const params: any = {
+      page: pagination.value.current,
+      page_size: pagination.value.pageSize,
+      q: search.value,
+    };
+
+    // Добавляем фильтр по статусу если он выбран
+    if (statusFilter.value) {
+      params.status_in = statusFilter.value;
+    }
+
+    const { data } = await AppealApi<{
+      items: Appeal[];
+      total_count: number;
+    }>(
+      "",
+      params,
+      "GET"
+    );
+
+    tableData.value = Object.values(data.items);
+    pagination.value.total = data.total_count;
+  } catch (error) {
+    message.error(t("l_Load_error_message"));
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Table Events
+const handleTableChange = (pag: any) => {
+  pagination.value.current = pag.current;
+  pagination.value.pageSize = pag.pageSize;
+  fetchUsers();
+};
+
+function onEdit(index: number) {
+  editingUser.value = tableData.value[index];
+  modalVisible.value = true;
+  console.log(editingUser);
+}
+
+const openDetail = (appealId: string) => {
+  selectedAppealId.value = appealId;
+  detailModalVisible.value = true;
+};
+
+const openFilter = () => {
+  filterModalVisible.value = true;
+};
+
+const handleStatusChange = (value: string) => {
+  statusFilter.value = value;
+  pagination.value.current = 1;
+  fetchUsers();
+};
+// Fetch on mount
+onMounted(() => {
+  fetchUsers();
+});
+
 </script>
 
 <style scoped>
