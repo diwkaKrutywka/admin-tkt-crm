@@ -77,7 +77,6 @@ export default {
   l_Total_records: "Барлығы {total} жазба",
   l_Organization_ID: "Ұйым ID",
   l_Appeals:"Апелляциялар",
-  // Appeal detail translations
   l_Appeal_details: "Апелляция туралы мәліметтер",
   l_Appeal_information: "Апелляция туралы ақпарат",
   l_Creation_date: "Құрылған күні",
@@ -110,4 +109,6 @@ export default {
   l_All: "Барлығы",
   l_Unprocessed: "Өңделмеген",
   l_Processed: "Өңделген",
+  l_Notification:"Хабарлама",
+  l_There_is_nothing:"Хабарлама жоқ",
 };

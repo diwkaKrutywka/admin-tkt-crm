@@ -11,21 +11,21 @@
           <a-menu>
             <a-menu-item>
               <a
-                :style="{ color: langTag.value === 'kk' ? '#40a9ff' : '#000' }"
+                :style="{ color: langTag.valueOf === 'kk' ? '#40a9ff' : '#000' }"
                 href="#"
                 @click.prevent="setLanguage('kk')"
               >Қазақша</a>
             </a-menu-item>
             <a-menu-item>
               <a
-                :style="{ color: langTag.value === 'ru' ? '#40a9ff' : '#000' }"
+                :style="{ color: langTag.valueOf === 'ru' ? '#40a9ff' : '#000' }"
                 href="#"
                 @click.prevent="setLanguage('ru')"
               >Русский</a>
             </a-menu-item>
             <a-menu-item>
               <a
-                :style="{ color: langTag.value === 'en' ? '#40a9ff' : '#000' }"
+                :style="{ color: langTag.valueOf === 'en' ? '#40a9ff' : '#000' }"
                 href="#"
                 @click.prevent="setLanguage('en')"
               >English</a>

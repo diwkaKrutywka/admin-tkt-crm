@@ -76,7 +76,6 @@ export default {
   l_Total_records: "Всего {total} записей",
   l_Organization_ID: "ID организации",
   l_Appeals:"Обращения",
-  // Appeal detail translations
   l_Appeal_details: "Детали обращения",
   l_Appeal_information: "Информация об обращении",
   l_Creation_date: "Дата создания",
@@ -110,4 +109,6 @@ export default {
   l_All: "Все",
   l_Unprocessed: "Необработанные",
   l_Processed: "Обработанные",
+  l_Notification:"Уведомление",
+  l_There_is_nothing:"Нет уведомлений",
 };

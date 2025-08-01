@@ -15,7 +15,7 @@
       </div>
       <div class="flex items-center gap-1 h-full ml-4">
         <div class="flex flex-col">
-          <span class="font-bold text-2xl">{{ $t('l_Ticket_system') }}</span>
+          <span class="font-bold text-2xl">{{ $t("l_Ticket_system") }}</span>
         </div>
       </div>
     </div>
@@ -23,11 +23,76 @@
     <!-- Right section -->
     <div class="flex items-center gap-4 z-10">
       <ChangeLanguageBox class="flex items-center" />
+
+      <div class="top-item">
+        <a-dropdown placement="bottomRight" trigger="click">
+          <span
+            class="text-xl material-symbols-outlined text-blue-400 cursor-pointer"
+          >
+            notifications
+          </span>
+
+          <template #overlay>
+            <div
+              style="
+                width: 400px;
+                padding: 5px;
+                background: white;
+                border: #f1f1f1 solid 2px;
+                border-radius: 15px;
+              "
+              @click.stop
+            >
+              <div v-if="notificationStore.messages.length === 0">
+                <h3>{{ $t("l_There_is_nothing") }}</h3>
+              </div>
+
+              <div
+                v-else
+                style="max-height: 800px; overflow-y: auto; padding-right: 8px"
+                class="scrollable-content"
+              >
+                <a-menu>
+                  <h2 class="ml-2 mb-2 font-bold text-lg">
+                    {{ $t("l_Notification") }}
+                  </h2>
+                  <a-menu-item
+                    v-for="(msg, index) in notificationStore.messages"
+                    :key="index"
+                    @click="handleAppealClick(msg)"
+                  >
+                    <div
+                      class="p-2 border rounded-md"
+                      :class="{
+                        'border-blue-500 text-blue-500 underline':
+                          activeMessageId === msg.data.id,
+                        'border-blue-400 text-gray-800':
+                          activeMessageId !== msg.data.id,
+                      }"
+                    >
+                      <p class="text-md">
+                        Обращение от {{ msg?.data?.phone_number }}
+                      </p>
+                      <p class="text-[10px] text-gray-400">
+                        {{ formatTime(msg.timestamp) }}
+                      </p>
+                    </div>
+                  </a-menu-item>
+                </a-menu>
+              </div>
+            </div>
+          </template>
+        </a-dropdown>
+      </div>
+
       <div class="relative" ref="dropdownRef">
-        <div class="flex items-center gap-2 cursor-pointer" @click="toggleUserDropdown">
-  <span class="text-xl material-symbols-outlined">person</span>
-  <span class="font-medium">{{ userStore.user?.full_name }}</span>
-</div>
+        <div
+          class="flex items-center gap-2 cursor-pointer"
+          @click="toggleUserDropdown"
+        >
+          <span class="text-xl material-symbols-outlined">person</span>
+          <span class="font-medium">{{ userStore.user?.full_name }}</span>
+        </div>
 
         <div
           v-show="isUserDropdownOpen"
@@ -44,7 +109,7 @@
               >
             </div>
             <div class="font-bold text-lg mb-1">
-              {{userStore.user?.full_name || "User" }}
+              {{ userStore.user?.full_name || "User" }}
             </div>
             <div
               class="text-sm text-gray-500 mb-2"
@@ -91,6 +156,8 @@ import { computed, ref } from "vue";
 import { onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 const { t: $t } = useI18n();
+import { useNotificationStore } from "../store/index";
+const notificationStore = useNotificationStore();
 
 const emit = defineEmits(["toggle-drawer"]);
 const userStore = useUserStore();
@@ -100,6 +167,16 @@ const isUserDropdownOpen = ref(false);
 const toggleUserDropdown = () => {
   isUserDropdownOpen.value = !isUserDropdownOpen.value;
 };
+import { useRouter } from "vue-router";
+const router = useRouter();
+const activeMessageId = ref<string | null>(null);
+
+function handleAppealClick(msg: any) {
+  activeMessageId.value = msg.data.appeal_id; // подсветим активное уведомление
+  emit("toggle-drawer"); // закроем drawer (если родитель слушает)
+  router.push({ path: "/appeals", query: { id: msg.data.appeal_id } }); // переход
+}
+
 const onSignOut = () => {
   //userStore.signOut();
   isUserDropdownOpen.value = false;
@@ -110,6 +187,9 @@ const handleClickOutside = (event: MouseEvent) => {
     isUserDropdownOpen.value = false;
   }
 };
+function formatTime(timestamp: number) {
+  return new Date(timestamp).toLocaleString();
+}
 onMounted(() => {
   document.addEventListener("mousedown", handleClickOutside);
 });

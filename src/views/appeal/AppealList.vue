@@ -52,6 +52,7 @@
               style="color: black; font-size: 21px; cursor: pointer;"
               class="icon material-symbols-outlined"
               @click="openDetail(tableData[index].id)"
+
             >
               expand_content
             </span>
@@ -62,10 +63,12 @@
     <filter-appeal
       v-model:open="filterModalVisible"
       @filter="applyFilter"
+
     ></filter-appeal>
     <edit-appeal
+
       v-model:open="modalVisible"
-      :id="editingUser?.id"
+      :id="editingUser"
       @submit="fetchUsers"
     />
     <detail-page
@@ -103,6 +106,7 @@ const detailModalVisible = ref(false);
 const selectedAppealId = ref<string | null>(null);
 import { useGlobal } from "../../composables/useGlobal";
 // Pagination
+
 const pagination = ref({
   current: 1,
   pageSize: 10,
@@ -112,8 +116,70 @@ const pagination = ref({
   showQuickJumper: true,
   showTotal: (total: number) => t("l_Total_records", { total }),
 });
-
+const filterModalVisible = ref(false);
+const modalVisible = ref(false);
+const editingUser = ref<string>("");
 const expandedReasons = ref<string[]>([]);
+const currentFilters = ref<any>({});
+
+const route = useRoute();
+const { $formatIsoDate } = useGlobal();
+
+// --- Автоматическое открытие модалки по ID из query
+onMounted(async () => {
+  const id = route.query.id as string;
+  console.log(id)
+  await fetchUsers();
+  if (id) {
+   
+    console.log(id)
+      editingUser.value = id;
+      modalVisible.value = true;
+      
+    
+  }
+});
+
+const fetchUsers = async () => {
+  loading.value = true;
+  try {
+    const { data } = await AppealApi<{
+      items: Appeal[];
+      total_count: number;
+    }>(
+      "",
+      {
+        page: pagination.value.current,
+        page_size: pagination.value.pageSize,
+        q: search.value,
+      },
+      "GET"
+    );
+    tableData.value = Object.values(data.items);
+    pagination.value.total = data.total_count;
+  } catch (error) {
+    message.error("Не удалось загрузить обращения");
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleTableChange = (pag: any) => {
+  pagination.value.current = pag.current;
+  pagination.value.pageSize = pag.pageSize;
+  fetchUsers();
+};
+
+const applyFilter = (filters: any) => {
+  currentFilters.value = filters;
+  pagination.value.current = 1;
+  fetchUsers();
+};
+
+const openFilter = () => {
+  filterModalVisible.value = true;
+};
 
 const toggleReasonExpansion = (id: string) => {
   if (expandedReasons.value.includes(id)) {
@@ -123,7 +189,6 @@ const toggleReasonExpansion = (id: string) => {
   }
 };
 
-// Columns
 const columns = [
   {
     title: "#",
@@ -139,8 +204,9 @@ const columns = [
     title: t("l_Phone_number"),
     dataIndex: ["contact","called_by"],
     key: ["contact","called_by"],
+
     customRender: ({ text, record }: TableRenderProps<Appeal>) => {
-      if (!text) return null; // если номера нет — ничего не выводим
+      if (!text) return null;
 
       let color = "blue";
       if (record.status === "new") color = "red";
@@ -170,11 +236,12 @@ const columns = [
     title: t("l_Call_sub_type_id"),
     dataIndex: "call_sub_type_id",
   },
+
   {
     title: t("l_Reason"),
     dataIndex: "reason",
     customRender: ({ text, record }: TableRenderProps<Appeal>) => {
-      const reasonText = text ?? ""; // ← если null, будет пустая строка
+      const reasonText = text ?? "";
       const id = String(record.id);
       const isExpanded = expandedReasons.value.includes(id);
       const displayText = isExpanded ? reasonText : reasonText.slice(0, 100);
@@ -194,10 +261,12 @@ const columns = [
     },
   },
 
+
   {
     title: t("l_Manager"),
     dataIndex: "employee_id",
   },
+
   {
     title: t("l_Address"),
     key: "address",
@@ -205,16 +274,18 @@ const columns = [
       const parts = [];
 
       if (record.city_id) {
+
         parts.push(
           h("div", [h("span", t("l_City") + ": "), h("strong", record.city_id)])
         );
-      }
 
+      }
 
       if (record.district_id) {
         parts.push(
           h("div", [h("span", t("l_District") + ": "), h("strong", record.district_id)])
         );
+
       }
 
       if (record.healthcare_facility_id) {
@@ -222,6 +293,7 @@ const columns = [
           h("div", [h("span", t("l_Polyclinic") + ": "), h("strong", record.healthcare_facility_id)])
         );
       }
+
       return parts.length > 0
         ? h("div", { class: "text-gray-800 space-y-1" }, parts)
         : null;
@@ -231,7 +303,6 @@ const columns = [
     title: t("l_Create_date"),
     dataIndex: "date",
     customRender: ({ text }: TableRenderProps<Appeal>) => {
-      const { $formatIsoDate } = useGlobal();
       return $formatIsoDate(text);
     },
   },
@@ -312,7 +383,9 @@ const handleStatusChange = (value: string) => {
 onMounted(() => {
   fetchUsers();
 });
+
 </script>
+
 <style scoped>
 .search-input :deep(.ant-input-search-button) {
   display: flex;
