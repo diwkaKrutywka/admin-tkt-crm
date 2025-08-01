@@ -7,7 +7,7 @@
         >
           <a-input-search
             v-model:value="search"
-            placeholder="Search by username, fullname"
+            :placeholder="$t('l_Search_placeholder')"
             style="width: 400px; vertical-align: middle"
             class="align-middle search-input"
             @search="fetchUsers"
@@ -35,9 +35,9 @@
         <template v-if="column.key === 'Action'">
           <a-space>
             <span
-              style="color: black; font-size: 21px"
+              style="color: black; font-size: 21px; cursor: pointer;"
               class="icon material-symbols-outlined"
-              @click="toDetails(index)"
+              @click="openDetail(tableData[index].id)"
             >
               expand_content
             </span>
@@ -45,14 +45,18 @@
         </template>
       </template>
     </a-table>
-    <filter-contact
+    <filter-appeal
       v-model:open="filterModalVisible"
       @filter="applyFilter"
-    ></filter-contact>
-    <edit-contact
+    ></filter-appeal>
+    <edit-appeal
       v-model:open="modalVisible"
       :id="editingUser?.id"
       @submit="fetchUsers"
+    />
+    <detail-page
+      v-model:open="detailModalVisible"
+      :appeal-id="selectedAppealId || undefined"
     />
   </div>
 </template>
@@ -62,10 +66,14 @@ import { ref, h, onMounted } from "vue";
 import { Avatar, message, Tag } from "ant-design-vue";
 import { SafetyOutlined, BankOutlined } from "@ant-design/icons-vue";
 import type { Appeal } from "../../types/appeal";
-import FilterContact from "./FilterContact.vue";
+import FilterAppeal from "./FilterAppeal.vue";
 import type { TableRenderProps } from "../../types/table";
-import EditContact from "./EditContact.vue";
+import EditAppeal from "./EditAppeal.vue";
+import DetailPage from "./DetailPage.vue";
 import { AppealApi } from "../../api/appeal"; // ← your API utility
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 const open = ref<boolean>(false);
 const filterModalVisible = ref<boolean>(false);
 const reason = ref<string>("");
@@ -76,6 +84,8 @@ const tableData = ref<Appeal[]>([]);
 const loading = ref(false);
 const modalVisible = ref(false);
 const editingUser = ref<Appeal | null>(null);
+const detailModalVisible = ref(false);
+const selectedAppealId = ref<string | null>(null);
 import { useGlobal } from "../../composables/useGlobal";
 // Pagination
 const pagination = ref({
@@ -85,7 +95,7 @@ const pagination = ref({
   showSizeChanger: true,
   pageSizeOptions: ["10", "20", "50"],
   showQuickJumper: true,
-  showTotal: (total: number) => `Всего ${total} записей`,
+  showTotal: (total: number) => t("l_Total_records", { total }),
 });
 
 const expandedReasons = ref<string[]>([]);
@@ -111,7 +121,7 @@ const columns = [
     },
   },
   {
-    title: "Phone number",
+    title: t("l_Phone_number"),
     dataIndex: ["contact","called_by"],
     key: ["contact","called_by"],
     customRender: ({ text, record }: TableRenderProps<Appeal>) => {
@@ -129,22 +139,24 @@ const columns = [
             fontSize: "13px",
             padding: "2px 10px",
             borderRadius: "10px",
+            cursor: "pointer",
           },
+          onClick: () => openDetail(record.id),
         },
         { default: () => text }
       );
     },
   },
   {
-    title: "call_type_id",
+    title: t("l_Call_type_id"),
     dataIndex: "call_type_id",
   },
   {
-    title: "call_sub_type_id",
+    title: t("l_Call_sub_type_id"),
     dataIndex: "call_sub_type_id",
   },
   {
-    title: "Reason",
+    title: t("l_Reason"),
     dataIndex: "reason",
     customRender: ({ text, record }: TableRenderProps<Appeal>) => {
       const reasonText = text ?? ""; // ← если null, будет пустая строка
@@ -168,31 +180,31 @@ const columns = [
   },
 
   {
-    title: "Manager",
+    title: t("l_Manager"),
     dataIndex: "employee_id",
   },
   {
-    title: "Address",
+    title: t("l_Address"),
     key: "address",
     customRender: ({ record }: TableRenderProps<Appeal>) => {
       const parts = [];
 
       if (record.city_id) {
         parts.push(
-          h("div", [h("span", "Город: "), h("strong", record.city_id)])
+          h("div", [h("span", t("l_City") + ": "), h("strong", record.city_id)])
         );
       }
 
 
       if (record.district_id) {
         parts.push(
-          h("div", [h("span", "Район: "), h("strong", record.district_id)])
+          h("div", [h("span", t("l_District") + ": "), h("strong", record.district_id)])
         );
       }
 
       if (record.healthcare_facility_id) {
         parts.push(
-          h("div", [h("span", "Поликлиника: "), h("strong", record.healthcare_facility_id)])
+          h("div", [h("span", t("l_Polyclinic") + ": "), h("strong", record.healthcare_facility_id)])
         );
       }
       return parts.length > 0
@@ -201,7 +213,7 @@ const columns = [
     },
   },
   {
-    title: "Create date",
+    title: t("l_Create_date"),
     dataIndex: "date",
     customRender: ({ text }: TableRenderProps<Appeal>) => {
       const { $formatIsoDate } = useGlobal();
@@ -209,7 +221,7 @@ const columns = [
     },
   },
   {
-    title: "Действия",
+    title: t("l_Actions"),
     key: "Action",
     width: 110,
     align: "center",
@@ -240,7 +252,7 @@ const fetchUsers = async () => {
     tableData.value = Object.values(data.items);
     pagination.value.total = data.total_count;
   } catch (error) {
-    message.error("Не удалось загрузить список контактов");
+    message.error(t("l_Load_error_message"));
     console.error(error);
   } finally {
     loading.value = false;
@@ -259,6 +271,12 @@ function onEdit(index: number) {
   modalVisible.value = true;
   console.log(editingUser);
 }
+
+const openDetail = (appealId: string) => {
+  selectedAppealId.value = appealId;
+  detailModalVisible.value = true;
+};
+
 const openFilter = () => {
   filterModalVisible.value = true;
 };

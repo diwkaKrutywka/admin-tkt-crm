@@ -19,8 +19,8 @@ interface Contact {
     healthcare_facility_id: string;
     call_type_id: string;
     call_sub_type_id: string;
-    appeal_category_id: string;
-    appeal_sub_category_id: string;
+    appeal_category_id?: string;
+    appeal_sub_category_id?: string;
     contact: Contact;
   }
   
