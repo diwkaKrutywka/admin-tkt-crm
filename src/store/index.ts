@@ -34,3 +34,16 @@ export const useUserStore = defineStore('user', {
     }
   },
 })
+
+
+export const useLanguageStore = defineStore('language', {
+  state: () => ({
+    currentLang: localStorage.getItem('currentLang') || 'kk'
+  }),
+  actions: {
+    setLang(lang: string) {
+      this.currentLang = lang
+      localStorage.setItem('currentLang', lang)
+    }
+  }
+})

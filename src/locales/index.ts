@@ -1,36 +1,25 @@
+// i18n.ts
 import { createI18n } from 'vue-i18n'
-
-// Импорт словарей (убери `.ts` в импортах — это лишнее)
 import kk from './language/kk'
 import ru from './language/ru'
 import en from './language/en'
 
-// Типы локалей
-type MessageSchema = typeof kk // можно взять тип из одного языка, если ключи совпадают
+type MessageSchema = typeof kk
 
-// Получаем язык из localStorage или устанавливаем по умолчанию
-let currentLang = localStorage.getItem('currentLang') || 'kk'
-
-// Список доступных языков
-const availableLanguages = ['kk', 'ru', 'en'] as const
-
-// Проверка языка
-if (!availableLanguages.includes(currentLang as any)) {
-  currentLang = 'kk'
+// Определим доступные языки
+const messages = {
+  kk,
+  ru,
+  en
 }
 
-// Создание i18n-инстанса
-const i18n = createI18n<[MessageSchema], typeof currentLang>({
+const i18n = createI18n<[MessageSchema], 'kk' | 'ru' | 'en'>({
   legacy: false,
   globalInjection: true,
-  locale: currentLang,
+  locale: 'kk', // временно, позже установим из Pinia
   fallbackLocale: 'kk',
   warnHtmlMessage: false,
-  messages: {
-    kk,
-    ru,
-    en
-  }
+  messages
 })
 
 export default i18n
