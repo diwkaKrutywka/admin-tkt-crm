@@ -2,8 +2,9 @@ import axios from 'axios'
 import { notification } from 'ant-design-vue'
 import config from '../config'
 import { useUserStore } from '../store/index'
+import { useLanguageStore } from '../store/index'
 
-// Create base instance
+// Создание базового инстанса
 const Service = axios.create({
   baseURL: config.baseURL,
   timeout: 30000,
@@ -13,30 +14,36 @@ const Service = axios.create({
   },
 })
 
-// 🧩 Request Interceptor: attach access token
+// 🧩 Request Interceptor: добавляем токен и язык
 Service.interceptors.request.use((config) => {
   const userStore = useUserStore()
+  const languageStore = useLanguageStore()
 
+  // Токен
   if (userStore.accessToken) {
     config.headers.Authorization = `Bearer ${userStore.accessToken}`
+  }
+
+  // Язык
+  if (languageStore.currentLang) {
+    config.headers['Accept-Language'] = languageStore.currentLang as 'kk' | 'ru' | 'en'
   }
 
   return config
 })
 
-// 🔁 Response Interceptor: refresh token on 401
+// 🔁 Response Interceptor: обработка 401 и рефреш токена
 let isRefreshing = false
 let failedQueue: any[] = []
 
 const processQueue = (error: any, token: string | null = null) => {
-  failedQueue.forEach(prom => {
+  failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error)
     } else {
       prom.resolve(token)
     }
   })
-
   failedQueue = []
 }
 
@@ -66,9 +73,7 @@ Service.interceptors.response.use(
             originalRequest.headers.Authorization = `Bearer ${token}`
             return Service(originalRequest)
           })
-          .catch((err) => {
-            return Promise.reject(err)
-          })
+          .catch((err) => Promise.reject(err))
       }
 
       originalRequest._retry = true
@@ -79,7 +84,7 @@ Service.interceptors.response.use(
           `${config.baseURL}/api/v1/auth/refresh`,
           {
             refresh_token: userStore.refreshToken,
-          },
+          }
         )
 
         const newAccessToken = response.data.access_token
@@ -108,7 +113,7 @@ Service.interceptors.response.use(
     }
 
     return Promise.reject(error)
-  },
+  }
 )
 
 export default Service
