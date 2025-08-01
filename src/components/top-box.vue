@@ -13,9 +13,9 @@
           >menu</span
         >
       </div>
-      <div class="flex items-center gap-1 h-full">
+      <div class="flex items-center gap-1 h-full ml-4">
         <div class="flex flex-col">
-          <span class="font-bold">{{ $t('l_Ticket_system') }}</span>
+          <span class="font-bold text-2xl">{{ $t('l_Ticket_system') }}</span>
         </div>
       </div>
     </div>

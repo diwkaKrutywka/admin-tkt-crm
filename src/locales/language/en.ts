@@ -43,6 +43,7 @@ export default {
   l_Filter_reset: "Filter reset",
   l_Sort_order: "Sort",
   l_From: "From",
+  l_Appeals:"Appeals",
   l_To: "To",
   l_Contacts:"Contacts",
   l_Filter:"Filter",

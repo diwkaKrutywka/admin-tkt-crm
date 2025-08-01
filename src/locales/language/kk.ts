@@ -76,4 +76,5 @@ export default {
   l_Search_placeholder: "Логин немесе аты-жөні бойынша іздеу",
   l_Total_records: "Барлығы {total} жазба",
   l_Organization_ID: "Ұйым ID",
+  l_Appeals:"Апелляциялар",
 };

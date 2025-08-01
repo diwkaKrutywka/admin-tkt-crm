@@ -76,4 +76,5 @@ export default {
   l_Search_placeholder: "Поиск по логину или ФИО",
   l_Total_records: "Всего {total} записей",
   l_Organization_ID: "ID организации",
+  l_Appeals:"Обращения",
 };
