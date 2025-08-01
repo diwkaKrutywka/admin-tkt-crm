@@ -5,7 +5,7 @@
         <div style="display: flex; justify-content: center; align-items: center;">
           <a-input-search
             v-model:value="search"
-            placeholder="Search by username, fullname"
+            :placeholder="$t('l_Search_placeholder')"
             style="width: 400px; vertical-align: middle;"
             class="align-middle search-input"
             @search="fetchUsers"
@@ -132,6 +132,9 @@ import type { User } from "../../types/user";
 import type { TableRenderProps } from "../../types/table";
 import AddEditUser from "./AddEditUser.vue";
 
+import { useI18n } from "vue-i18n";
+const { t: $t } = useI18n();
+
 import FilterModal from "../../components/filter.vue";
 import { UserApi } from "../../api/user"; // ← your API utility
 const open = ref<boolean>(false);
@@ -155,7 +158,7 @@ const pagination = ref({
   showSizeChanger: true,
   pageSizeOptions: ["10", "20", "50"],
   showQuickJumper: true,
-  showTotal: (total: number) => `Всего ${total} записей`,
+  showTotal: (total: number) => $t('l_Total_records', { total }),
 });
 
 // Columns
@@ -171,7 +174,7 @@ const columns = [
     },
   },
   {
-    title: "Пользователь",
+    title: $t("l_User"),
     dataIndex: "full_name",
     customRender: ({ text }: TableRenderProps<User>) => {
       const initials = (text as string)
@@ -198,7 +201,7 @@ const columns = [
     },
   },
   {
-    title: "Роль",
+    title: $t("l_Role"),
     dataIndex: "user_role",
     customRender: ({ text }: TableRenderProps<User>) => {
       return h(
@@ -212,7 +215,7 @@ const columns = [
     },
   },
   {
-    title: "Организация",
+    title: $t("l_Organization"),
     dataIndex: "organization_name",
     customRender: ({ text }: TableRenderProps<User>) => {
       return h("div", { class: "flex items-center gap-2 text-gray-800" }, [
@@ -222,16 +225,16 @@ const columns = [
     },
   },
   {
-    title: "Статус",
+    title: $t("l_Status"),
     dataIndex: "is_active",
     customRender: ({ text }: TableRenderProps<User>) => {
       return text
-        ? h(Tag, { color: "green" }, () => "Активен")
-        : h(Tag, { color: "red" }, () => "Неактивен");
+        ? h(Tag, { color: "green" }, () => $t("l_Active"))
+        : h(Tag, { color: "red" }, () => $t("l_Inactive"));
     },
   },
   {
-    title: "Последний вход",
+    title: $t("l_Last_login"),
     dataIndex: "last_login_at",
     customRender: ({ text }: TableRenderProps<User>) => {
       const { $formatIsoDate } = useGlobal();
@@ -239,7 +242,7 @@ const columns = [
     },
   },
   {
-    title: "Действия",
+    title: $t("l_Actions"),
     key: "Action",
     width: 110,
     align: "center",

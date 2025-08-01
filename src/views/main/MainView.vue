@@ -4,7 +4,7 @@
       <template #extra>
         <a-button type="primary" @click="onAdd()">
           <span class="material-symbols-outlined">
-            add <span class="ml-2"> Создать обращение </span>
+            add <span class="ml-2"> {{ $t('l_Create_request') }} </span>
           </span>
         </a-button>
       </template>
