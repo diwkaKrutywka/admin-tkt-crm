@@ -1,0 +1,231 @@
+{
+  "dashboardData": {
+    "cards": [
+      {
+        "id": "my-appeals",
+        "category": "statistics",
+        "type": "statistic",
+        "title": "Мои обращения",
+        "subtitle": null,
+        "order": 1,
+        "data": {
+          "value": 28,
+          "label": "В работе",
+          "previousValue": 25,
+          "trend": "up",
+          "changePercent": 12
+        },
+        "config": {
+          "urgent": false,
+          "showTrend": true,
+          "format": "number"
+        }
+      },
+      {
+        "id": "created-today",
+        "category": "statistics",
+        "type": "statistic",
+        "title": "Создано сегодня",
+        "subtitle": null,
+        "order": 2,
+        "data": {
+          "value": 12,
+          "label": "+2 за последний час",
+          "previousValue": 8,
+          "trend": "up",
+          "changePercent": 50
+        },
+        "config": {
+          "urgent": false,
+          "showTrend": false,
+          "format": "number"
+        }
+      },
+      {
+        "id": "completed",
+        "category": "statistics",
+        "type": "statistic",
+        "title": "Завершено",
+        "subtitle": null,
+        "order": 3,
+        "data": {
+          "value": 156,
+          "label": "За этот месяц",
+          "previousValue": 142,
+          "trend": "up",
+          "changePercent": 9.9
+        },
+        "config": {
+          "urgent": false,
+          "showTrend": true,
+          "format": "number"
+        }
+      },
+      {
+        "id": "overdue",
+        "category": "statistics",
+        "type": "statistic",
+        "title": "Просроченные",
+        "subtitle": null,
+        "order": 4,
+        "data": {
+          "value": 5,
+          "label": "Требуют внимания",
+          "previousValue": 3,
+          "trend": "up",
+          "changePercent": 66.7
+        },
+        "config": {
+          "urgent": true,
+          "showTrend": true,
+          "format": "number"
+        }
+      },
+      {
+        "id": "recent-activity",
+        "category": "information",
+        "type": "activity",
+        "title": "Последняя активность",
+        "subtitle": "Недавние изменения в системе",
+        "order": 5,
+        "data": {
+          "activities": [
+            {
+              "id": "act_001",
+              "title": "Новое обращение #2024-001234 создано",
+              "time": "5 минут назад",
+              "status": "new",
+              "user": {
+                "id": "user456",
+                "name": "Иванов И.И."
+              },
+              "details": {
+                "type": "appeal_created",
+                "appealId": "2024-001234",
+                "priority": "medium"
+              }
+            },
+            {
+              "id": "act_002",
+              "title": "Обращение #2024-001233 назначено на ПМСП №1",
+              "time": "15 минут назад",
+              "status": "assigned",
+              "user": {
+                "id": "user789",
+                "name": "Петров П.П."
+              },
+              "details": {
+                "type": "appeal_assigned",
+                "appealId": "2024-001233",
+                "assignedTo": "ПМСП №1"
+              }
+            },
+            {
+              "id": "act_003",
+              "title": "Обращение #2024-001232 завершено",
+              "time": "1 час назад",
+              "status": "completed",
+              "user": {
+                "id": "user101",
+                "name": "Сидоров С.С."
+              },
+              "details": {
+                "type": "appeal_completed",
+                "appealId": "2024-001232",
+                "resolution": "resolved"
+              }
+            },
+            {
+              "id": "act_004",
+              "title": "Обращение #2024-001231 требует дополнительной информации",
+              "time": "2 часа назад",
+              "status": "assigned",
+              "user": {
+                "id": "user202",
+                "name": "Козлов К.К."
+              },
+              "details": {
+                "type": "appeal_assigned",
+                "appealId": "2024-001231",
+                "reason": "additional_info_required"
+              }
+            }
+          ]
+        },
+        "config": {
+          "maxItems": 5,
+          "showUser": true,
+          "refreshInterval": 30000,
+          "autoRefresh": true
+        }
+      },
+      {
+        "id": "quick-actions",
+        "category": "information",
+        "type": "actions",
+        "title": "Быстрые действия",
+        "subtitle": "Часто используемые функции",
+        "order": 6,
+        "data": {
+          "actions": [
+            {
+              "id": "create-appeal",
+              "label": "Создать новое обращение",
+              "icon": "+",
+              "variant": "primary",
+              "route": "/appeals/create",
+              "permission": "appeals.create",
+              "enabled": true,
+              "shortcut": "Ctrl+N"
+            },
+            {
+              "id": "my-appeals",
+              "label": "Мои обращения",
+              "icon": "📋",
+              "variant": "secondary",
+              "route": "/appeals/my",
+              "permission": "appeals.view_own",
+              "enabled": true,
+              "badge": {
+                "count": 28,
+                "type": "info"
+              }
+            },
+            {
+              "id": "all-appeals",
+              "label": "Все обращения",
+              "icon": "📊",
+              "variant": "secondary",
+              "route": "/appeals/all",
+              "permission": "appeals.view_all",
+              "enabled": true,
+              "badge": {
+                "count": 156,
+                "type": "success"
+              }
+            },
+            {
+              "id": "reports",
+              "label": "Отчеты",
+              "icon": "📈",
+              "variant": "secondary",
+              "route": "/reports",
+              "permission": "reports.view",
+              "enabled": true
+            }
+          ]
+        },
+        "config": {
+          "layout": "vertical",
+          "showIcons": true,
+          "showBadges": true,
+          "showShortcuts": false
+        }
+      }
+    ],
+
+    "permissions": {
+      "dispatcher": true
+    }
+  }
+}

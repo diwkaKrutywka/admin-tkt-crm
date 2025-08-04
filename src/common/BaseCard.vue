@@ -1,48 +1,55 @@
+<!-- BaseCard.vue -->
 <template>
-  <div class="bg-white rounded-lg border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
+  <div class="base-card">
     <!-- Заголовок карточки -->
-    <div class="mb-4">
+    <div class="card-header">
       <slot name="header">
-        <h3 :class="['text-gray-900 font-semibold mb-1', bigCard ? 'text-2xl text-left' : 'text-lg']">
-          {{ title }}
-        </h3>
-        <p v-if="subtitle" class="text-sm text-gray-500 text-left">{{ subtitle }}</p>
+        <h3 class="card-title " :class="{ bigCardTitle: bigCard }">{{ title }}</h3>
+        <p class="card-subtitle text-left" v-if="subtitle">{{ subtitle }}</p>
       </slot>
     </div>
 
     <!-- Основное содержимое -->
-    <div class="flex-1">
+    <div class="card-content">
       <slot name="content">
-        <div class="text-gray-700 text-sm leading-relaxed">
+        <div class="default-content">
           <slot></slot>
         </div>
       </slot>
     </div>
 
-    <!-- Дополнительные действия -->
-    <div v-if="hasActions" class="mt-4 pt-4 border-t border-gray-100">
+    <!-- Дополнительные действия (если есть) -->
+    <div class="card-actions" v-if="hasActions">
       <slot name="actions"></slot>
     </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed } from 'vue'
-
-const props = defineProps<{
-  bigCard?: boolean
-  title?: string
-  subtitle?: string
-}>()
-
-const slots = defineSlots<{
-  header?: () => any
-  content?: () => any
-  actions?: () => any
-}>()
-
-const hasActions = computed(() => !!slots.actions)
+<script>
+export default {
+  name: 'BaseCard',
+  props: {
+    bigCard: {
+      type: Boolean,
+      default: false
+    },
+    title: {
+      type: String,
+      default: ''
+    },
+    subtitle: {
+      type: String,
+      default: ''
+    }
+  },
+  computed: {
+    hasActions() {
+      return !!this.$slots.actions
+    }
+  }
+}
 </script>
+
 <style scoped>
 .base-card {
   background: #ffffff;
