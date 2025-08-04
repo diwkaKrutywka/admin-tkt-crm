@@ -20,19 +20,35 @@
           </span>
         </a-button>
       </template>
-      <!-- Добавляем select для фильтрации по статусу -->
+      <!-- Фильтр по видам обращений -->
       <div style="margin-top: -8px; margin-bottom: 8px;">
-        <span style="margin-right: 8px;">{{ $t('l_Appeal_types_label') }}:</span>
-        <a-select
-          v-model:value="statusFilter"
-          style="width: 10rem;"
-          placeholder="Выберите статус"
-          @change="handleStatusChange"
-        >
-          <a-select-option value="">{{ $t('l_All') }}</a-select-option>
-          <a-select-option value="new">{{ $t('l_Unprocessed') }}</a-select-option>
-          <a-select-option value="in_progress">{{ $t('l_Processed') }}</a-select-option>
-        </a-select>
+        <span style="margin-right: 12px; font-weight: 500;">{{ $t('l_Appeal_types_label') }}:</span>
+        <a-space>
+          <a-button
+            :type="statusFilter === '' ? 'primary' : 'default'"
+            size="small"
+            @click="handleStatusChange('')"
+            style="border-radius: 6px;"
+          >
+            {{ $t('l_All') }}
+          </a-button>
+          <a-button
+            :type="statusFilter === 'new' ? 'primary' : 'default'"
+            size="small"
+            @click="handleStatusChange('new')"
+            style="border-radius: 6px;"
+          >
+            {{ $t('l_Unprocessed') }}
+          </a-button>
+          <a-button
+            :type="statusFilter === 'in_progress' ? 'primary' : 'default'"
+            size="small"
+            @click="handleStatusChange('in_progress')"
+            style="border-radius: 6px;"
+          >
+            {{ $t('l_Processed') }}
+          </a-button>
+        </a-space>
       </div>
     </a-page-header>
     <a-table
@@ -282,7 +298,7 @@ const fetchUsers = async () => {
 
     // Добавляем фильтр по статусу если он выбран
     if (statusFilter.value) {
-      params.status_in = statusFilter.value;
+      params.status__in = statusFilter.value;
     }
 
     const { data } = await AppealApi<{
