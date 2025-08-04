@@ -282,7 +282,7 @@ const fetchUsers = async () => {
 
     // Добавляем фильтр по статусу если он выбран
     if (statusFilter.value) {
-      params.status_in = statusFilter.value;
+      params.status__in = statusFilter.value;
     }
 
     const { data } = await AppealApi<{
