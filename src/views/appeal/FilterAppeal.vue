@@ -1,7 +1,7 @@
 <template>
     <a-modal
       v-model:open="visible"
-      :title="$t('l_Filter_users')"
+      :title="$t('l_Filter_appeals')"
       @ok="handleOk"
       :confirm-loading="loading"
       @cancel="handleCancel"
@@ -11,49 +11,61 @@
       :wrapClassName="'filter-modal-wrapper'"
     >
       <a-form :model="form" layout="vertical">
-        <!-- Organization ID -->
-        <a-form-item label="Organization ID" name="organization_id">
-          <a-input 
-            v-model:value="form.organization_id" 
-            :placeholder="$t('l_Enter_org_id')"
-            allow-clear
-          />
-        </a-form-item>
-  
-        <!-- User Role -->
-        <a-form-item :label="$t('l_User_role')" name="user_role">
+        <!-- Status -->
+        <a-form-item :label="$t('l_Status')" name="status_in">
           <a-select 
-            v-model:value="form.user_role" 
-            :placeholder="$t('l_Select_role')"
-            allow-clear
-          >
-            <a-select-option value="system_admin">System Admin</a-select-option>
-            <a-select-option value="senior_doctor">Senior Doctor</a-select-option>
-            <a-select-option value="dispatcher">Dispatcher</a-select-option>
-            <a-select-option value="manager">Manager</a-select-option>
-            <a-select-option value="employee">Employee</a-select-option>
-          </a-select>
-        </a-form-item>
-  
-        <!-- Is Active -->
-        <a-form-item :label="$t('l_Active_status')" name="is_active">
-          <a-select 
-            v-model:value="form.is_active" 
+            v-model:value="form.status_in" 
             :placeholder="$t('l_Select_status')"
             allow-clear
           >
-            <a-select-option :value="true">{{ $t('l_Active') }}</a-select-option>
-            <a-select-option :value="false">{{ $t('l_Inactive') }}</a-select-option>
+            <a-select-option value="new">{{ $t('l_New') }}</a-select-option>
+            <a-select-option value="in_progress">{{ $t('l_In_progress') }}</a-select-option>
+            <a-select-option value="transferred">{{ $t('l_Transferred') }}</a-select-option>
+            <a-select-option value="completed">{{ $t('l_Completed') }}</a-select-option>
+            <a-select-option value="closed">{{ $t('l_Closed') }}</a-select-option>
           </a-select>
         </a-form-item>
-  
+
+        <!-- City ID -->
+        <a-form-item :label="$t('l_City_id')" name="city_id_in">
+          <a-select 
+            v-model:value="form.city_id_in" 
+            :placeholder="$t('l_Select_city')"
+            allow-clear
+          >
+            
+          </a-select>
+        </a-form-item>
+
+        <!-- District ID -->
+        <a-form-item :label="$t('l_District_id')" name="district_id_in">
+          <a-select 
+            v-model:value="form.district_id_in" 
+            :placeholder="$t('l_Select_district')"
+            allow-clear
+          >
+            
+          </a-select>
+        </a-form-item>
+
+        <!-- Healthcare Facility ID -->
+        <a-form-item :label="$t('l_Healthcare_facility_id')" name="healthcare_facility_id_in">
+          <a-select 
+            v-model:value="form.healthcare_facility_id_in" 
+            :placeholder="$t('l_Select_healthcare_facility')"
+            allow-clear
+          >
+            
+          </a-select>
+        </a-form-item>
+
         <!-- Даты в одной строке на больших экранах -->
         <a-row :gutter="[8, 8]">
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-            <a-form-item :label="$t('l_Create_time')" name="create_date">
-              <a-range-picker
-                v-model:value="form.create_date"
-                :placeholder="[$t('l_From'), $t('l_To')]"
+            <a-form-item :label="$t('l_Created_date_from')" name="date_gte">
+              <a-date-picker
+                v-model:value="form.date_gte"
+                :placeholder="$t('l_From')"
                 format="DD.MM.YYYY"
                 allow-clear
                 style="width: 100%"
@@ -61,10 +73,10 @@
             </a-form-item>
           </a-col>
           <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-            <a-form-item :label="$t('l_Last_login')" name="last_login">
-              <a-range-picker
-                v-model:value="form.last_login"
-                :placeholder="[$t('l_From'), $t('l_To')]"
+            <a-form-item :label="$t('l_Created_date_to')" name="date_lte">
+              <a-date-picker
+                v-model:value="form.date_lte"
+                :placeholder="$t('l_To')"
                 format="DD.MM.YYYY"
                 allow-clear
                 style="width: 100%"
@@ -73,7 +85,7 @@
           </a-col>
         </a-row>
       </a-form>
-  
+
       <template #footer>
         <a-space>
           <a-button @click="handleReset">
@@ -98,11 +110,12 @@
   const { t: $t } = useI18n()
   
   interface FilterForm {
-    organization_id: string
-    user_role: string
-    is_active: boolean | null
-    create_date: [any, any] | null
-    last_login: [any, any] | null
+    status_in: string
+    city_id_in: string
+    district_id_in: string
+    healthcare_facility_id_in: string
+    date_gte: any
+    date_lte: any
   }
   
   const props = defineProps<{
@@ -122,11 +135,12 @@
   const loading = ref(false)
   
   const form = reactive<FilterForm>({
-    organization_id: '',
-    user_role: '',
-    is_active: null,
-    create_date: null,
-    last_login: null,
+    status_in: '',
+    city_id_in: '',
+    district_id_in: '',
+    healthcare_facility_id_in: '',
+    date_gte: null,
+    date_lte: null,
   })
   
   // Сброс формы при открытии модального окна
@@ -140,11 +154,12 @@
   )
   
   const resetForm = () => {
-    form.organization_id = ''
-    form.user_role = ''
-    form.is_active = null
-    form.create_date = null
-    form.last_login = null
+    form.status_in = ''
+    form.city_id_in = ''
+    form.district_id_in = ''
+    form.healthcare_facility_id_in = ''
+    form.date_gte = null
+    form.date_lte = null
   }
   
   const handleOk = async () => {
@@ -152,16 +167,27 @@
     
     try {
       // Проверяем, что хотя бы одно поле заполнено
-      const hasFilters = form.organization_id || form.user_role || form.is_active !== null || 
-                        form.create_date || form.last_login
+      const hasFilters = form.status_in || form.city_id_in || form.district_id_in || 
+                        form.healthcare_facility_id_in || form.date_gte || form.date_lte
       
       if (!hasFilters) {
         message.warning($t('l_Choose_filter_criteria'))
         return
       }
-  
+
+      // Подготавливаем данные для отправки
+      const filterData = { ...form }
+      
+      // Конвертируем даты в нужный формат если они есть
+      if (form.date_gte) {
+        filterData.date_gte = form.date_gte.format('YYYY-MM-DD')
+      }
+      if (form.date_lte) {
+        filterData.date_lte = form.date_lte.format('YYYY-MM-DD')
+      }
+
       // Эмитим событие с данными фильтра
-      emit('filter', { ...form })
+      emit('filter', filterData)
       
       message.success($t('l_Filter_applied'))
       visible.value = false

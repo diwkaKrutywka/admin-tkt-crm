@@ -1,97 +1,34 @@
-<template>
-  <div class="bg-white rounded-lg border border-gray-200 p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
-    <!-- Заголовок карточки -->
-    <div class="mb-4">
-      <slot name="header">
-        <h3 :class="['text-gray-900 font-semibold mb-1', bigCard ? 'text-2xl text-left' : 'text-lg']">
-          {{ title }}
-        </h3>
-        <p v-if="subtitle" class="text-sm text-gray-500 text-left">{{ subtitle }}</p>
-      </slot>
-    </div>
-
-    <!-- Основное содержимое -->
-    <div class="flex-1">
-      <slot name="content">
-        <div class="text-gray-700 text-sm leading-relaxed">
-          <slot></slot>
-        </div>
-      </slot>
-    </div>
-
-    <!-- Дополнительные действия -->
-    <div v-if="hasActions" class="mt-4 pt-4 border-t border-gray-100">
-      <slot name="actions"></slot>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { computed } from 'vue'
-
-const props = defineProps<{
-  bigCard?: boolean
+defineProps<{
   title?: string
   subtitle?: string
 }>()
 
-const slots = defineSlots<{
+defineSlots<{
   header?: () => any
   content?: () => any
   actions?: () => any
+  default?: () => any
 }>()
-
-const hasActions = computed(() => !!slots.actions)
 </script>
-<style scoped>
-.base-card {
-  background: #ffffff;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: box-shadow 0.2s ease;
-}
 
-.base-card:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+<template>
+  <div class="base-card">
+    <div class="card-header">
+      <slot name="header">
+        <h3>{{ title }}</h3>
+        <p v-if="subtitle">{{ subtitle }}</p>
+      </slot>
+    </div>
 
-.card-header {
-  margin-bottom: 16px;
-}
+    <div class="card-body">
+      <slot name="content">
+        <slot /> <!-- fallback -->
+      </slot>
+    </div>
 
-.bigCardTitle {
-  text-align: left;
-  font-size: 24px !important;
-}
-
-.card-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1f2937;
-  margin: 0 0 4px 0;
-}
-
-.card-subtitle {
-  font-size: 14px;
-  color: #6b7280;
-  margin: 0;
-}
-
-.card-content {
-  flex: 1;
-}
-
-.card-actions {
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid #f3f4f6;
-}
-
-.default-content {
-  color: #374151;
-  font-size: 14px;
-  line-height: 1.5;
-}
-</style>
+    <div class="card-footer" v-if="$slots.actions">
+      <slot name="actions" />
+    </div>
+  </div>
+</template>
