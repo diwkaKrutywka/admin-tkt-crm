@@ -111,4 +111,19 @@ export default {
   l_Processed: "Обработанные",
   l_Notification:"Уведомление",
   l_There_is_nothing:"Нет уведомлений",
+  // Appeal filter translations
+  l_Filter_appeals: "Фильтр обращений",
+  l_Select_city: "Выберите город",
+  l_Select_district: "Выберите район", 
+  l_Select_healthcare_facility: "Выберите поликлинику",
+  l_City_id: "Город",
+  l_District_id: "Район", 
+  l_Healthcare_facility_id: "Поликлиника",
+
+  l_Enter_city_id: "Введите ID города",
+  l_Enter_district_id: "Введите ID района",
+  l_Enter_healthcare_facility_id: "Введите ID поликлиники",
+  l_In_progress: "В обработке",
+  l_Transferred: "Передан",
+  l_Closed: "Закрыт",
 };

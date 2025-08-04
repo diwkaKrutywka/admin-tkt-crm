@@ -111,4 +111,19 @@ export default {
   l_Processed: "Өңделген",
   l_Notification:"Хабарлама",
   l_There_is_nothing:"Хабарлама жоқ",
+  // Appeal filter translations
+  l_Filter_appeals: "Апелляцияларды сүзгі",
+  l_Select_city: "Қаланы таңдаңыз",
+  l_Select_district: "Ауданды таңдаңыз", 
+  l_Select_healthcare_facility: "Поликлиниканы таңдаңыз",
+  l_City_id: "Қала",
+  l_District_id: "Аудан", 
+  l_Healthcare_facility_id: "Емхана",
+
+  l_Enter_city_id: "Қала ID-ін енгізіңіз",
+  l_Enter_district_id: "Аудан ID-ін енгізіңіз",
+  l_Enter_healthcare_facility_id: "Поликлиника ID-ін енгізіңіз",
+  l_In_progress: "Өңделуде",
+  l_Transferred: "Берілді",
+  l_Closed: "Жабылды",
 };

@@ -113,4 +113,19 @@ export default {
   l_Unprocessed: "Unprocessed",
   l_Processed: "Processed",
   l_There_is_nothing:"There is nothing",
+  // Appeal filter translations
+  l_Filter_appeals: "Filter Appeals",
+  l_Select_city: "Select city",
+  l_Select_district: "Select district", 
+  l_Select_healthcare_facility: "Select healthcare facility",
+  l_City_id: "City",
+  l_District_id: "District", 
+  l_Healthcare_facility_id: "Polyclinic",
+
+  l_Enter_city_id: "Enter city ID",
+  l_Enter_district_id: "Enter district ID",
+  l_Enter_healthcare_facility_id: "Enter healthcare facility ID",
+  l_In_progress: "In Progress",
+  l_Transferred: "Transferred",
+  l_Closed: "Closed",
 };
