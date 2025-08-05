@@ -135,7 +135,7 @@ import AddEditUser from "./AddEditUser.vue";
 import { useI18n } from "vue-i18n";
 const { t: $t } = useI18n();
 
-import FilterModal from "../../components/filter.vue";
+import FilterModal from "./FilterUser.vue";
 import { UserApi } from "../../api/user"; // ← your API utility
 const open = ref<boolean>(false);
 const reason = ref<string>("");

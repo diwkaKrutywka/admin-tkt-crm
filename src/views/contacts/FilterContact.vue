@@ -52,7 +52,7 @@
         >
           <a-select-option value="male">{{ $t('l_Male') }}</a-select-option>
           <a-select-option value="female">{{ $t('l_Female') }}</a-select-option>
-          <a-select-option value="other">{{ $t('l_Other') }}</a-select-option>
+          <a-select-option value="not_specified">{{ $t('l_Not_specified') }}</a-select-option>
         </a-select>
       </a-form-item>
 
