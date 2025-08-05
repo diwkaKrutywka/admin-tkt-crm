@@ -43,8 +43,7 @@ export function RefApi<T = any>(
     method: Method = 'POST'
   ): Promise<AxiosResponse<T>> {
     const axiosConfig: AxiosRequestConfig = {
-      baseURL: 'http://10.100.0.12:8002/api/v1', // <-- override here
-      url: `/${url}`,
+      url: `ref/api/v1/${url}`,
       method,
     }
   

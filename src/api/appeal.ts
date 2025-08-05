@@ -6,8 +6,7 @@ export function AppealApi<T = any>(
     method: Method = 'POST'
   ): Promise<AxiosResponse<T>> {
     const config: AxiosRequestConfig = {
-      baseURL: 'http://10.100.0.61:8031/api/v1', // <-- override here
-      url: `appeals/${url}`,
+      url: `appeal/api/v1/appeals/${url}`,
       method,
     }
   

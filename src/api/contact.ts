@@ -6,8 +6,7 @@ export function ContactApi<T = any>(
     method: Method = 'POST'
   ): Promise<AxiosResponse<T>> {
     const config: AxiosRequestConfig = {
-      baseURL: 'http://10.100.0.61:8030/api/v1', // <-- override here
-      url: `contacts/${url}`,
+      url: `contact/api/v1/contacts/${url}`,
       method,
     }
   
