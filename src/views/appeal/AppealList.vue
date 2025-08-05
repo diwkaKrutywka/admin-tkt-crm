@@ -294,12 +294,23 @@ const fetchUsers = async () => {
       page: pagination.value.current,
       page_size: pagination.value.pageSize,
       q: search.value,
+      ...currentFilters.value,
     };
 
-    // Добавляем фильтр по статусу если он выбран
+    if (params.status_in) {
+      params.status__in = params.status_in;
+      delete params.status_in;
+    }
     if (statusFilter.value) {
       params.status__in = statusFilter.value;
     }
+
+    // Удаляем пустые параметры
+    Object.keys(params).forEach(key => {
+      if (params[key] === '' || params[key] == null) {
+        delete params[key];
+      }
+    });
 
     const { data } = await AppealApi<{
       items: Appeal[];
