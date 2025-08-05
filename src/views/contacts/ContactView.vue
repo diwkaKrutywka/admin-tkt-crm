@@ -189,24 +189,24 @@ const applyFilter = (filters: any) => {
   }
   
   // Обрабатываем gender
-  if (filters.gender_eq) {
-    processedFilters.gender_eq = filters.gender_eq;
+  if (filters.gender__eq) {
+    processedFilters.gender__eq = filters.gender__eq;
   }
   
   // Обрабатываем даты рождения
-  if (filters.birth_date_gte) {
-    processedFilters.birth_date_gte = filters.birth_date_gte.format('YYYY-MM-DD');
+  if (filters.birth_date__gte) {
+    processedFilters.birth_date__gte = filters.birth_date__gte.format('YYYY-MM-DD');
   }
-  if (filters.birth_date_lte) {
-    processedFilters.birth_date_lte = filters.birth_date_lte.format('YYYY-MM-DD');
+  if (filters.birth_date__lte) {
+    processedFilters.birth_date__lte = filters.birth_date__lte.format('YYYY-MM-DD');
   }
   
   // Обрабатываем даты создания
-  if (filters.created_at_gte) {
-    processedFilters.created_at_gte = filters.created_at_gte.format('YYYY-MM-DD');
+  if (filters.created_at__gte) {
+    processedFilters.created_at__gte = filters.created_at__gte.format('YYYY-MM-DD');
   }
-  if (filters.created_at_lte) {
-    processedFilters.created_at_lte = filters.created_at_lte.format('YYYY-MM-DD');
+  if (filters.created_at__lte) {
+    processedFilters.created_at__lte = filters.created_at__lte.format('YYYY-MM-DD');
   }
   
   currentFilters.value = processedFilters;
@@ -238,6 +238,13 @@ const fetchUsers = async () => {
     if (Object.keys(currentFilters.value).length > 0) {
       Object.assign(queryParams, currentFilters.value);
     }
+    
+    // Удаляем пустые параметры
+    Object.keys(queryParams).forEach(key => {
+      if (queryParams[key] === '' || queryParams[key] == null) {
+        delete queryParams[key];
+      }
+    });
     
     const { data } = await ContactApi<{
       items: Contact[];

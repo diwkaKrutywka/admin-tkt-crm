@@ -44,9 +44,9 @@
       </a-row>
 
       <!-- Gender -->
-      <a-form-item :label="$t('l_Gender')" name="gender_eq">
+      <a-form-item :label="$t('l_Gender')" name="gender__eq">
         <a-select 
-          v-model:value="form.gender_eq" 
+          v-model:value="form.gender__eq" 
           :placeholder="$t('l_Select_gender')"
           allow-clear
         >
@@ -59,9 +59,9 @@
       <!-- Birth Date Range в одной строке -->
       <a-row :gutter="[8, 8]">
         <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-          <a-form-item :label="$t('l_Birth_date_from')" name="birth_date_gte">
+          <a-form-item :label="$t('l_Birth_date_from')" name="birth_date__gte">
             <a-date-picker
-              v-model:value="form.birth_date_gte"
+              v-model:value="form.birth_date__gte"
               :placeholder="$t('l_From')"
               format="DD.MM.YYYY"
               allow-clear
@@ -70,9 +70,9 @@
           </a-form-item>
         </a-col>
         <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-          <a-form-item :label="$t('l_Birth_date_to')" name="birth_date_lte">
+          <a-form-item :label="$t('l_Birth_date_to')" name="birth_date__lte">
             <a-date-picker
-              v-model:value="form.birth_date_lte"
+              v-model:value="form.birth_date__lte"
               :placeholder="$t('l_To')"
               format="DD.MM.YYYY"
               allow-clear
@@ -85,9 +85,9 @@
       <!-- Created Date Range в одной строке -->
       <a-row :gutter="[8, 8]">
         <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-          <a-form-item :label="$t('l_Created_date_from')" name="created_at_gte">
+          <a-form-item :label="$t('l_Created_date_from')" name="created_at__gte">
             <a-date-picker
-              v-model:value="form.created_at_gte"
+              v-model:value="form.created_at__gte"
               :placeholder="$t('l_From')"
               format="DD.MM.YYYY"
               allow-clear
@@ -96,9 +96,9 @@
           </a-form-item>
         </a-col>
         <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-          <a-form-item :label="$t('l_Created_date_to')" name="created_at_lte">
+          <a-form-item :label="$t('l_Created_date_to')" name="created_at__lte">
             <a-date-picker
-              v-model:value="form.created_at_lte"
+              v-model:value="form.created_at__lte"
               :placeholder="$t('l_To')"
               format="DD.MM.YYYY"
               allow-clear
@@ -136,11 +136,11 @@ const { t: $t } = useI18n()
 interface FilterForm {
   order_by: string
   order: string
-  gender_eq: string
-  birth_date_gte: Dayjs | null
-  birth_date_lte: Dayjs | null
-  created_at_gte: Dayjs | null
-  created_at_lte: Dayjs | null
+  gender__eq: string
+  birth_date__gte: Dayjs | null
+  birth_date__lte: Dayjs | null
+  created_at__gte: Dayjs | null
+  created_at__lte: Dayjs | null
 }
 
 const props = defineProps<{
@@ -163,11 +163,11 @@ const loading = ref(false)
 const form = reactive<FilterForm>({
   order_by: '',
   order: '',
-  gender_eq: '',
-  birth_date_gte: null,
-  birth_date_lte: null,
-  created_at_gte: null,
-  created_at_lte: null,
+  gender__eq: '',
+  birth_date__gte: null,
+  birth_date__lte: null,
+  created_at__gte: null,
+  created_at__lte: null,
 })
 
 // Сброс формы при открытии модального окна
@@ -183,11 +183,11 @@ watch(
 const resetForm = () => {
   form.order_by = ''
   form.order = ''
-  form.gender_eq = ''
-  form.birth_date_gte = null
-  form.birth_date_lte = null
-  form.created_at_gte = null
-  form.created_at_lte = null
+  form.gender__eq = ''
+  form.birth_date__gte = null
+  form.birth_date__lte = null
+  form.created_at__gte = null
+  form.created_at__lte = null
 }
 
 const handleOk = async () => {
@@ -195,9 +195,9 @@ const handleOk = async () => {
   
   try {
     // Проверяем, что хотя бы одно поле заполнено
-    const hasFilters = form.order_by || form.order || form.gender_eq || 
-                      form.birth_date_gte || form.birth_date_lte || 
-                      form.created_at_gte || form.created_at_lte
+    const hasFilters = form.order_by || form.order || form.gender__eq || 
+                      form.birth_date__gte || form.birth_date__lte || 
+                      form.created_at__gte || form.created_at__lte
     
     if (!hasFilters) {
       message.warning($t('l_Choose_filter_criteria'))
