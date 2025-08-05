@@ -21,32 +21,34 @@
         </a-button>
       </template>
       <!-- Фильтр по видам обращений -->
-      <div style="margin-top: -8px; margin-bottom: 8px;">
-        <span style="margin-right: 12px; font-weight: 500;">{{ $t('l_Appeal_types_label') }}:</span>
+      <div style="margin-top: -8px; margin-bottom: 8px">
+        <span style="margin-right: 12px; font-weight: 500"
+          >{{ $t("l_Appeal_types_label") }}:</span
+        >
         <a-space>
           <a-button
             :type="statusFilter === '' ? 'primary' : 'default'"
             size="small"
             @click="handleStatusChange('')"
-            style="border-radius: 6px;"
+            style="border-radius: 6px"
           >
-            {{ $t('l_All') }}
+            {{ $t("l_All") }}
           </a-button>
           <a-button
             :type="statusFilter === 'new' ? 'primary' : 'default'"
             size="small"
             @click="handleStatusChange('new')"
-            style="border-radius: 6px;"
+            style="border-radius: 6px"
           >
-            {{ $t('l_Unprocessed') }}
+            {{ $t("l_Unprocessed") }}
           </a-button>
           <a-button
             :type="statusFilter === 'in_progress' ? 'primary' : 'default'"
             size="small"
             @click="handleStatusChange('in_progress')"
-            style="border-radius: 6px;"
+            style="border-radius: 6px"
           >
-            {{ $t('l_Processed') }}
+            {{ $t("l_Processed") }}
           </a-button>
         </a-space>
       </div>
@@ -65,10 +67,9 @@
         <template v-if="column.key === 'Action'">
           <a-space>
             <span
-              style="color: black; font-size: 21px; cursor: pointer;"
+              style="color: black; font-size: 21px; cursor: pointer"
               class="icon material-symbols-outlined"
               @click="openDetail(tableData[index].id)"
-
             >
               expand_content
             </span>
@@ -79,10 +80,9 @@
     <filter-appeal
       v-model:open="filterModalVisible"
       @filter="applyFilter"
-
     ></filter-appeal>
 
-    <edit-appeal
+    <update-appeal
       v-model:open="modalVisible"
       :id="editingUser"
       @submit="fetchUsers"
@@ -96,11 +96,12 @@
 
 <script setup lang="ts">
 import { ref, h, onMounted } from "vue";
-import {message, Tag } from "ant-design-vue";
+import { message, Tag } from "ant-design-vue";
 import type { Appeal } from "../../types/appeal";
 import FilterAppeal from "./FilterAppeal.vue";
 import type { TableRenderProps } from "../../types/table";
-import EditAppeal from "./EditAppeal.vue";
+//import EditAppeal from "./EditAppeal.vue";
+import UpdateAppeal from "./UpdateAppeal.vue";
 import DetailPage from "./DetailPage.vue";
 import { AppealApi } from "../../api/appeal"; // ← your API utility
 import { useI18n } from "vue-i18n";
@@ -110,7 +111,7 @@ const search = ref<string>("");
 const statusFilter = ref<string>(""); // Добавляем переменную для фильтра статуса
 const tableData = ref<Appeal[]>([]);
 const loading = ref(false);
-const router = useRouter()
+const router = useRouter();
 const detailModalVisible = ref(false);
 const selectedAppealId = ref<string | null>(null);
 import { useGlobal } from "../../composables/useGlobal";
@@ -133,21 +134,22 @@ const currentFilters = ref<any>({});
 
 const route = useRoute();
 const { $formatIsoDate } = useGlobal();
+import { watch } from "vue";
 
-// --- Автоматическое открытие модалки по ID из query
-onMounted(async () => {
-  const id = route.query.id as string;
-  console.log(id)
-  await fetchUsers();
-  if (id) {
-      editingUser.value = id;
+watch(
+  () => route.query.id,
+  (id) => {
+    if (id) {
+      editingUser.value = id as string;
       modalVisible.value = true;
-     // router.replace({path:'/appeals'})
-    
-  }
+      router.replace({ path: "/appeals" }); // убираем query
+    }
+  },
+  { immediate: true } // ← если хочешь, чтобы срабатывало и при первой загрузке
+);
+onMounted(async () => {
+  await fetchUsers();
 });
-
-
 
 const toggleReasonExpansion = (id: string) => {
   if (expandedReasons.value.includes(id)) {
@@ -170,8 +172,8 @@ const columns = [
   },
   {
     title: t("l_Phone_number"),
-    dataIndex: ["contact","called_by"],
-    key: ["contact","called_by"],
+    dataIndex: ["contact", "called_by"],
+    key: ["contact", "called_by"],
 
     customRender: ({ text, record }: TableRenderProps<Appeal>) => {
       if (!text) return null;
@@ -229,7 +231,6 @@ const columns = [
     },
   },
 
-
   {
     title: t("l_Manager"),
     dataIndex: "employee_id",
@@ -242,23 +243,26 @@ const columns = [
       const parts = [];
 
       if (record.city_id) {
-
         parts.push(
           h("div", [h("span", t("l_City") + ": "), h("strong", record.city_id)])
         );
-
       }
 
       if (record.district_id) {
         parts.push(
-          h("div", [h("span", t("l_District") + ": "), h("strong", record.district_id)])
+          h("div", [
+            h("span", t("l_District") + ": "),
+            h("strong", record.district_id),
+          ])
         );
-
       }
 
       if (record.healthcare_facility_id) {
         parts.push(
-          h("div", [h("span", t("l_Polyclinic") + ": "), h("strong", record.healthcare_facility_id)])
+          h("div", [
+            h("span", t("l_Polyclinic") + ": "),
+            h("strong", record.healthcare_facility_id),
+          ])
         );
       }
 
@@ -304,11 +308,7 @@ const fetchUsers = async () => {
     const { data } = await AppealApi<{
       items: Appeal[];
       total_count: number;
-    }>(
-      "",
-      params,
-      "GET"
-    );
+    }>("", params, "GET");
 
     tableData.value = Object.values(data.items);
     pagination.value.total = data.total_count;
@@ -326,7 +326,6 @@ const handleTableChange = (pag: any) => {
   pagination.value.pageSize = pag.pageSize;
   fetchUsers();
 };
-
 
 const openDetail = (appealId: string) => {
   selectedAppealId.value = appealId;
@@ -346,7 +345,6 @@ const handleStatusChange = (value: string) => {
 onMounted(() => {
   fetchUsers();
 });
-
 </script>
 
 <style scoped>

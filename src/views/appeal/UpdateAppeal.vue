@@ -42,7 +42,9 @@ import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
 import { AppealApi } from '../../api/appeal'
 import { toRaw } from 'vue'
+import { useNotificationStore } from '../../store/index'
 
+const notificationStore = useNotificationStore()
 interface Contact {
  
   reason: string
@@ -147,6 +149,7 @@ const handleOk = async () => {
       await AppealApi(`${props.id}`, payload, 'PUT')
       message.success('Contact updated successfully')
       emit('submit', payload as Contact)
+      notificationStore.removeMessageByAppealId(props.id)
     } else {
       const res = await AppealApi('', payload, 'POST')
       message.success('User created successfully')

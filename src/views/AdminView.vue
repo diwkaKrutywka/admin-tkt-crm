@@ -35,7 +35,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { notification } from 'ant-design-vue'
 import MenuBox from '../components/menu-bar.vue'
 import TopBox from '../components/top-box.vue'
 import { initWebSocket, closeWebSocket } from '../services/ws'
@@ -53,14 +52,6 @@ onMounted(() => {
   const clientId = userStore.user?.user?.employee_id || 'test-client-1'
   if (clientId) {
     initWebSocket(clientId, (message) => {
-      // Показываем всплывающее уведомление
-      // notification.open({
-      //   message: message.title || 'Уведомление',
-      //   description: message.body || JSON.stringify(message.data),
-      //   duration: 5,
-      // })
-
-      // Сохраняем в Piniaш
       console.log(message)
       if(message.type === 'appeal_created'){
       notificationStore.addMessage(message)

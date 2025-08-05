@@ -32,7 +32,7 @@ import { computed } from 'vue'
 const props = defineProps<{
   bigCard?: boolean
   title?: string
-  subtitle?: string
+  subtitle?: any
 }>()
 
 const slots = defineSlots<{

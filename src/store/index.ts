@@ -66,5 +66,10 @@ export const useNotificationStore = defineStore('notification', {
     clearMessages() {
       this.messages = []
     },
+    removeMessageByAppealId(appealId: string) {
+      this.messages = this.messages.filter(
+        (msg) => msg.data?.appeal_id !== appealId
+      )
+    },
   },
 })
