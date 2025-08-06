@@ -1,6 +1,6 @@
 <template>
     <div>
-      <a-page-header :title="$t('l_Setting   s') +' / ' + $t('l_Regions')">
+      <a-page-header :title="$t('l_Settings') +' / ' + $t('l_Regions')">
         <template #extra>
           <a-button type="primary" @click="onAdd">
             <span class="material-symbols-outlined">add
@@ -28,6 +28,21 @@
               >
                 edit
               </span>
+              <a-popconfirm
+           
+              placement="leftBottom"
+              title="Сіз расымен қолданушыны тоқтатқыңыз келеді ме?"
+              :ok-text="$t('l_Yes')"
+              :cancel-text="$t('l_No')"
+              @confirm="onDelete(record.id)"
+            >
+              <span
+                style="color:red; font-size: 21px"
+                class="icon material-symbols-outlined"
+              >
+                delete
+              </span>
+            </a-popconfirm>
             </a-space>
           </template>
         </template>
@@ -130,7 +145,21 @@
     pagination.value.pageSize = pag.pageSize
     fetchRegions()
   }
-  
+  import { deleteItems } from '../../../api/ref'
+
+const onDelete = async (id: string) => {
+  try {
+    loading.value = true
+    await deleteItems('regions', id)
+    message.success($t('l_Delete_success') || 'Region deleted successfully')
+    fetchRegions() // обновить таблицу
+  } catch (error) {
+    message.error($t('l_Delete_error') || 'Failed to delete region')
+  } finally {
+    loading.value = false
+  }
+}
+
   const onAdd = () => {
     editingRegion.value = null
     modalVisible.value = true

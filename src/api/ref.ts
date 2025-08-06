@@ -14,9 +14,12 @@ export interface Region {
   name: string
   name_kk?: string
   name_ru?: string
+  name_en?: string // добавь, если используешь в форме
   region_code?: string
   admin_code?: string
   region_type?: string
+  capital_city?: string // если используешь
+  display_order?: number // если используешь
   is_active: boolean
 }
 
@@ -79,4 +82,21 @@ export const getOrganizations = (params?: { include_inactive?: boolean; district
 }
 export const getRegions = (params?: { include_inactive?: boolean; search?: string; page?: number; page_size?: number }) => {
   return RefApi<ApiResponse<Region>>('regions/', params, 'GET')
+}
+// Добавить регион
+export const createRegion = (data: Partial<Region>) => {
+  return RefApi('regions/', data, 'POST')
+}
+
+// Обновить регион
+export const updateRegion = (id: string, data: Partial<Region>) => {
+  return RefApi(`regions/${id}/`, data, 'PUT')
+}
+
+// Получить регион по ID (для редактирования)
+export const getRegionById = (id: string) => {
+  return RefApi<Region>(`regions/${id}`, undefined, 'GET')
+}
+export const deleteItems = (url:string, id: string) => {
+  return RefApi(`${url}/${id}`, undefined, 'DELETE')
 }
