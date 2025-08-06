@@ -7,7 +7,7 @@ export function ApiApi<T = any>(
   method: 'GET' | 'POST' = 'POST'
 ): Promise<AxiosResponse<T>> {
   const config: AxiosRequestConfig = {
-    url: `auth/api/v1/auth/auth/${url}`,
+    url: `auth/api/v1/auth/${url}`,
     method,
   }
 
