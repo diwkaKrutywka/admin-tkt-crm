@@ -5,18 +5,28 @@ import type { ComplaintCategory, ComplaintStatus, ComplaintSubcategory, CallSubt
 export interface City {
   id: string
   name: string
-  name_kk?: string
-  name_ru?: string
+  region_id: string
+  city_code: string
+  city_type: string
+  is_regional_center: boolean
+  is_district_center: boolean
+  postal_code: string
+  display_order: number
   is_active: boolean
+  created_at?: string
+  updated_at?: string
 }
 export interface Region {
   id: string
   name: string
   name_kk?: string
   name_ru?: string
+  name_en?: string // добавь, если используешь в форме
   region_code?: string
   admin_code?: string
   region_type?: string
+  capital_city?: string // если используешь
+  display_order?: number // если используешь
   is_active: boolean
 }
 
@@ -73,7 +83,7 @@ export function RefApi<T = any>(
   }
 
 // API методы для справочных данных
-export const getCities = (params?: { include_inactive?: boolean }) => {
+export const getCities = (params?: { include_inactive?: boolean, search?: string; page?: number; page_size?: number  }) => {
   return RefApi<ApiResponse<City>>('cities/', params, 'GET')
 }
 
@@ -144,4 +154,35 @@ export const updateCallSubtype = (id: string, data: Partial<Omit<CallSubtype, 'i
   return RefApi<CallSubtype>(`call-subtypes/${id}`, data, 'PUT')
 }
 
+// Добавить регион
+export const createRegion = (data: Partial<Region>) => {
+  return RefApi('regions/', data, 'POST')
+}
 
+// Обновить регион
+export const updateRegion = (id: string, data: Partial<Region>) => {
+  return RefApi(`regions/${id}/`, data, 'PUT')
+}
+
+// Получить регион по ID (для редактирования)
+export const getRegionById = (id: string) => {
+  return RefApi<Region>(`regions/${id}`, {multilingual:true}, 'GET')
+}
+
+export const deleteItems = (url:string, id: string) => {
+  return RefApi(`${url}/${id}`, undefined, 'DELETE')
+}
+
+export const createCity = (data: Partial<City>) => {
+  return RefApi('cities/', data, 'POST')
+}
+
+// Обновить город
+export const updateCity = (id: string, data: Partial<City>) => {
+  return RefApi(`cities/${id}/`, data, 'PUT')
+}
+
+// Получить город по ID
+export const getCityById = (id: string) => {
+  return RefApi<City>(`cities/${id}`, { multilingual: true }, 'GET')
+}

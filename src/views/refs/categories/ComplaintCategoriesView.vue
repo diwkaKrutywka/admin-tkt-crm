@@ -86,14 +86,6 @@ const columns = [
     dataIndex: 'code',
   },
   {
-    title: $t('l_Status'),
-    dataIndex: 'is_active',
-    customRender: ({ text }: TableRenderProps<ComplaintCategory>) =>
-      text
-        ? h('span', { style: 'color: green' }, $t('l_Active'))
-        : h('span', { style: 'color: red' }, $t('l_Inactive')),
-  },
-  {
     title: $t('l_Actions'),
     key: 'Action',
     align: 'center',

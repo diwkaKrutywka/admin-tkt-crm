@@ -89,16 +89,12 @@ const columns = [
     dataIndex: 'code',
   },
   {
+    title: $t('l_Description'),
+    dataIndex: 'description',
+  },
+  {
     title: $t('l_Is_final'),
     dataIndex: 'is_final',
-  },
-  {
-    title: $t('l_Created_at'),
-    dataIndex: 'created_at',
-  },
-  {
-    title: $t('l_Updated_at'),
-    dataIndex: 'updated_at',
   },
   {
     title: $t('l_Actions'),
