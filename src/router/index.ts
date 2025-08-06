@@ -52,9 +52,49 @@ const routes: RouteRecordRaw[] = [
           //   name: 'DistrictsView',
           //   component: () => import('../views/refs/districts/DistrictsView.vue')
           // },
-          // добавь остальные табы
+          // {
+          //   path: 'addresses',
+          //   name: 'AddressesView',
+          //   component: () => import('../views/refs/addresses/AddressesView.vue')
+          // },
+          // {
+          //   path: 'streets',
+          //   name: 'StreetsView',
+          //   component: () => import('../views/refs/streets/StreetsView.vue')
+          // },
+          // {
+          //   path: 'types',
+          //   name: 'CallTypesView',
+          //   component: () => import('../views/refs/types/CallTypesView.vue')
+          // },
+          // {
+          //   path: 'subtypes',
+          //   name: 'CallSubtypesView',
+          //   component: () => import('../views/refs/subtypes/CallSubtypesView.vue')
+          // },
+          // {
+          //   path: 'complaint_status',
+          //   name: 'ComplaintStatusView',
+          //   component: () => import('../views/refs/statuses/ComplaintStatusView.vue')
+          // },
+          // {
+          //   path: 'complaint_categories',
+          //   name: 'ComplaintCategoriesView',
+          //   component: () => import('../views/refs/categories/ComplaintCategoriesView.vue')
+          // },
+          // {
+          //   path: 'complaint_subcategories',
+          //   name: 'ComplaintSubcategoriesView',
+          //   component: () => import('../views/refs/subcategories/ComplaintSubcategoriesView.vue')
+          // },
+          {
+            path: 'organizations',
+            name: 'OrganizationsView',
+            component: () => import('../views/refs/organizations/OrganizationView.vue')
+          }
         ]
       }
+      
       
       
     ]
