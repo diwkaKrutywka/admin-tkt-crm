@@ -42,11 +42,11 @@ const routes: RouteRecordRaw[] = [
             name: 'RegionView',
             component: () => import('../views/refs/regions/RegionsView.vue')
           },
-          // {
-          //   path: 'cities',
-          //   name: 'CitiesView',
-          //   component: () => import('../views/refs/cities/CitiesView.vue')
-          // },
+          {
+            path: 'cities',
+            name: 'CitiesView',
+            component: () => import('../views/refs/city/CityView.vue')
+          },
           // {
           //   path: 'districts',
           //   name: 'DistrictsView',

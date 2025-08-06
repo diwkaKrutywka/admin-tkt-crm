@@ -5,9 +5,16 @@ import http from '../utils/https'
 export interface City {
   id: string
   name: string
-  name_kk?: string
-  name_ru?: string
+  region_id: string
+  city_code: string
+  city_type: string
+  is_regional_center: boolean
+  is_district_center: boolean
+  postal_code: string
+  display_order: number
   is_active: boolean
+  created_at?: string
+  updated_at?: string
 }
 export interface Region {
   id: string
@@ -69,7 +76,7 @@ export function RefApi<T = any>(
   }
 
 // API методы для справочных данных
-export const getCities = (params?: { include_inactive?: boolean }) => {
+export const getCities = (params?: { include_inactive?: boolean, search?: string; page?: number; page_size?: number  }) => {
   return RefApi<ApiResponse<City>>('cities/', params, 'GET')
 }
 
@@ -95,8 +102,21 @@ export const updateRegion = (id: string, data: Partial<Region>) => {
 
 // Получить регион по ID (для редактирования)
 export const getRegionById = (id: string) => {
-  return RefApi<Region>(`regions/${id}`, undefined, 'GET')
+  return RefApi<Region>(`regions/${id}`, {multilingual:true}, 'GET')
 }
 export const deleteItems = (url:string, id: string) => {
   return RefApi(`${url}/${id}`, undefined, 'DELETE')
+}
+export const createCity = (data: Partial<City>) => {
+  return RefApi('cities/', data, 'POST')
+}
+
+// Обновить город
+export const updateCity = (id: string, data: Partial<City>) => {
+  return RefApi(`cities/${id}/`, data, 'PUT')
+}
+
+// Получить город по ID
+export const getCityById = (id: string) => {
+  return RefApi<City>(`cities/${id}`, { multilingual: true }, 'GET')
 }
