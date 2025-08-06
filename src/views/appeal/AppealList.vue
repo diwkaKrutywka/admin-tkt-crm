@@ -297,7 +297,7 @@ const fetchUsers = async () => {
     const params: any = {
       page: pagination.value.current,
       page_size: pagination.value.pageSize,
-      q: search.value,
+      search: search.value,
       ...currentFilters.value,
     };
 

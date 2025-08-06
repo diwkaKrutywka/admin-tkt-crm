@@ -1,6 +1,5 @@
 import type { AxiosRequestConfig, AxiosResponse, Method } from 'axios'
 import http from '../utils/https'
-import config from '../config'
 
 // Типы для справочных данных
 export interface City {
@@ -8,6 +7,16 @@ export interface City {
   name: string
   name_kk?: string
   name_ru?: string
+  is_active: boolean
+}
+export interface Region {
+  id: string
+  name: string
+  name_kk?: string
+  name_ru?: string
+  region_code?: string
+  admin_code?: string
+  region_type?: string
   is_active: boolean
 }
 
@@ -68,4 +77,6 @@ export const getDistricts = (params?: { include_inactive?: boolean; city_id?: st
 export const getOrganizations = (params?: { include_inactive?: boolean; district_id?: string }) => {
   return RefApi<ApiResponse<Organization>>('organizations/', params, 'GET')
 }
-  
+export const getRegions = (params?: { include_inactive?: boolean; search?: string; page?: number; page_size?: number }) => {
+  return RefApi<ApiResponse<Region>>('regions/', params, 'GET')
+}

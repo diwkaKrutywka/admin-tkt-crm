@@ -42,5 +42,12 @@ export function getMenuList(): MenuItem[] {
       expand: false,
       children: [],
     },
+    {
+      name: $t("l_Settings"),
+      icon: "settings",
+      routerPath: "/settings",
+      expand: false,
+      children: [],
+    },
   ]
 }
