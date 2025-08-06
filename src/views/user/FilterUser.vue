@@ -1,7 +1,7 @@
 <template>
   <a-modal
     v-model:open="visible"
-    :title="$t('l_Filter_contacts')"
+    :title="$t('l_Filter_users')"
     @ok="handleOk"
     :confirm-loading="loading"
     @cancel="handleCancel"
@@ -11,100 +11,72 @@
     :wrapClassName="'filter-modal-wrapper'"
   >
     <a-form :model="form" layout="vertical">
-      <!-- Order By и Order в одной строке -->
+      <!-- Organization ID и User Role в одной строке -->
       <a-row :gutter="[8, 8]">
         <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-          <a-form-item :label="$t('l_Order_by')" name="order_by">
-            <a-select 
-              v-model:value="form.order_by" 
-              :placeholder="$t('l_Select_order_by')"
+          <a-form-item :label="$t('l_Organization_ID')" name="organization_id">
+            <a-input 
+              v-model:value="form.organization_id" 
+              :placeholder="$t('l_Enter_org_id')"
               allow-clear
-            >
-              <a-select-option value="id">{{ $t('l_ID') }}</a-select-option>
-              <a-select-option value="name">{{ $t('l_Name') }}</a-select-option>
-              <a-select-option value="email">{{ $t('l_Email') }}</a-select-option>
-              <a-select-option value="phone">{{ $t('l_Phone') }}</a-select-option>
-              <a-select-option value="birth_date">{{ $t('l_Birth_date') }}</a-select-option>
-              <a-select-option value="created_at">{{ $t('l_Created_at') }}</a-select-option>
-            </a-select>
+            />
           </a-form-item>
         </a-col>
         <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-          <a-form-item :label="$t('l_Order')" name="order">
+          <a-form-item :label="$t('l_User_role')" name="user_role">
             <a-select 
-              v-model:value="form.order" 
-              :placeholder="$t('l_Select_order')"
+              v-model:value="form.user_role" 
+              :placeholder="$t('l_Select_status')"
               allow-clear
             >
-              <a-select-option value="asc">{{ $t('l_Ascending') }}</a-select-option>
-              <a-select-option value="desc">{{ $t('l_Descending') }}</a-select-option>
+              <a-select-option value="system_admin">System Admin</a-select-option>
+              <a-select-option value="senior_doctor">Senior Doctor</a-select-option>
+              <a-select-option value="dispatcher">Dispatcher</a-select-option>
+              <a-select-option value="manager">Manager</a-select-option>
+              <a-select-option value="employee">Employee</a-select-option>
             </a-select>
           </a-form-item>
         </a-col>
       </a-row>
-
-      <!-- Gender -->
-      <a-form-item :label="$t('l_Gender')" name="gender__eq">
+      <!-- Is Active -->
+      <a-form-item :label="$t('l_Active_status')" name="is_active">
         <a-select 
-          v-model:value="form.gender__eq" 
-          :placeholder="$t('l_Select_gender')"
+          v-model:value="form.is_active" 
+          :placeholder="$t('l_Select_status')"
           allow-clear
         >
-          <a-select-option value="male">{{ $t('l_Male') }}</a-select-option>
-          <a-select-option value="female">{{ $t('l_Female') }}</a-select-option>
-          <a-select-option value="not_specified">{{ $t('l_Not_specified') }}</a-select-option>
+          <a-select-option value="true">{{ $t('l_Active') }}</a-select-option>
+          <a-select-option value="false">{{ $t('l_Inactive') }}</a-select-option>
         </a-select>
       </a-form-item>
 
-      <!-- Birth Date Range в одной строке -->
+      <!-- Даты в одной строке на больших экранах -->
       <a-row :gutter="[8, 8]">
         <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-          <a-form-item :label="$t('l_Birth_date_from')" name="birth_date__gte">
-            <a-date-picker
-              v-model:value="form.birth_date__gte"
-              :placeholder="$t('l_From')"
+          <!--
+          <a-form-item :label="$t('l_Create_time')" name="create_date">
+            <a-range-picker
+              v-model:value="form.create_date"
+              :placeholder="[$t('l_From'), $t('l_To')]"
               format="DD.MM.YYYY"
               allow-clear
               style="width: 100%"
             />
           </a-form-item>
+          -->
         </a-col>
         <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-          <a-form-item :label="$t('l_Birth_date_to')" name="birth_date__lte">
-            <a-date-picker
-              v-model:value="form.birth_date__lte"
-              :placeholder="$t('l_To')"
+          <!--
+          <a-form-item :label="$t('l_Last_login')" name="last_login">
+            <a-range-picker
+              v-model:value="form.last_login"
+              :placeholder="[$t('l_From'), $t('l_To')]"
               format="DD.MM.YYYY"
               allow-clear
               style="width: 100%"
             />
           </a-form-item>
-        </a-col>
-      </a-row>
-
-      <!-- Created Date Range в одной строке -->
-      <a-row :gutter="[8, 8]">
-        <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-          <a-form-item :label="$t('l_Created_date_from')" name="created_at__gte">
-            <a-date-picker
-              v-model:value="form.created_at__gte"
-              :placeholder="$t('l_From')"
-              format="DD.MM.YYYY"
-              allow-clear
-              style="width: 100%"
-            />
-          </a-form-item>
-        </a-col>
-        <a-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12">
-          <a-form-item :label="$t('l_Created_date_to')" name="created_at__lte">
-            <a-date-picker
-              v-model:value="form.created_at__lte"
-              :placeholder="$t('l_To')"
-              format="DD.MM.YYYY"
-              allow-clear
-              style="width: 100%"
-            />
-          </a-form-item>
+          -->
         </a-col>
       </a-row>
     </a-form>
@@ -134,13 +106,11 @@ import type { Dayjs } from 'dayjs'
 const { t: $t } = useI18n()
 
 interface FilterForm {
-  order_by: string
-  order: string
-  gender__eq: string
-  birth_date__gte: Dayjs | null
-  birth_date__lte: Dayjs | null
-  created_at__gte: Dayjs | null
-  created_at__lte: Dayjs | null
+  organization_id: string
+  user_role: string
+  is_active: string | null
+  create_date: [Dayjs, Dayjs] | null
+  last_login: [Dayjs, Dayjs] | null
 }
 
 const props = defineProps<{
@@ -150,7 +120,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'update:open', val: boolean): void
   (e: 'filter', payload: FilterForm): void
-  (e: 'reset'): void
 }>()
 
 const visible = computed({
@@ -161,13 +130,11 @@ const visible = computed({
 const loading = ref(false)
 
 const form = reactive<FilterForm>({
-  order_by: '',
-  order: '',
-  gender__eq: '',
-  birth_date__gte: null,
-  birth_date__lte: null,
-  created_at__gte: null,
-  created_at__lte: null,
+  organization_id: '',
+  user_role: '',
+  is_active: null,
+  create_date: null,
+  last_login: null,
 })
 
 // Сброс формы при открытии модального окна
@@ -181,13 +148,11 @@ watch(
 )
 
 const resetForm = () => {
-  form.order_by = ''
-  form.order = ''
-  form.gender__eq = ''
-  form.birth_date__gte = null
-  form.birth_date__lte = null
-  form.created_at__gte = null
-  form.created_at__lte = null
+  form.organization_id = ''
+  form.user_role = ''
+  form.is_active = null
+  form.create_date = null
+  form.last_login = null
 }
 
 const handleOk = async () => {
@@ -195,9 +160,8 @@ const handleOk = async () => {
   
   try {
     // Проверяем, что хотя бы одно поле заполнено
-    const hasFilters = form.order_by || form.order || form.gender__eq || 
-                      form.birth_date__gte || form.birth_date__lte || 
-                      form.created_at__gte || form.created_at__lte
+    const hasFilters = form.organization_id || form.user_role || form.is_active !== null || 
+                      form.create_date || form.last_login
     
     if (!hasFilters) {
       message.warning($t('l_Choose_filter_criteria'))
@@ -223,7 +187,6 @@ const handleCancel = () => {
 const handleReset = () => {
   resetForm()
   message.info($t('l_Filter_reset'))
-  emit('reset')
 }
 
 const modalWidth = computed(() => {
@@ -262,4 +225,3 @@ onMounted(() => {
   document.head.appendChild(style)
 })
 </script>
-  
