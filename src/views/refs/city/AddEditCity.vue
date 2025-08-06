@@ -68,18 +68,7 @@
             </a-form-item>
           </a-col>
 
-          <a-col>
-            <a-form-item
-              name="is_active"
-              :label="$t('l_Is_active')"
-              :colon="false"
-              style="margin-bottom: 0"
-            >
-              <a-checkbox v-model:checked="form.is_active">
-                {{ $t("l_Is_active") }}
-              </a-checkbox>
-            </a-form-item>
-          </a-col>
+          
         </a-row>
       </a-form-item>
 
@@ -133,7 +122,6 @@ const form = ref({
   is_district_center: false,
   postal_code: "",
   display_order: 0,
-  is_active: true,
 });
 
 const regionOptions = ref<{ label: string; value: string }[]>([]);
@@ -151,7 +139,7 @@ const loadRegions = async () => {
   try {
     regionsLoading.value = true;
     const { data } = await getRegions({
-      is_active: true,
+    
       page: 1,
       page_size: 100,
     });
@@ -190,7 +178,7 @@ const resetForm = () => {
     is_district_center: false,
     postal_code: "",
     display_order: 0,
-    is_active: true,
+   
   };
 };
 
