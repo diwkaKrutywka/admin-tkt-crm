@@ -1,7 +1,7 @@
 import axios from "axios";
 // import store from "../store/index.ts";
 import { notification } from "ant-design-vue";
-import config from "../config";
+import { referenceBaseUrl } from "../config";
 
 const Service = axios.create({
   timeout: 10000 * 3,
@@ -15,7 +15,8 @@ const Service = axios.create({
         ? localStorage.getItem("accessToken")
         : ""
     }`,
-  },config 
+  },
+  config,
 });
 
 const debounceTokenCancel = new Map();

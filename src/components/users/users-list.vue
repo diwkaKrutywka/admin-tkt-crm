@@ -73,7 +73,7 @@ import { useUserStore } from '../../store/index';
 import { h } from 'vue';
 import { Avatar, Tag } from "ant-design-vue";
 import { SafetyOutlined, BankOutlined } from '@ant-design/icons-vue';
-import { users } from '../../api/users';
+import { UserApi } from '../../api/users';
 import { useRouter } from "vue-router";
 import { Button, Tooltip } from 'ant-design-vue';
 import { EditOutlined, DeleteOutlined, UserDeleteOutlined, EllipsisOutlined } from '@ant-design/icons-vue';

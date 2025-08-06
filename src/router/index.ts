@@ -15,19 +15,24 @@ const routes: RouteRecordRaw[] = [
         component: () => import("../views/user/UserList.vue"),
       },
       {
-        path: 'main', 
-        name: 'MainView',
-        component: () => import('../views/main/MainView.vue')
-      }
-    ]
+        path: "main",
+        name: "MainView",
+        component: () => import("../views/main/MainView.vue"),
+      },
+      {
+        path: "/references",
+        name: "References",
+        component: () => import("../views/ReferencesPage.vue"),
+      },
+    ],
   },
   {
-    path: '/login',
-    name: 'LoginView',
-    component: () => import('../views/LoginView.vue'),
-    children: []
-  }
-]
+    path: "/login",
+    name: "LoginView",
+    component: () => import("../views/LoginView.vue"),
+    children: [],
+  },
+];
 
 const router = createRouter({
   history: createWebHistory(),
