@@ -41,16 +41,24 @@
   ]
   
   const route = useRoute()
-  const router = useRouter()
-  
-  const activeTab = ref(route.params.tab || tabs[0].key)
-  
-  watch(() => route.params.tab, (newTab) => {
-    activeTab.value = newTab as string
-  })
-  
-  function onTabChange(key: string) {
-    router.push({ name: 'RefViewChild', params: { tab: key } })
+const router = useRouter()
+
+const activeTab = ref('')
+
+watch(() => route.path, (newPath) => {
+  // Ищем точное совпадение пути, а не просто окончание
+  const tab = tabs.find(t => newPath === `/settings/${t.path}`)
+  if (tab) {
+    activeTab.value = tab.key
   }
+}, { immediate: true })
+
+  function onTabChange(key: string) {
+  const selectedTab = tabs.find(tab => tab.key === key)
+  if (selectedTab) {
+    router.push(`/settings/${selectedTab.path}`)
+  }
+}
+
   </script>
   

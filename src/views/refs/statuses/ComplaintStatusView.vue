@@ -1,10 +1,10 @@
 <template>
   <div>
-    <a-page-header :title="$t('l_Settings') + ' / ' + $t('l_Organizations')">
+    <a-page-header :title="$t('l_Settings') + ' / ' + $t('l_Complaint_statuses')">
       <template #extra>
         <a-button type="primary" @click="onAdd">
           <span class="material-symbols-outlined">add
-            <span class="ml-2">{{ $t('l_Add_organization') }}</span>
+            <span class="ml-2">{{ $t('l_Add_complaint_status') }}</span>
           </span>
         </a-button>
       </template>
@@ -31,14 +31,17 @@
             </span>
           </a-space>
         </template>
+        <template v-else-if="column.dataIndex === 'is_final'">
+          <span>{{ record.is_final ? $t('l_Yes') : $t('l_No') }}</span>
+        </template>
       </template>
     </a-table>
-
-    <AddEditOrganization
+    <!-- Модалка для добавления/редактирования — по запросу -->
+    <AddEditStatus
       :open="modalVisible"
-      :organization="editingOrganization"
+      :status="editingStatus"
       @update:open="modalVisible = $event"
-      @submit="fetchOrganizations"
+      @submit="fetchComplaintStatuses"
     />
   </div>
 </template>
@@ -47,17 +50,17 @@
 import { ref, onMounted, h } from 'vue'
 import { message } from 'ant-design-vue'
 import type { TableRenderProps } from '../../../types/table'
-import type { Organization } from '../../../types/ref'
+import type { ComplaintStatus } from '../../../types/ref'
 import { useI18n } from 'vue-i18n'
-import { getOrganizations } from '../../../api/ref'
-import AddEditOrganization from './AddEditOrganization.vue'
+import { getComplaintStatuses } from '../../../api/ref'
+import AddEditStatus from './AddEditStatus.vue'
 
 const { t: $t } = useI18n()
 
-const tableData = ref<Organization[]>([])
+const tableData = ref<ComplaintStatus[]>([])
 const loading = ref(false)
 const modalVisible = ref(false)
-const editingOrganization = ref<Organization | null>(null)
+const editingStatus = ref<ComplaintStatus | null>(null)
 
 const pagination = ref({
   current: 1,
@@ -78,28 +81,24 @@ const columns = [
       (pagination.value.current - 1) * pagination.value.pageSize + index + 1,
   },
   {
-    title: $t('l_Full_name'),
-    dataIndex: 'full_name',
+    title: $t('l_Name'),
+    dataIndex: 'name',
   },
   {
-    title: $t('l_Short_name'),
-    dataIndex: 'short_name',
+    title: $t('l_Code'),
+    dataIndex: 'code',
   },
   {
-    title: $t('l_Organization_type'),
-    dataIndex: 'organization_type',
+    title: $t('l_Is_final'),
+    dataIndex: 'is_final',
   },
   {
-    title: $t('l_Display_name'),
-    dataIndex: 'display_name',
+    title: $t('l_Created_at'),
+    dataIndex: 'created_at',
   },
   {
-    title: $t('l_Status'),
-    dataIndex: 'is_active',
-    customRender: ({ text }: TableRenderProps<Organization>) =>
-      text
-        ? h('span', { style: 'color: green' }, $t('l_Active'))
-        : h('span', { style: 'color: red' }, $t('l_Inactive')),
+    title: $t('l_Updated_at'),
+    dataIndex: 'updated_at',
   },
   {
     title: $t('l_Actions'),
@@ -109,18 +108,17 @@ const columns = [
   },
 ]
 
-const fetchOrganizations = async () => {
+const fetchComplaintStatuses = async () => {
   loading.value = true
   try {
     const params = {
-      page: pagination.value.current,
-        page_size: pagination.value.pageSize,
+      include_inactive: true
     }
-    const { data } = await getOrganizations(params)
+    const { data } = await getComplaintStatuses(params)
     tableData.value = data.items
-      pagination.value.total = data.total
+    pagination.value.total = data.total ?? data.items.length
   } catch (error) {
-    message.error($t('l_Load_error') || 'Failed to load organizations')
+    message.error($t('l_Load_error') || 'Failed to load complaint statuses')
   } finally {
     loading.value = false
   }
@@ -129,21 +127,21 @@ const fetchOrganizations = async () => {
 const handleTableChange = (pag: any) => {
   pagination.value.current = pag.current
   pagination.value.pageSize = pag.pageSize
-  fetchOrganizations()
+  fetchComplaintStatuses()
 }
 
 const onAdd = () => {
-  editingOrganization.value = null
+  editingStatus.value = null
   modalVisible.value = true
 }
 
-const onEdit = (organization: Organization) => {
-  editingOrganization.value = organization
+const onEdit = (status: ComplaintStatus) => {
+  editingStatus.value = status
   modalVisible.value = true
 }
 
 onMounted(() => {
-  fetchOrganizations()
+  fetchComplaintStatuses()
 })
 </script>
 
