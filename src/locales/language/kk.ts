@@ -186,4 +186,5 @@ export default {
   "l_OSM_ID": "OSM ID",
   "l_Geometry": "Геометрия",
   "l_Custom": "Қолмен енгізілген",
+  "l_Confirm_delete_city":"Қаланы жоюды растаңыз"
 };

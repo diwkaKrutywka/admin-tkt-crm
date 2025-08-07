@@ -37,7 +37,7 @@
           <a-input-number v-model:value="form.display_order" style="width: 100%" />
         </a-form-item>
         <a-form-item :label="$t('l_Description')" name="description">
-          <a-textarea v-model:value="form.description" rows="3" />
+          <a-textarea v-model:value="form.description" :rows="3" />
         </a-form-item>
       
       </a-form>

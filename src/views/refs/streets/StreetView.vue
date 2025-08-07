@@ -48,8 +48,8 @@
       </a-table>
   
       <add-edit-street
-        v-model:open="modalVisible"
-        :street_id="editingStreet?.id"
+        v-model:visible="modalVisible"
+        :street_id="editingStreet?.id ?? null"
         @submit="fetchStreets"
       />
     </div>

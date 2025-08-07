@@ -59,7 +59,7 @@
       </a-form-item>
 
       <a-form-item :label="$t('l_Description')" name="description">
-        <a-textarea v-model:value="form.description" rows="3" />
+        <a-textarea v-model:value="form.description" :rows="3" />
       </a-form-item>
 
       <a-form-item :label="$t('l_Display_order')" name="display_order">

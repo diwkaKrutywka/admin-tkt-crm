@@ -49,7 +49,7 @@
   
       <add-edit-address
         v-model:open="modalVisible"
-        :address_id="editingAddress?.id"
+        :address_id="editingAddress?.id ?? null"
         @submit="fetchAddresses"
       />
     </div>

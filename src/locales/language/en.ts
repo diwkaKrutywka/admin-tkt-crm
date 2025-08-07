@@ -185,7 +185,6 @@ export default {
   "l_Complaint": "Complaint",
   "l_Add_street":"Add street",
   "l_Edit_street": "Edit street",
- 
   "l_Street_type": "Street type",
   "l_Street_code": "Street code",
   "l_OSM_ID": "OSM ID",

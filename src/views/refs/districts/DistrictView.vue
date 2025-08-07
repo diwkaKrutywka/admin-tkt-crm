@@ -49,7 +49,7 @@
   
       <add-edit-district
         v-model:open="modalVisible"
-        :district_id="editingDistrict?.id"
+        :district_id="editingDistrict?.id ?? null"
         @submit="fetchDistricts"
       />
     </div>

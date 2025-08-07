@@ -51,7 +51,7 @@
   
       <add-edit-call-type
         v-model:open="modalVisible"
-        :call_type_id="editingItem?.id"
+        :call_type_id="editingItem?.id ?? null"
         @submit="fetchCallTypes"
       />
     </div>

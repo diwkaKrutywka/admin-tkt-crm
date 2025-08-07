@@ -182,7 +182,7 @@ export default {
   "l_Complaint": "Жалоба",
   "l_Add_street": "Добавить улицу",
   "l_Edit_street": "Редактировать улицу",
-  
+  "l_Confirm_delete_city":"Подтвердите удаление города",
   "l_Street_type": "Тип улицы",
   "l_Street_code": "Код улицы",
   "l_OSM_ID": "OSM ID",

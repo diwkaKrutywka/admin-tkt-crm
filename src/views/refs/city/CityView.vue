@@ -50,8 +50,8 @@
       </a-table>
   
       <add-edit-city
-        v-model:open="modalVisible"
-        :city_id="editingCity?.id"
+        v-model:visible="modalVisible"
+        :city_id="editingCity?.id ?? null"
         @submit="fetchCities"
       />
     </div>

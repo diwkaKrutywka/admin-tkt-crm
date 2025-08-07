@@ -22,7 +22,7 @@
           <a-input v-model:value="form.code" />
         </a-form-item>
         <a-form-item :label="$t('l_Description')" name="description">
-          <a-textarea v-model:value="form.description" rows="3" />
+          <a-textarea v-model:value="form.description" :rows="3" />
         </a-form-item>
         <a-form-item :label="$t('l_Complaint')" name="is_complaint">
           <a-switch v-model:checked="form.is_complaint" />
