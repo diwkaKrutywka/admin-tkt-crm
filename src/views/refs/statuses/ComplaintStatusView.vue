@@ -31,9 +31,7 @@
             </span>
           </a-space>
         </template>
-        <template v-else-if="column.dataIndex === 'is_final'">
-          <span>{{ record.is_final ? $t('l_Yes') : $t('l_No') }}</span>
-        </template>
+
       </template>
     </a-table>
     <!-- Модалка для добавления/редактирования — по запросу -->
@@ -55,7 +53,7 @@ import { useI18n } from 'vue-i18n'
 import { getComplaintStatuses } from '../../../api/ref'
 import AddEditStatus from './AddEditStatus.vue'
 
-const { t: $t } = useI18n()
+const { t: $t, locale } = useI18n()
 
 const tableData = ref<ComplaintStatus[]>([])
 const loading = ref(false)
@@ -82,19 +80,25 @@ const columns = [
   },
   {
     title: $t('l_Name'),
-    dataIndex: 'name',
+    key: 'name',
+    customRender: ({ record }: { record: ComplaintStatus }) => {
+      if (locale.value === 'ru') return record.name || record.code
+      if (locale.value === 'kk') return record.name_kk || record.code
+      if (locale.value === 'en') return record.name_en || record.code
+      return record.name || record.code
+    },
   },
   {
     title: $t('l_Code'),
     dataIndex: 'code',
   },
   {
-    title: $t('l_Description'),
-    dataIndex: 'description',
-  },
-  {
-    title: $t('l_Is_final'),
+    title: $t('l_Status'),
     dataIndex: 'is_final',
+    customRender: ({ text }: TableRenderProps<ComplaintStatus>) =>
+      text
+        ? h('span', { style: 'color: green' }, $t('l_Active'))
+        : h('span', { style: 'color: red' }, $t('l_Inactive')),
   },
   {
     title: $t('l_Actions'),

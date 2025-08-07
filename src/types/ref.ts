@@ -39,7 +39,9 @@ description?: string;
 
 export interface ComplaintCategory {
 id: string;
-name: string;
+name?: string;
+name_kk?: string;
+name_en?: string;
 code: string;
 description?: string;
 is_active: boolean;

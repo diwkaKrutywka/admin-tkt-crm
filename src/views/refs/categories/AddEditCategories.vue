@@ -8,8 +8,18 @@
     destroyOnClose
   >
     <a-form :model="form" layout="vertical">
-      <a-form-item :label="$t('l_Name')" name="name" required>
-        <a-input v-model:value="form.name" />
+      <a-form-item :label="$t('l_Name_ru')" name="name" required>
+        <a-select
+          v-model:value="form.name"
+          :options="categoryOptions"
+          :placeholder="$t('l_Name_ru')"
+        />
+      </a-form-item>
+      <a-form-item :label="$t('l_Name_kz')" name="name_kk" required>
+        <a-input v-model:value="form.name_kk" />
+      </a-form-item>
+      <a-form-item :label="$t('l_Name_en')" name="name_en" required>
+        <a-input v-model:value="form.name_en" />
       </a-form-item>
       <a-form-item :label="$t('l_Code')" name="code" required>
         <a-input v-model:value="form.code" />
@@ -22,11 +32,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits } from 'vue'
+import { ref, watch, defineProps, defineEmits, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
 import type { ComplaintCategory } from '../../../types/ref'
-import { createComplaintCategory, updateComplaintCategory } from '../../../api/ref'
+import { createComplaintCategory, updateComplaintCategory, getComplaintCategories } from '../../../api/ref'
 
 const props = defineProps({
   open: Boolean,
@@ -39,8 +49,24 @@ const loading = ref(false)
 const isEdit = ref(false)
 const form = ref({
   name: '',
+  name_kk: '',
+  name_en: '',
   code: '',
   description: '',
+})
+
+const categoryOptions = ref<{ label: string, value: string }[]>([])
+
+onMounted(async () => {
+  try {
+    const res = await getComplaintCategories()
+    categoryOptions.value = (res.data?.items || []).map((cat: ComplaintCategory) => ({
+      label: cat.name ?? '',
+      value: cat.name ?? '',
+    }))
+  } catch (e) {
+    categoryOptions.value = []
+  }
 })
 
 watch(
@@ -49,7 +75,9 @@ watch(
     if (cat) {
       isEdit.value = true
       form.value = {
-        name: cat.name,
+        name: cat.name || '',
+        name_kk: cat.name_kk || '',
+        name_en: cat.name_en || '',
         code: cat.code,
         description: cat.description || '',
       }
@@ -57,6 +85,8 @@ watch(
       isEdit.value = false
       form.value = {
         name: '',
+        name_kk: '',
+        name_en: '',
         code: '',
         description: '',
       }

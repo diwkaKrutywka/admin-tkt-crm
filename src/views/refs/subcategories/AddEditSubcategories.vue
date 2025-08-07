@@ -15,11 +15,11 @@
           :placeholder="$t('l_Complaint_category_id')"
         />
       </a-form-item>
-      <a-form-item :label="$t('l_Name_kz')" name="name_kk" required>
-        <a-input v-model:value="form.name_kk" />
-      </a-form-item>
       <a-form-item :label="$t('l_Name_ru')" name="name_ru" required>
         <a-input v-model:value="form.name_ru" />
+      </a-form-item>
+      <a-form-item :label="$t('l_Name_kz')" name="name_kk" required>
+        <a-input v-model:value="form.name_kk" />
       </a-form-item>
       <a-form-item :label="$t('l_Name_en')" name="name_en" required>
         <a-input v-model:value="form.name_en" />

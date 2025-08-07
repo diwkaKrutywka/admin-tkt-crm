@@ -159,4 +159,47 @@ export default {
   l_District_center: "Районный центр",
   l_Postal_code: "Почтовый индекс",
   l_Is_active: "Активен",
+  l_Organization_number: "Номер организации",
+  l_Organization_type: "Тип организации",
+  l_Company: "Компания",
+  l_Private_clinic: "Частная клиника",
+  l_Public_clinic: "Поликлиника",
+  l_Hospital: "Больница",
+  l_Website: "Веб-сайт",
+  l_Description: "Описание",
+  l_Edit_organization: "Редактировать организацию",
+  l_Short_name: "Краткое название",
+  l_Display_name: "Название для отображения",
+  l_Add_organization: "Добавить организацию",
+  l_Organization_updated: "Организация успешно обновлена",
+  l_Organization_created: "Организация успешно добавлена",
+
+  
+
+  // Complaint subcategory translations
+  l_Add_complaint_subcategory: "Добавить подкатегорию обращения",
+  l_Edit_complaint_subcategory: "Редактировать подкатегорию обращения",
+  l_Complaint_subcategory_created: "Подкатегория обращения успешно добавлена",
+  l_Complaint_subcategory_updated: "Подкатегория обращения успешно обновлена",
+  l_Complaint_category_id: "ID категории обращения",
+  l_Code: "Код",
+  l_Complaint_subcategories: "Подкатегории",
+
+  // Complaint category translations
+  l_Add_complaint_category: "Добавить категорию обращения",
+  l_Edit_complaint_category: "Редактировать категорию обращения",
+  l_Complaint_category_created: "Категория обращения успешно добавлена",
+  l_Complaint_category_updated: "Категория обращения успешно обновлена",
+  l_Complaint_categories: "Категории обращений",
+  
+  // Complaint status translations
+  l_Add_complaint_status: "Добавить статус обращения",
+  l_Edit_complaint_status: "Редактировать статус обращения",
+  l_Complaint_status_created: "Статус обращения успешно добавлен",
+  l_Complaint_status_updated: "Статус обращения успешно обновлен",
+  l_Is_final: "Конечный статус",
+  l_Complaint_statuses: "Статусы обращений",
+
+  // Call subtype translations
+  l_Add_call_subtype: "Добавить подтип звонка",
 };

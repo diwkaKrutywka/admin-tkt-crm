@@ -78,7 +78,7 @@ const columns = [
       (pagination.value.current - 1) * pagination.value.pageSize + index + 1,
   },
   {
-    title: $t('l_Full_name'),
+    title: $t('l_Name'),
     dataIndex: 'full_name',
   },
   {
@@ -88,18 +88,22 @@ const columns = [
   {
     title: $t('l_Organization_type'),
     dataIndex: 'organization_type',
+    customRender: ({ text }: { text: string }) => {
+      if (text === 'private_clinic') {
+        return $t('l_Private_clinic')
+      } else if (text === 'clinic' || text === 'public_clinic') {
+        return $t('l_Public_clinic')
+      } else if (text === 'hospital') {
+        return $t('l_Hospital')
+      } else if (text === "company") {
+        return $t('l_Company')
+      }
+      return text
+    },
   },
   {
     title: $t('l_Display_name'),
     dataIndex: 'display_name',
-  },
-  {
-    title: $t('l_Status'),
-    dataIndex: 'is_active',
-    customRender: ({ text }: TableRenderProps<Organization>) =>
-      text
-        ? h('span', { style: 'color: green' }, $t('l_Active'))
-        : h('span', { style: 'color: red' }, $t('l_Inactive')),
   },
   {
     title: $t('l_Actions'),

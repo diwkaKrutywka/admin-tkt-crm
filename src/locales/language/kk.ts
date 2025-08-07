@@ -159,4 +159,43 @@ export default {
   l_District_center: 'Аудан орталығы',
   l_Postal_code: 'Пошталық индекс',
   l_Is_active: 'Белсенді',
+  l_Organization_number: "Ұйым нөмірі",
+  l_Organization_type: "Ұйым түрі",
+  l_Display_name: "Көрсету аты",
+  l_Add_organization: "Ұйым қосу",
+  l_Short_name: "Қысқа атау",
+  l_Company: "Компания",
+  l_Private_clinic: "Жеке емхана",
+  l_Public_clinic: "Поликлиника",
+  l_Hospital: "Аурухана",
+  l_Website: "Веб-сайт",
+  l_Description: "Сипаттама",
+  l_Edit_organization: "Ұйымды өзгерту",
+  l_Organization_updated: "Ұйым сәтті жаңартылды",
+  l_Organization_created: "Ұйым сәтті қосылды",
+  // Complaint subcategory translations
+  l_Add_complaint_subcategory: "Апелляция кіші санатын қосу",
+  l_Edit_complaint_subcategory: "Апелляция кіші санатын өзгерту",
+  l_Complaint_subcategory_created: "Апелляция кіші санаты сәтті қосылды",
+  l_Complaint_subcategory_updated: "Апелляция кіші санаты сәтті жаңартылды",
+  l_Complaint_category_id: "Апелляция санаты ID",
+  l_Code: "Код",
+  l_Complaint_subcategories: "Апелляция кіші санаттары",
+  // Complaint category translations
+  l_Add_complaint_category: "Апелляция санатын қосу",
+  l_Edit_complaint_category: "Апелляция санатын өзгерту",
+  l_Complaint_category_created: "Апелляция санаты сәтті қосылды",
+  l_Complaint_category_updated: "Апелляция санаты сәтті жаңартылды",
+  l_Complaint_categories: "Апелляция санаттары",
+
+  // Complaint status translations
+  l_Add_complaint_status: "Апелляция статусын қосу",
+  l_Edit_complaint_status: "Апелляция статусын өзгерту",
+  l_Complaint_status_created: "Апелляция статусы сәтті қосылды",
+  l_Complaint_status_updated: "Апелляция статусы сәтті жаңартылды",
+  l_Is_final: "Соңғы статус",
+  l_Complaint_statuses: "Апелляция статустары",
+
+  // Call subtype translations
+  l_Add_call_subtype: "Қоңырау кіші түрін қосу",
 };

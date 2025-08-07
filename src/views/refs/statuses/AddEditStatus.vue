@@ -8,11 +8,11 @@
     destroyOnClose
   >
     <a-form :model="form" layout="vertical">
-      <a-form-item :label="$t('l_Name_kk')" name="name_kk" required>
-        <a-input v-model:value="form.name_kk" />
-      </a-form-item>
       <a-form-item :label="$t('l_Name_ru')" name="name_ru" required>
         <a-input v-model:value="form.name_ru" />
+      </a-form-item>
+      <a-form-item :label="$t('l_Name_kz')" name="name_kk" required>
+        <a-input v-model:value="form.name_kk" />
       </a-form-item>
       <a-form-item :label="$t('l_Name_en')" name="name_en" required>
         <a-input v-model:value="form.name_en" />
@@ -23,12 +23,23 @@
       <a-form-item :label="$t('l_Description')" name="description">
         <a-input v-model:value="form.description" />
       </a-form-item>
-      <a-form-item :label="$t('l_Is_final')" name="is_final">
-        <a-switch v-model:checked="form.is_final" />
+      <a-form-item>
+          <a-row :gutter="[20, 0]" align="middle">
+          <a-col>
+            <a-form-item
+              :label="$t('l_Status')"
+              name="is_final"
+              :colon="false"
+              style="margin-bottom: 0"
+            >
+                             <a-switch 
+                 v-model:checked="form.is_final" 
+               />
+            </a-form-item>
+          </a-col>
+        </a-row>
       </a-form-item>
-      <a-form-item :label="$t('l_Is_active')" name="is_active">
-        <a-switch v-model:checked="form.is_active" />
-      </a-form-item>
+      
     </a-form>
   </a-modal>
 </template>
@@ -56,7 +67,6 @@ const form = ref({
   code: '',
   description: '',
   is_final: false,
-  is_active: true,
 })
 
 watch(
@@ -66,12 +76,11 @@ watch(
       isEdit.value = true
       form.value = {
         name_kk: status.name_kk || '',
-        name_ru: status.name_ru || '',
+        name_ru: status.name || '',
         name_en: status.name_en || '',
-        code: status.code,
+        code: status.code || '',
         description: status.description || '',
-        is_final: status.is_final,
-        is_active: status.is_active,
+        is_final: status.is_final || false,
       }
     } else {
       isEdit.value = false
@@ -82,7 +91,6 @@ watch(
         code: '',
         description: '',
         is_final: false,
-        is_active: true,
       }
     }
   },

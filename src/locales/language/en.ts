@@ -172,4 +172,36 @@ export default {
   l_Complaint_category_id: "Complaint Category ID",
   l_Code: "Code",
   l_Description: "Description",
+
+  l_Organization_number: "Organization number",
+  l_Organization_type: "Organization type",
+  l_Display_name: "Display name",
+  l_Add_organization: "Add organization",
+  l_Short_name: "Short name",
+  l_Company: "Company",
+  l_Private_clinic: "Private hospital",
+  l_Public_clinic: "Clinic",
+  l_Hospital: "Hospital",
+  l_Website: "Website",
+  l_Edit_organization: "Edit organization",
+  l_Organization_updated: "Organization updated successfully",
+  l_Organization_created: "Organization created successfully",
+
+  // Complaint category translations
+  l_Add_complaint_category: "Add Complaint Category",
+  l_Edit_complaint_category: "Edit Complaint Category",
+  l_Complaint_category_created: "Complaint category created successfully",
+  l_Complaint_category_updated: "Complaint category updated successfully",
+  l_Complaint_categories: "Complaint categories",
+  
+  // Complaint status translations
+  l_Add_complaint_status: "Add Complaint Status",
+  l_Edit_complaint_status: "Edit Complaint Status",
+  l_Complaint_status_created: "Complaint status created successfully",
+  l_Complaint_status_updated: "Complaint status updated successfully",
+  l_Is_final: "Final status",
+  l_Complaint_statuses: "Complaint statuses",
+
+  // Call subtype translations
+  l_Add_call_subtype: "Add Call Subtype",
 };

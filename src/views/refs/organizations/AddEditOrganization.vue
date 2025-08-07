@@ -11,7 +11,7 @@
       <a-form-item :label="$t('l_Organization_number')" name="organization_number">
         <a-input v-model:value="form.organization_number" />
       </a-form-item>
-      <a-form-item :label="$t('l_Full_name')" name="full_name" required>
+      <a-form-item :label="$t('l_Name')" name="full_name" required>
         <a-input v-model:value="form.full_name" />
       </a-form-item>
       <a-form-item :label="$t('l_Short_name')" name="short_name" required>
@@ -19,9 +19,11 @@
       </a-form-item>
       <a-form-item :label="$t('l_Organization_type')" name="organization_type" required>
         <a-select v-model:value="form.organization_type">
-          <a-select-option value="company">{{ $t('l_Company') }}</a-select-option>
           <a-select-option value="private_clinic">{{ $t('l_Private_clinic') }}</a-select-option>
           <a-select-option value="public_clinic">{{ $t('l_Public_clinic') }}</a-select-option>
+          <a-select-option value="hospital">{{ $t('l_Hospital') }}</a-select-option>
+          <a-select-option value="company">{{ $t('l_Company') }}</a-select-option>
+
         </a-select>
       </a-form-item>
       <a-form-item :label="$t('l_Phone')" name="phone">

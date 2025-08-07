@@ -32,9 +32,9 @@
           </a-space>
         </template>
         <template v-else-if="column.dataIndex === 'is_active'">
-          <a-tag :color="record.is_active ? 'green' : 'red'">
+          <span :style="{ color: record.is_active ? 'green' : 'red' }">
             {{ record.is_active ? $t('l_Active') : $t('l_Inactive') }}
-          </a-tag>
+          </span>
         </template>
       </template>
     </a-table>
@@ -90,11 +90,7 @@ const columns = [
     title: $t('l_Code'),
     dataIndex: 'code',
   },
-  {
-    title: $t('l_Description'),
-    dataIndex: 'description',
-  },
-  {
+  { 
     title: $t('l_Status'),
     dataIndex: 'is_active',
   },

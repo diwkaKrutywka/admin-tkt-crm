@@ -8,7 +8,7 @@
     destroyOnClose
   >
     <a-form :model="form" layout="vertical">
-      <a-form-item :label="$t('l_Name_kk')" name="name_kk" required>
+      <a-form-item :label="$t('l_Name_kz')" name="name_kk" required>
         <a-input v-model:value="form.name_kk" />
       </a-form-item>
       <a-form-item :label="$t('l_Name_ru')" name="name_ru" required>
