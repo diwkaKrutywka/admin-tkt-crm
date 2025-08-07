@@ -7,6 +7,7 @@
       :confirm-loading="loading"
       :destroyOnClose="true"
       width="600px"
+      class="bg-[#F3F6F8]"
     >
       <a-form :model="form" layout="vertical">
         <a-form-item :label="$t('l_Region')" name="region_id" required>

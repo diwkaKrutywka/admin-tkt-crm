@@ -53,16 +53,16 @@
         class="mb-6 mt-8"
       >
         <a-descriptions-item :label="$t('l_Call_type')">
-          {{ appealData.call_type_id || $t('l_Not_specified_m') }}
+          {{ appealData.call_type?.name || $t('l_Not_specified_m') }}
         </a-descriptions-item>
         <a-descriptions-item :label="$t('l_Call_subtype')">
-          {{ appealData.call_sub_type_id || $t('l_Not_specified_m') }}
+          {{ appealData.call_sub_type?.name || $t('l_Not_specified_m') }}
         </a-descriptions-item>
         <a-descriptions-item :label="$t('l_Appeal_category')">
-          {{ appealData.appeal_category_id || $t('l_Not_specified_f') }}
+          {{ appealData.appeal_category?.name || $t('l_Not_specified_f') }}
         </a-descriptions-item>
         <a-descriptions-item :label="$t('l_Appeal_subcategory')">
-          {{ appealData.appeal_sub_category_id || $t('l_Not_specified_f') }}
+          {{ appealData.appeal_sub_category?.name || $t('l_Not_specified_f') }}
         </a-descriptions-item>
       </a-descriptions>
 
@@ -74,13 +74,13 @@
         class="mb-6 mt-8"
       >
         <a-descriptions-item :label="$t('l_City')">
-          {{ appealData.city_id || $t('l_Not_specified_m') }}
+          {{ appealData.city?.name || $t('l_Not_specified_m') }}
         </a-descriptions-item>
         <a-descriptions-item :label="$t('l_District')">
-          {{ appealData.district_id || $t('l_Not_specified_m') }}
+          {{ appealData.district?.name|| $t('l_Not_specified_m') }}
         </a-descriptions-item>
         <a-descriptions-item :label="$t('l_Polyclinic')">
-          {{ appealData.healthcare_facility_id || $t('l_Not_specified_f') }}
+          {{ appealData.healthcare_facility?.name || $t('l_Not_specified_f') }}
         </a-descriptions-item>
       </a-descriptions>
 
