@@ -1,36 +1,42 @@
 <template>
-  <a-modal v-model:open="visible" :title="isEdit ? 'Edit User' : 'Add User'" @ok="handleOk" :confirm-loading="loading"
-    @cancel="handleCancel" destroyOnClose>
+  <a-modal
+    v-model:open="visible"
+    :title="isEdit ? 'Edit User' : 'Add User'"
+    @ok="handleOk"
+    :confirm-loading="loading"
+    @cancel="handleCancel"
+    destroyOnClose
+  >
     <a-form :model="form" :rules="rules" ref="formRef" layout="vertical">
-      <a-form-item label="Username" name="username">
+      <a-form-item :label="$t('l_Username')" name="username" v-if="!isEdit">
         <a-input v-model:value="form.username" />
       </a-form-item>
 
-      <a-form-item label="Full Name" name="full_name">
+      <a-form-item :label="$t('l_Full_name')" name="full_name">
         <a-input v-model:value="form.full_name" />
       </a-form-item>
 
-      <a-form-item v-if="!isEdit" label="Password" name="password">
+      <a-form-item v-if="!isEdit" :label="$t('l_Password')" name="password">
         <a-input-password v-model:value="form.password" />
       </a-form-item>
 
-      <a-form-item label="User Role" name="user_role">
+      <a-form-item :label="$t('l_User_role')" name="user_role" v-if="!isEdit">
         <a-select v-model:value="form.user_role" :options="roleOptions" />
       </a-form-item>
 
-      <a-form-item label="Organization" name="organization_id">
+      <a-form-item label="Organization ID" name="organization_id">
         <a-input v-model:value="form.organization_id" />
       </a-form-item>
 
-      <a-form-item label="Organization Name" name="organization_name">
+      <a-form-item :label="$t('l_Organization')" name="organization_name">
         <a-input v-model:value="form.organization_name" />
       </a-form-item>
 
-      <a-form-item label="Department" name="department">
+      <a-form-item :label="$t('l_Department')" name="department">
         <a-input v-model:value="form.department" />
       </a-form-item>
 
-      <a-form-item label="Position" name="position">
+      <a-form-item :label="$t('l_Position')" name="position">
         <a-input v-model:value="form.position" />
       </a-form-item>
     </a-form>
@@ -38,10 +44,11 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, watch, computed } from 'vue';
+import { ref, reactive, computed, watch } from 'vue';
 import type { FormInstance } from 'ant-design-vue';
 import { message } from 'ant-design-vue';
-import { UserApi } from '../../api/users'
+import { UserApi } from '../../api/user';
+import { toRaw } from 'vue';
 interface User {
   username: string;
   full_name: string;
@@ -55,7 +62,7 @@ interface User {
 
 const props = defineProps<{
   open: boolean;
-  user?: User;
+  user_id?: string;
 }>();
 
 const emit = defineEmits<{
@@ -68,7 +75,7 @@ const visible = computed({
   set: (val: boolean) => emit('update:open', val),
 });
 
-const isEdit = computed(() => !!props.user);
+const isEdit = computed(() => !!props.user_id);
 
 const form = reactive<User>({
   username: '',
@@ -83,20 +90,46 @@ const form = reactive<User>({
 
 const roleOptions = [
   { label: 'System Admin', value: 'system_admin' },
-  { label: 'User', value: 'user' },
+  { label: 'Senior Doctor', value: 'senior_doctor' },
   { label: 'Manager', value: 'manager' },
+  { label: 'Dispatcher', value: 'dispatcher' },
+  { label: 'Employee', value: 'employee' },
 ];
 
 const formRef = ref<FormInstance>();
 const loading = ref(false);
 
+const fetchUser = async () => {
+  if (!props.user_id) return;
+
+  loading.value = true;
+  try {
+    const res = await UserApi(`${props.user_id}`, {}, 'GET');
+    const userData = res.data;
+
+    Object.assign(form, {
+      username: '', // disable editing username
+      full_name: userData.full_name,
+      password: '',
+      user_role: userData.user_role || 'employee',
+      organization_id: userData.organization_id,
+      organization_name: userData.organization_name,
+      department: userData.department,
+      position: userData.position,
+    });
+  } catch (err) {
+    message.error('Failed to load user data');
+  } finally {
+    loading.value = false;
+  }
+};
+
 watch(
-  () => props.user,
-  (val) => {
-    if (val) {
-      Object.assign(form, { ...val });
-      form.password = ''; // don't pre-fill password
-    } else {
+  () => props.open,
+  async (val) => {
+    if (val && props.user_id) {
+      await fetchUser();
+    } else if (val) {
       Object.assign(form, {
         username: '',
         full_name: '',
@@ -124,21 +157,25 @@ const rules = {
   user_role: [{ required: true, message: 'Please select user role' }],
 };
 
-
 const handleOk = async () => {
   try {
     await formRef.value?.validate();
     loading.value = true;
 
-    const payload = { ...form };
+    // Fix: use Record<string, any> to make properties deletable
+    const payload: Record<string, any> = { ...toRaw(form) };
 
-    if (isEdit.value) {
+    if (isEdit.value && props.user_id) {
       delete payload.password;
+      delete payload.user_role;
+      delete payload.username;
+      await UserApi(`${props.user_id}`, payload, 'PUT');
+      message.success('User updated successfully');
       emit('submit', payload as User);
     } else {
-      const response = await UserApi('' /* endpoint suffix */, payload, 'POST');
+      const res = await UserApi('', payload, 'POST');
       message.success('User created successfully');
-      emit('submit', response.data);
+      emit('submit', res.data);
     }
 
     visible.value = false;

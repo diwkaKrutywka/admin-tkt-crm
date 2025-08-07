@@ -1,19 +1,19 @@
 import http from '../utils/https'
-import type { AxiosRequestConfig, AxiosResponse } from 'axios'
+import type { AxiosRequestConfig, AxiosResponse, Method } from 'axios'
 
 export function UserApi<T = any>(
   url: string,
   data?: Record<string, any>,
-  method: 'GET' | 'POST' = 'POST'
+  method: Method = 'POST'
 ): Promise<AxiosResponse<T>> {
   const config: AxiosRequestConfig = {
-    url: `users/${url}`,
+    url: `auth/api/v1/auth/users/${url}`,
     method,
   }
 
-  if (method === 'POST') {
+  if (['POST', 'PUT', 'PATCH'].includes(method.toUpperCase())) {
     config.data = data
-  } else {
+  } else if (method.toUpperCase() === 'GET') {
     config.params = data
   }
 

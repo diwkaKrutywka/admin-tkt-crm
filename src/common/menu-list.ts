@@ -13,6 +13,7 @@ export function getMenuList(): MenuItem[] {
   const $t = i18n.global.t
 
   return [
+   
     {
       name: $t("l_Main_page"),
       icon: "dashboard",
@@ -21,9 +22,30 @@ export function getMenuList(): MenuItem[] {
       children: [],
     },
     {
+      name: $t("l_Appeals"),
+      icon: "assignment",
+      routerPath: "/appeals",
+      expand: false,
+      children: [],
+    },
+    {
       name: $t("l_Users"),
       icon: "people",
       routerPath: "/user/all",
+      expand: false,
+      children: [],
+    },
+    {
+      name: $t("l_Contacts"),
+      icon: "assignment_ind",
+      routerPath: "/contacts",
+      expand: false,
+      children: [],
+    },
+    {
+      name: $t("l_Settings"),
+      icon: "settings",
+      routerPath: "/settings",
       expand: false,
       children: [],
     },

@@ -1,9 +1,10 @@
-import axios from "axios";
-import { notification } from "ant-design-vue";
-import config from "../config";
-import { useUserStore } from "../store/index";
+import axios from 'axios'
+import { notification } from 'ant-design-vue'
+import config from '../config'
+import { useUserStore } from '../store/index'
+import { useLanguageStore } from '../store/index'
 
-// Create base instance
+// Создание базового инстанса
 const Service = axios.create({
   baseURL: config.baseURL,
   timeout: 30000,
@@ -13,20 +14,27 @@ const Service = axios.create({
   },
 });
 
-// 🧩 Request Interceptor: attach access token
+// 🧩 Request Interceptor: добавляем токен и язык
 Service.interceptors.request.use((config) => {
-  const userStore = useUserStore();
+  const userStore = useUserStore()
+  const languageStore = useLanguageStore()
 
+  // Токен
   if (userStore.accessToken) {
     config.headers.Authorization = `Bearer ${userStore.accessToken}`;
   }
 
-  return config;
-});
+  // Язык
+  if (languageStore.currentLang) {
+    config.headers['Accept-Language'] = languageStore.currentLang as 'kk' | 'ru' | 'en'
+  }
 
-// 🔁 Response Interceptor: refresh token on 401
-let isRefreshing = false;
-let failedQueue: any[] = [];
+  return config
+})
+
+// 🔁 Response Interceptor: обработка 401 и рефреш токена
+let isRefreshing = false
+let failedQueue: any[] = []
 
 const processQueue = (error: any, token: string | null = null) => {
   failedQueue.forEach((prom) => {
@@ -35,10 +43,9 @@ const processQueue = (error: any, token: string | null = null) => {
     } else {
       prom.resolve(token);
     }
-  });
-
-  failedQueue = [];
-};
+  })
+  failedQueue = []
+}
 
 Service.interceptors.response.use(
   (response) => response,
@@ -68,9 +75,7 @@ Service.interceptors.response.use(
             originalRequest.headers.Authorization = `Bearer ${token}`;
             return Service(originalRequest);
           })
-          .catch((err) => {
-            return Promise.reject(err);
-          });
+          .catch((err) => Promise.reject(err))
       }
 
       originalRequest._retry = true;
@@ -82,7 +87,7 @@ Service.interceptors.response.use(
           {
             refresh_token: userStore.refreshToken,
           }
-        );
+        )
 
         const newAccessToken = response.data.access_token;
         const newRefreshToken = response.data.refresh_token;
@@ -109,8 +114,8 @@ Service.interceptors.response.use(
       }
     }
 
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
-);
+)
 
 export default Service;

@@ -84,4 +84,43 @@ export const useUserStore = defineStore("userInfo", {
       this.user = null;
     },
   },
-});
+})
+
+
+export const useLanguageStore = defineStore('language', {
+  state: () => ({
+    currentLang: localStorage.getItem('currentLang') || 'kk'
+  }),
+  actions: {
+    setLang(lang: string) {
+      this.currentLang = lang
+      localStorage.setItem('currentLang', lang)
+    }
+  }
+})
+
+interface NotificationMessage {
+  title?: string
+  body?: string
+  data?: any
+  timestamp: number
+}
+
+export const useNotificationStore = defineStore('notification', {
+  state: () => ({
+    messages: [] as NotificationMessage[],
+  }),
+  actions: {
+    addMessage(message: NotificationMessage) {
+      this.messages.unshift({ ...message, timestamp: Date.now() })
+    },
+    clearMessages() {
+      this.messages = []
+    },
+    removeMessageByAppealId(appealId: string) {
+      this.messages = this.messages.filter(
+        (msg) => msg.data?.appeal_id !== appealId
+      )
+    },
+  },
+})

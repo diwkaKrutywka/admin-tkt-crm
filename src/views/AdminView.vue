@@ -20,7 +20,7 @@
     <div class="flex-1 flex flex-col h-screen overflow-x-auto">
       <TopBox @toggle-drawer="isDrawerOpen = !isDrawerOpen" />
       <div class="p-3 flex-1 overflow-y-auto">
-        <div class="bg-gray-50 rounded-xl p-10 h-full w-full">
+        <div class="bg-gray-100 rounded-xl px-10 py-5 h-full w-full">
           <router-view />
         </div>
       </div>
@@ -29,10 +29,36 @@
   </div>
 </template>
 
+
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import MenuBox from '../components/menu-bar.vue'
-import TopBox from '../components/top-box.vue';
-import heartPulse from '../icons/heartPulse.vue'
+import TopBox from '../components/top-box.vue'
+import { initWebSocket, closeWebSocket } from '../services/ws'
+import { useUserStore } from '../store/index'
+import { useNotificationStore } from '../store/index'
+
+// Drawer
 const isDrawerOpen = ref(false)
+
+// WebSocket setup
+const userStore = useUserStore()
+const notificationStore = useNotificationStore()
+
+onMounted(() => {
+  const clientId = userStore.user?.user?.employee_id || 'test-client-1'
+  if (clientId) {
+    initWebSocket(clientId, (message) => {
+      console.log(message)
+      if(message.type === 'appeal_created'){
+      notificationStore.addMessage(message)
+      }
+    })
+  }
+})
+
+onBeforeUnmount(() => {
+  closeWebSocket()
+})
 </script>
+

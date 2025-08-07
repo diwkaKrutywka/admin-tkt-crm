@@ -2,53 +2,116 @@
   <div>
     <a-page-header :title="$t('l_Users')">
       <template #extra>
-        <a-button type="primary" @click="onAdd">
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <a-input-search
+            v-model:value="search"
+            :placeholder="$t('l_Search_placeholder')"
+            style="width: 400px; vertical-align: middle;"
+            class="align-middle search-input"
+            @search="fetchUsers"
+            allowClear
+          />
+        </div>
+        <a-button @click="openFilter">
+          <span class="material-symbols-outlined">
+            filter_alt <span class="ml-2"> {{ $t("l_Filter") }}</span>
+          </span>
+        </a-button>
+        <a-button type="primary" @click="onAdd()">
           <span class="material-symbols-outlined">
             add <span class="ml-2"> {{ $t("l_Add_user") }}</span>
           </span>
         </a-button>
       </template>
+      <br/>
     </a-page-header>
-    <!-- Статистика -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <BaseCard v-for="stat in stats" :key="stat.title" :title="stat.title">
-        <template #content>
-          <div class="text-2xl font-bold text-gray-900">{{ stat.value }}</div>
-        </template>
-      </BaseCard>
-    </div>
-    <filter-user></filter-user>
 
-    <a-table bordered :dataSource="tableData" :columns="columns" :pagination="pagination" rowKey="id" :loading="loading"
-      @change="handleTableChange">
-      <template #bodyCell="{ column, index }">
+    <!-- <filter-user></filter-user> -->
+
+    <a-table
+      bordered
+      :dataSource="tableData"
+      :columns="columns"
+      :pagination="pagination"
+      rowKey="id"
+      :loading="loading"
+      @change="handleTableChange"
+    >
+      <template #bodyCell="{ record, column, index }">
         <template v-if="column.key === 'Action'">
           <a-space>
             <span style="color: black; font-size: 21px" class="icon material-symbols-outlined" @click="onEdit(index)">
               edit
             </span>
-            <a-popconfirm placement="leftBottom" title="Сіз расымен қолданушыны тоқтатқыңыз келеді ме?"
-              :ok-text="$t('l_Yes')" :cancel-text="$t('l_No')" @confirm="onDeactivate(index)">
-              <span style="color: rgb(0, 100, 250); font-size: 21px" class="icon material-symbols-outlined">
-                cancel
+            <a-popconfirm
+              v-if="!record.is_locked"
+              placement="leftBottom"
+              title="Сіз расымен қолданушыны тоқтатқыңыз келеді ме?"
+              :ok-text="$t('l_Yes')"
+              :cancel-text="$t('l_No')"
+              @confirm="onDeactivate(index, 'true')"
+            >
+              <span
+                style="color: rgb(0, 100, 250); font-size: 21px"
+                class="icon material-symbols-outlined"
+              >
+                lock_open_right
               </span>
             </a-popconfirm>
-            <a-popconfirm placement="leftBottom" title="Сіз расымен қолданушыны өшіргіңіз келеді ме?"
-              :ok-text="$t('l_Yes')" :cancel-text="$t('l_No')" @confirm="onDelete(index)">
-              <span style="color: red; font-size: 21px" class="icon material-symbols-outlined">
+            <a-popconfirm
+              v-if="record.is_locked"
+              placement="leftBottom"
+              title="Сіз расымен қолданушыны қайта қосқыңыз келеді ме?"
+              :ok-text="$t('l_Yes')"
+              :cancel-text="$t('l_No')"
+              @confirm="onDeactivate(index, 'false')"
+            >
+              <span
+                style="color: rgb(0, 100, 250); font-size: 21px"
+                class="icon material-symbols-outlined"
+              >
+                lock
+              </span>
+            </a-popconfirm>
+            <!-- <a-popconfirm
+              placement="leftBottom"
+              title="Сіз расымен қолданушыны өшіргіңіз келеді ме?"
+              :ok-text="$t('l_Yes')"
+              :cancel-text="$t('l_No')"
+              @confirm="onDelete(index)"
+            >
+              <span
+                style="color: red; font-size: 21px"
+                class="icon material-symbols-outlined"
+              >
                 delete
               </span>
-            </a-popconfirm>
+            </a-popconfirm> -->
           </a-space>
         </template>
       </template>
     </a-table>
 
-    <add-edit-user v-model:open="modalVisible" :user="editingUser" @submit="fetchUsers" />
+    <add-edit-user
+      v-model:open="modalVisible"
+      :user_id="editingUser?.id"
+      @submit="fetchUsers"
+    />
+
+    <!-- Filter Modal -->
+    <filter-modal
+      v-model:open="filterModalVisible"
+      @filter="applyFilter"
+    />
   </div>
 
-  <a-modal v-model:open="open" :title="$t('l_Lock_user')" :ok-text="$t('l_Lock')" :cancel-text="$t('l_Cancel')"
-    @ok="lockUser">
+  <a-modal
+    v-model:open="open"
+    :title="!lockingStatus ? $t('l_Lock_user') : $t('l_Unlock_user')"
+    :ok-text="!lockingStatus ? $t('l_Lock') : $t('l_Unlock')"
+    :cancel-text="$t('l_Cancel')"
+    @ok="lockUser"
+  >
     <a-form layout="vertical">
       <a-form-item :label="$t('l_Reason')">
         <a-input v-model:value="reason" />
@@ -60,42 +123,29 @@
 import { ref, h, computed, onMounted } from "vue";
 import { Avatar, message, Tag } from "ant-design-vue";
 import { SafetyOutlined, BankOutlined } from "@ant-design/icons-vue";
-import { UserApi } from "../../api/users.ts";
-import type { User } from "../../types/user.ts";
-import type { TableRenderProps } from "../../types/table.ts";
-import BaseCard from '../../common/BaseCard.vue'
-import { useUserStore } from '../../store/index'
-
-import FilterUser from "./FilterUser.vue";
+import type { User } from "../../types/user";
+import type { TableRenderProps } from "../../types/table";
 import AddEditUser from "./AddEditUser.vue";
 
+import { useI18n } from "vue-i18n";
+const { t: $t } = useI18n();
+
+import FilterModal from "./FilterUser.vue";
+
+import { UserApi } from "../../api/user"; // ← your API utility
 const open = ref<boolean>(false);
 const reason = ref<string>("");
-
-const userStore = useUserStore();
-
+const search = ref<string>("");
+const lockingStatus = ref<string>("");
 // State
 const tableData = ref<User[]>([]);
-const loading = ref(false);
+const loading = ref<boolean>(false);;
 const modalVisible = ref(false);
+const filterModalVisible = ref(false);
 const editingUser = ref<User | null>(null);
 const lockingUserId = ref<string | null>(null);
-
-
-// Статистика для basecard
-
-const usersList = computed(() => userStore.usersList);
-const activeUsers = computed(() => userStore.activeUsers);
-const inactiveUsers = computed(() => userStore.inactiveUsers);
-const organizations = computed(() => userStore.organizations);
-
-const stats = computed(() => [
-  { title: 'Всего пользователей', value: usersList.value.length },
-  { title: 'Активные', value: activeUsers.value.length },
-  { title: 'Неактивные', value: inactiveUsers.value.length },
-  { title: 'Организаций', value: organizations.value.length },
-]);
-
+const currentFilters = ref<any>({});
+import { useGlobal } from "../../composables/useGlobal";
 // Pagination
 const pagination = ref({
   current: 1,
@@ -104,7 +154,7 @@ const pagination = ref({
   showSizeChanger: true,
   pageSizeOptions: ["10", "20", "50"],
   showQuickJumper: true,
-  showTotal: (total: number) => `Всего ${total} записей`,
+  showTotal: (total: number) => $t('l_Total_records', { total }),
 });
 
 // Columns
@@ -120,7 +170,7 @@ const columns = [
     },
   },
   {
-    title: "Пользователь",
+    title: $t("l_User"),
     dataIndex: "full_name",
     customRender: ({ text }: TableRenderProps<User>) => {
       const initials = (text as string)
@@ -147,7 +197,7 @@ const columns = [
     },
   },
   {
-    title: "Роль",
+    title: $t("l_Role"),
     dataIndex: "user_role",
     customRender: ({ text }: TableRenderProps<User>) => {
       return h(
@@ -161,7 +211,7 @@ const columns = [
     },
   },
   {
-    title: "Организация",
+    title: $t("l_Organization"),
     dataIndex: "organization_name",
     customRender: ({ text }: TableRenderProps<User>) => {
       return h("div", { class: "flex items-center gap-2 text-gray-800" }, [
@@ -171,20 +221,24 @@ const columns = [
     },
   },
   {
-    title: "Статус",
+    title: $t("l_Status"),
     dataIndex: "is_active",
     customRender: ({ text }: TableRenderProps<User>) => {
       return text
-        ? h(Tag, { color: "green" }, () => "Активен")
-        : h(Tag, { color: "red" }, () => "Неактивен");
+        ? h(Tag, { color: "green" }, () => $t("l_Active"))
+        : h(Tag, { color: "red" }, () => $t("l_Inactive"));
     },
   },
   {
-    title: "Последний вход",
+    title: $t("l_Last_login"),
     dataIndex: "last_login_at",
+    customRender: ({ text }: TableRenderProps<User>) => {
+      const { $formatIsoDate } = useGlobal();
+      return $formatIsoDate(text);
+    },
   },
   {
-    title: "Действия",
+    title: $t("l_Actions"),
     key: "Action",
     width: 110,
     align: "center",
@@ -195,16 +249,67 @@ const columns = [
 const fetchUsers = async () => {
   loading.value = true;
   try {
-    const { data } = await UserApi<{ users: User[]; total: number }>(
+    // Базовые параметры
+    const params: any = {
+      page: pagination.value.current,
+      page_size: pagination.value.pageSize,
+    };
+
+    // Добавляем поиск если есть
+    if (search.value.trim()) {
+      params.search = search.value.trim();
+    }
+
+    // Добавляем фильтры если есть
+    if (currentFilters.value) {
+      const filters = currentFilters.value;
+      
+      // Organization ID
+      if (filters.organization_id && filters.organization_id.trim()) {
+        params.organization_id = filters.organization_id.trim();
+      }
+      
+      // User Role
+      if (filters.user_role && filters.user_role.trim()) {
+        params.user_role = filters.user_role;
+      }
+      
+      // Is Active
+      if (filters.is_active !== null && filters.is_active !== undefined) {
+        params.is_active = filters.is_active === 'true';
+      }
+      
+      // Create Date Range
+      if (filters.create_date && filters.create_date.length === 2) {
+        const [startDate, endDate] = filters.create_date;
+        if (startDate) {
+          params.created_at_from = startDate.format('YYYY-MM-DD');
+        }
+        if (endDate) {
+          params.created_at_to = endDate.format('YYYY-MM-DD');
+        }
+      }
+      
+      // Last Login Range
+      if (filters.last_login && filters.last_login.length === 2) {
+        const [startDate, endDate] = filters.last_login;
+        if (startDate) {
+          params.last_login_from = startDate.format('YYYY-MM-DD');
+        }
+        if (endDate) {
+          params.last_login_to = endDate.format('YYYY-MM-DD');
+        }
+      }
+    }
+
+    console.log(params);
+    const { data } = await UserApi<{ items: User[]; total: number }>(
       "",
-      {
-        page: pagination.value.current,
-        page_size: pagination.value.pageSize,
-      },
+      params,
       "GET"
     );
 
-    tableData.value = Object.values(data.users);
+    tableData.value = Object.values(data.items);
     pagination.value.total = data.total;
     userStore.setUsersList(data);
 
@@ -234,20 +339,14 @@ function onEdit(index: number) {
   modalVisible.value = true;
 }
 
-function onDelete(index: number) {
-  const user = tableData.value[index];
-  message.success(`Пользователь ${user.full_name} удалён`);
-  // TODO: API call to delete
-}
-
-function onDeactivate(index: number) {
+function onDeactivate(index: number, bool: string) {
   const user = tableData.value[index];
   console.log(user);
   if (!user || !user.id) {
     message.error("Пользователь не найден");
     return;
   }
-
+  lockingStatus.value = bool;
   lockingUserId.value = user.id;
   open.value = true;
 }
@@ -261,7 +360,7 @@ const lockUser = async () => {
   try {
     await UserApi(
       `${lockingUserId.value}/lock`,
-      { reason: reason.value, is_locked: true },
+      { reason: reason.value, is_locked: lockingStatus.value },
       "POST"
     );
     message.success("Пользователь деактивирован");
@@ -274,8 +373,42 @@ const lockUser = async () => {
   }
 };
 
+// Filter functions
+const openFilter = () => {
+  filterModalVisible.value = true;
+};
+
+const applyFilter = (filters: any) => {
+  currentFilters.value = filters;
+  pagination.value.current = 1; // Сброс на первую страницу при применении фильтра
+  fetchUsers();
+};
+
+const resetFilters = () => {
+  currentFilters.value = {};
+  search.value = '';
+  pagination.value.current = 1;
+  fetchUsers();
+};
+
 // Fetch on mount
 onMounted(() => {
   fetchUsers();
 });
 </script>
+
+<style scoped>
+.search-input :deep(.ant-input-search-button) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-input :deep(.ant-input-search-button .anticon) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>
+
+
