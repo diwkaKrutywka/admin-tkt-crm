@@ -73,6 +73,15 @@ export interface Organization {
   is_active: boolean;
 }
 
+export interface callTypeNames {
+  name: string;
+  id: string;
+}
+export interface complaintCategoryNames {
+  name: string;
+  id: string;
+}
+
 export interface ReferencesState {
   callTypes: CallType[];
   callSubtypes: CallSubtype[];
@@ -80,6 +89,8 @@ export interface ReferencesState {
   complaintCategories: ComplaintCategory[];
   complaintSubcategories: ComplaintSubcategory[];
   organizations: Organization[];
+  callTypeNames: callTypeNames[];
+  complaintCategoryNames: complaintCategoryNames[];
   loading: boolean;
   error: string | null;
 }

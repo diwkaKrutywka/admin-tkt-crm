@@ -6,6 +6,8 @@ import type {
   ComplaintCategory,
   ComplaintSubcategory,
   Organization,
+  callTypeNames,
+  complaintCategoryNames,
   ReferencesState,
 } from "../interfaces/references/responseDto";
 
@@ -17,6 +19,8 @@ export const useReferencesStore = defineStore("references", {
     complaintCategories: [],
     complaintSubcategories: [],
     organizations: [],
+    callTypeNames: [],
+    complaintCategoryNames: [],
     loading: false,
     error: null,
   }),
@@ -26,6 +30,9 @@ export const useReferencesStore = defineStore("references", {
   actions: {
     setCallTypes(data: CallType[]) {
       this.callTypes = data;
+      this.callTypeNames = data.map((item: callTypeNames) => {
+        return { name: item.name, id: item.id };
+      });
     },
     setCallSubtypes(data: CallSubtype[]) {
       this.callSubtypes = data;
@@ -35,6 +42,9 @@ export const useReferencesStore = defineStore("references", {
     },
     setComplaintCategories(data: ComplaintCategory[]) {
       this.complaintCategories = data;
+      this.complaintCategoryNames = data.map((item: complaintCategoryNames) => {
+        return { name: item.name, id: item.id };
+      });
     },
     setComplaintSubcategories(data: ComplaintSubcategory[]) {
       this.complaintSubcategories = data;

@@ -28,43 +28,24 @@
                                 <label class="inline-flex items-center space-x-2 cursor-pointer">
 
                                 </label>
+
                             </div>
 
-                            <input v-if="typeof value === 'string' || typeof value === 'number'"
+                            <a-select v-if="key === 'call_type_id' || key === 'complaint_category_id'"
+                                v-model:value="activeTabFields[key]" class="w-full">
+                                <a-select-option v-for="(name, index) in currentTab === $t(`l_Call_subtypes`)
+                                    ? store.callTypeNames : currentTab === $t(`l_Complaint_subcategory`)
+                                        ? store.complaintCategoryNames : ''" :key="index" :value="name.id">{{ name.name
+                                        }}</a-select-option>
+
+                            </a-select>
+
+                            <input v-else-if="typeof value === 'string' || typeof value === 'number'"
                                 v-model="activeTabFields[key]" :id="key" type="text"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                                </div>
+                                class="w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                        </div>
+
                     </form>
-                    <!-- <form @submit.prevent="submitData" class="space-y-4">
-                        <div>
-                            <label class="block font-medium">
-                                Name <span class="text-red-500">*</span>
-                            </label>
-                            <input v-model="form.name" class="w-full border border-gray-300 rounded px-3 py-2 mt-1"
-                                placeholder="Enter name" required />
-                        </div>
-
-                        <div>
-                            <label class="block font-medium">
-                                Code <span class="text-red-500">*</span>
-                            </label>
-                            <input v-model="form.code" class="w-full border border-gray-300 rounded px-3 py-2 mt-1"
-                                placeholder="Enter code (e.g., TECH-01)" required />
-                        </div>
-
-                        <div>
-                            <label class="block font-medium">Description</label>
-                            <textarea v-model="form.description"
-                                class="w-full border border-gray-300 rounded px-3 py-2 mt-1" rows="3"
-                                placeholder="Enter description"></textarea>
-                        </div>
-
-                        <div>
-                            <label class="block font-medium">Display Order</label>
-                            <input v-model.number="form.displayOrder" type="number"
-                                class="w-full border border-gray-300 rounded px-3 py-2 mt-1" min="0" />
-                        </div>
-                    </form> -->
                 </BaseModal>
             </div>
             <a-table bordered :dataSource="refTable" :columns="columns" rowKey="id">
@@ -233,7 +214,7 @@ const submitData = async () => {
             currentModal.value === 'create' ? 'POST' : currentModal.value === 'edit' ? 'PUT' : 'DELETE'
         );
 
-        isModalOpen.value = false;
+        isModalOpen.value = false; 
     } catch (error) {
         console.error(error);
     } finally {
@@ -258,6 +239,37 @@ const getData = async (tab: string) => {
                             : currentTabRequest.value === 'organizations/' ? store.setOrganizations(data.items)
                                 : {};
 
+
+
+        // Подятгиваем имена родительских типов зсущностей
+
+        if (currentTabRequest.value === 'call-subtypes/') {
+            try {
+                const { data } = await referencesApi(
+                    'complaint-types/',
+                    {},
+                    "GET"
+                );
+                store.setCallTypes(data.items)
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        else if (currentTabRequest.value === 'complaint-subcategories/') {
+            try {
+                const { data } = await referencesApi(
+                    'complaint-categories/',
+                    {},
+                    "GET"
+                );
+                store.setComplaintCategories(data.items)
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        else {
+            return
+        }
     } catch (error) {
         console.error(error);
     }
