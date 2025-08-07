@@ -178,5 +178,12 @@ export default {
   "l_Confirm_delete_call_type": "Бұл қоңырау түрін жоюға сенімдісіз бе?",
   "l_Code": "Коды",
   "l_Description": "Сипаттамасы",
-  "l_Complaint": "Шағым"
+  "l_Complaint": "Шағым",
+  "l_Add_street": "Көше қосу",
+  "l_Edit_street": "Көшені өзгерту",
+  "l_Street_type": "Көше түрі",
+  "l_Street_code": "Көше коды",
+  "l_OSM_ID": "OSM ID",
+  "l_Geometry": "Геометрия",
+  "l_Custom": "Қолмен енгізілген",
 };

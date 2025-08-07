@@ -270,5 +270,5 @@ export const createCallType = (data: Partial<CallType>) => {
 };
 
 export const updateCallType = (id: string, data: Partial<CallType>) => {
-  return RefApi(`call-types/${id}/`, data, "PUT");
+  return RefApi(`call-types/${id}`, data, "PUT");
 };

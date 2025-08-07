@@ -182,5 +182,13 @@ export default {
   "l_Confirm_delete_call_type": "Are you sure you want to delete this call type?",
   "l_Code": "Code",
   "l_Description": "Description",
-  "l_Complaint": "Complaint"
+  "l_Complaint": "Complaint",
+  "l_Add_street":"Add street",
+  "l_Edit_street": "Edit street",
+ 
+  "l_Street_type": "Street type",
+  "l_Street_code": "Street code",
+  "l_OSM_ID": "OSM ID",
+  "l_Geometry": "Geometry",
+  "l_Custom": "Custom",
 };

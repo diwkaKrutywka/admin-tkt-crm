@@ -179,5 +179,13 @@ export default {
   "l_Confirm_delete_call_type": "Вы уверены, что хотите удалить этот тип звонка?",
   "l_Code": "Код",
   "l_Description": "Описание",
-  "l_Complaint": "Жалоба"
+  "l_Complaint": "Жалоба",
+  "l_Add_street": "Добавить улицу",
+  "l_Edit_street": "Редактировать улицу",
+  
+  "l_Street_type": "Тип улицы",
+  "l_Street_code": "Код улицы",
+  "l_OSM_ID": "OSM ID",
+  "l_Geometry": "Геометрия",
+  "l_Custom": "Пользовательский",
 };
