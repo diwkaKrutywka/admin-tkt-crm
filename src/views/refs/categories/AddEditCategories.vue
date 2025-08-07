@@ -8,12 +8,8 @@
     destroyOnClose
   >
     <a-form :model="form" layout="vertical">
-      <a-form-item :label="$t('l_Name_ru')" name="name" required>
-        <a-select
-          v-model:value="form.name"
-          :options="categoryOptions"
-          :placeholder="$t('l_Name_ru')"
-        />
+      <a-form-item :label="$t('l_Name_ru')" name="name_ru" required>
+        <a-input v-model:value="form.name_ru" :placeholder="$t('l_Name_ru')" />
       </a-form-item>
       <a-form-item :label="$t('l_Name_kz')" name="name_kk" required>
         <a-input v-model:value="form.name_kk" />
@@ -32,15 +28,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits, onMounted } from 'vue'
+import { ref, watch, defineProps, defineEmits } from 'vue'
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
 import type { ComplaintCategory } from '../../../types/ref'
-import { createComplaintCategory, updateComplaintCategory, getComplaintCategories } from '../../../api/ref'
+import { createComplaintCategory, updateComplaintCategory, getComplaintCategoryById } from '../../../api/ref'
 
 const props = defineProps({
   open: Boolean,
-  category: Object as () => ComplaintCategory | null,
+  category_id: String as () => string | null,
 })
 const emit = defineEmits(['update:open', 'submit'])
 const { t: $t } = useI18n()
@@ -48,47 +44,43 @@ const { t: $t } = useI18n()
 const loading = ref(false)
 const isEdit = ref(false)
 const form = ref({
-  name: '',
+  name_ru: '',
   name_kk: '',
   name_en: '',
   code: '',
   description: '',
 })
 
-const categoryOptions = ref<{ label: string, value: string }[]>([])
-
-onMounted(async () => {
-  try {
-    const res = await getComplaintCategories()
-    categoryOptions.value = (res.data?.items || []).map((cat: ComplaintCategory) => ({
-      label: cat.name ?? '',
-      value: cat.name ?? '',
-    }))
-  } catch (e) {
-    categoryOptions.value = []
-  }
-})
-
 watch(
-  () => props.category,
-  (cat) => {
-    if (cat) {
-      isEdit.value = true
-      form.value = {
-        name: cat.name || '',
-        name_kk: cat.name_kk || '',
-        name_en: cat.name_en || '',
-        code: cat.code,
-        description: cat.description || '',
-      }
-    } else {
-      isEdit.value = false
-      form.value = {
-        name: '',
-        name_kk: '',
-        name_en: '',
-        code: '',
-        description: '',
+  () => props.open,
+  async (val) => {
+    if (val) {
+      if (props.category_id) {
+        isEdit.value = true
+        loading.value = true
+        try {
+          const { data } = await getComplaintCategoryById(props.category_id)
+          form.value = {
+            name_ru: data.name_ru || '',
+            name_kk: data.name_kk || '',
+            name_en: data.name_en || '',
+            code: data.code,
+            description: data.description || '',
+          }
+        } catch {
+          message.error($t('l_Load_error') || 'Load error')
+        } finally {
+          loading.value = false
+        }
+      } else {
+        isEdit.value = false
+        form.value = {
+          name_ru: '',
+          name_kk: '',
+          name_en: '',
+          code: '',
+          description: '',
+        }
       }
     }
   },
@@ -102,8 +94,8 @@ const handleSubmit = async () => {
       await createComplaintCategory(form.value)
       message.success($t('l_Complaint_category_created'))
     } else {
-      if (props.category && props.category.id) {
-        await updateComplaintCategory(props.category.id, form.value)
+      if (props.category_id) {
+        await updateComplaintCategory(props.category_id, form.value)
         message.success($t('l_Complaint_category_updated'))
       }
     }
@@ -119,6 +111,6 @@ const handleSubmit = async () => {
 const handleCancel = () => {
   emit('update:open', false)
 }
-</script>
+</script> 
 
 <style scoped></style>

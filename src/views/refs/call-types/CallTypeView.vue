@@ -1,11 +1,11 @@
 <template>
     <div>
-      <a-page-header :title="$t('l_Settings') + ' / ' + $t('l_Cities')">
+      <a-page-header :title="$t('l_Settings') + ' / ' + $t('l_Call_types')">
         <template #extra>
           <a-button type="primary" @click="onAdd">
             <span class="material-symbols-outlined">
               add
-              <span class="ml-2">{{ $t('l_Add_city') }}</span>
+              <span class="ml-2">{{ $t('l_Add_call_type') }}</span>
             </span>
           </a-button>
         </template>
@@ -32,7 +32,7 @@
               </span>
               <a-popconfirm
                 placement="leftBottom"
-                :title="$t('l_Confirm_delete_city')"
+                :title="$t('l_Confirm_delete_call_type')"
                 :ok-text="$t('l_Yes')"
                 :cancel-text="$t('l_No')"
                 @confirm="onDelete(record.id)"
@@ -49,10 +49,10 @@
         </template>
       </a-table>
   
-      <add-edit-city
-        v-model:visible="modalVisible"
-        :city_id="editingCity?.id ?? null"
-        @submit="fetchCities"
+      <add-edit-call-type
+        v-model:open="modalVisible"
+        :call_type_id="editingItem?.id ?? null"
+        @submit="fetchCallTypes"
       />
     </div>
   </template>
@@ -62,17 +62,17 @@
   import { message } from 'ant-design-vue'
   import { useI18n } from 'vue-i18n'
   
-  import AddEditCity from './AddEditCity.vue'
-  import { getCities, deleteItems } from '../../../api/ref'
-  import type { City } from '../../../types/ref'
+  import AddEditCallType from './AddEditCallType.vue'
+  import { getCallTypes, deleteItems } from '../../../api/ref'
+  import type { CallType } from '../../../types/ref'
   import type { TableRenderProps } from '../../../types/table'
   
   const { t: $t } = useI18n()
   
-  const tableData = ref<City[]>([])
+  const tableData = ref<CallType[]>([])
   const loading = ref(false)
   const modalVisible = ref(false)
-  const editingCity = ref<City | null>(null)
+  const editingItem = ref<CallType | null>(null)
   
   const pagination = ref({
     current: 1,
@@ -97,37 +97,25 @@
       dataIndex: 'name',
     },
     {
-      title: $t('l_City_code'),
-      dataIndex: 'city_code',
+      title: $t('l_Code'),
+      dataIndex: 'code',
     },
     {
-      title: $t('l_City_type'),
-      dataIndex: 'city_type',
+      title: $t('l_Description'),
+      dataIndex: 'description',
     },
     {
-      title: $t('l_Regional_center'),
-      dataIndex: 'is_regional_center',
-      customRender: ({ text }: TableRenderProps<City>) =>
+      title: $t('l_Complaint'),
+      dataIndex: 'is_complaint',
+      customRender: ({ text }: TableRenderProps<CallType>) =>
         text
-          ? h('span', { style: 'color: green' }, $t('l_Yes'))
-          : h('span', { style: 'color: red' }, $t('l_No')),
-    },
-    {
-      title: $t('l_District_center'),
-      dataIndex: 'is_district_center',
-      customRender: ({ text }: TableRenderProps<City>) =>
-        text
-          ? h('span', { style: 'color: green' }, $t('l_Yes'))
-          : h('span', { style: 'color: red' }, $t('l_No')),
-    },
-    {
-      title: $t('l_Postal_code'),
-      dataIndex: 'postal_code',
+          ? h('span', { style: 'color: orange' }, $t('l_Yes'))
+          : h('span', { style: 'color: gray' }, $t('l_No')),
     },
     {
       title: $t('l_Status'),
       dataIndex: 'is_active',
-      customRender: ({ text }: TableRenderProps<City>) =>
+      customRender: ({ text }: TableRenderProps<CallType>) =>
         text
           ? h('span', { style: 'color: green' }, $t('l_Active'))
           : h('span', { style: 'color: red' }, $t('l_Inactive')),
@@ -140,18 +128,18 @@
     },
   ]
   
-  const fetchCities = async () => {
+  const fetchCallTypes = async () => {
     loading.value = true
     try {
       const params = {
         page: pagination.value.current,
         page_size: pagination.value.pageSize,
       }
-      const { data } = await getCities(params)
+      const { data } = await getCallTypes(params)
       tableData.value = data.items
       pagination.value.total = data.total
     } catch (error) {
-      message.error($t('l_Load_error') || 'Failed to load cities')
+      message.error($t('l_Load_error') || 'Failed to load call types')
     } finally {
       loading.value = false
     }
@@ -160,34 +148,34 @@
   const handleTableChange = (pag: any) => {
     pagination.value.current = pag.current
     pagination.value.pageSize = pag.pageSize
-    fetchCities()
+    fetchCallTypes()
   }
   
   const onDelete = async (id: string) => {
     try {
       loading.value = true
-      await deleteItems('cities', id)
-      message.success($t('l_Delete_success') || 'City deleted successfully')
-      fetchCities()
+      await deleteItems('call-types', id)
+      message.success($t('l_Delete_success') || 'Call type deleted successfully')
+      fetchCallTypes()
     } catch (error) {
-      message.error($t('l_Delete_error') || 'Failed to delete city')
+      message.error($t('l_Delete_error') || 'Failed to delete call type')
     } finally {
       loading.value = false
     }
   }
   
   const onAdd = () => {
-    editingCity.value = null
+    editingItem.value = null
     modalVisible.value = true
   }
   
-  const onEdit = (city: City) => {
-    editingCity.value = city
+  const onEdit = (item: CallType) => {
+    editingItem.value = item
     modalVisible.value = true
   }
   
   onMounted(() => {
-    fetchCities()
+    fetchCallTypes()
   })
   </script>
   

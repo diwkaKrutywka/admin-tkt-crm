@@ -25,10 +25,24 @@
             <span
               class="icon material-symbols-outlined"
               style="color: black; font-size: 21px; cursor: pointer"
-              @click="onEdit(record)"
+              @click="onEdit(record.id)"
             >
               edit
             </span>
+            <a-popconfirm
+              placement="leftBottom"
+              :title="$t('l_Delete_confirm_categories')"
+              :ok-text="$t('l_Yes')"
+              :cancel-text="$t('l_No')"
+              @confirm="onDelete(record.id)"
+            >
+              <span
+                style="color: red; font-size: 21px"
+                class="icon material-symbols-outlined"
+              >
+                delete
+              </span>
+            </a-popconfirm>
           </a-space>
         </template>
       </template>
@@ -36,7 +50,7 @@
     <!-- Модалка для добавления/редактирования — по запросу -->
     <AddEditCategories
       :open="modalVisible"
-      :category="editingCategory"
+      :category_id="editingCategoryId"
       @update:open="modalVisible = $event"
       @submit="fetchComplaintCategories"
     />
@@ -44,12 +58,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, h } from 'vue'
+import { ref, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
-import type { TableRenderProps } from '../../../types/table'
 import type { ComplaintCategory } from '../../../types/ref'
 import { useI18n } from 'vue-i18n'
-import { getComplaintCategories } from '../../../api/ref'
+import { getComplaintCategories, deleteItems } from '../../../api/ref'
 import AddEditCategories from './AddEditCategories.vue'
 
 const { t: $t } = useI18n()
@@ -57,7 +70,7 @@ const { t: $t } = useI18n()
 const tableData = ref<ComplaintCategory[]>([])
 const loading = ref(false)
 const modalVisible = ref(false)
-const editingCategory = ref<ComplaintCategory | null>(null)
+const editingCategoryId = ref<string | null>(null)
 
 const pagination = ref({
   current: 1,
@@ -116,13 +129,26 @@ const handleTableChange = (pag: any) => {
 }
 
 const onAdd = () => {
-  editingCategory.value = null
+  editingCategoryId.value = null
   modalVisible.value = true
 }
 
-const onEdit = (category: ComplaintCategory) => {
-  editingCategory.value = category
+const onEdit = (id: string) => {
+  editingCategoryId.value = id
   modalVisible.value = true
+}
+
+const onDelete = async (id: string) => {
+  try {
+    loading.value = true
+    await deleteItems('complaint-categories', id)
+    message.success($t('l_Delete_success') || 'Category deleted successfully')
+    fetchComplaintCategories()
+  } catch (error) {
+    message.error($t('l_Delete_error') || 'Failed to delete category')
+  } finally {
+    loading.value = false
+  }
 }
 
 onMounted(() => {

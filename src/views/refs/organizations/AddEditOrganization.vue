@@ -22,8 +22,7 @@
           <a-select-option value="private_clinic">{{ $t('l_Private_clinic') }}</a-select-option>
           <a-select-option value="public_clinic">{{ $t('l_Public_clinic') }}</a-select-option>
           <a-select-option value="hospital">{{ $t('l_Hospital') }}</a-select-option>
-          <a-select-option value="company">{{ $t('l_Company') }}</a-select-option>
-
+          <a-select-option value="government_agency">{{ $t('l_government_agency') }}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item :label="$t('l_Phone')" name="phone">
@@ -38,7 +37,6 @@
       <a-form-item :label="$t('l_Description')" name="description">
         <a-input v-model:value="form.description" />
       </a-form-item>
-     
     </a-form>
   </a-modal>
 </template>
@@ -48,11 +46,15 @@ import { ref, watch, defineProps, defineEmits } from 'vue'
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
 import type { Organization } from '../../../types/ref'
-import { createOrganization, updateOrganization } from '../../../api/ref'
+import {
+  createOrganization,
+  updateOrganization,
+  getOrganizationById,
+} from '../../../api/ref'
 
 const props = defineProps({
   open: Boolean,
-  organization: Object as () => Organization | null,
+  organization_id: String as () => string | null,
 })
 const emit = defineEmits(['update:open', 'submit'])
 const { t: $t } = useI18n()
@@ -63,42 +65,49 @@ const form = ref({
   organization_number: '',
   full_name: '',
   short_name: '',
-  organization_type: 'company',
+  organization_type: '',
   phone: '',
   email: '',
   website: '',
   description: '',
-  
 })
 
 watch(
-  () => props.organization,
-  (org) => {
-    if (org) {
-      isEdit.value = true
-      form.value = {
-        organization_number: org.organization_number || '',
-        full_name: org.full_name,
-        short_name: org.short_name,
-        organization_type: org.organization_type,
-        phone: org.phone || '',
-        email: org.email || '',
-        website: org.website || '',
-        description: org.description || '',
-      
-      }
-    } else {
-      isEdit.value = false
-      form.value = {
-        organization_number: '',
-        full_name: '',
-        short_name: '',
-        organization_type: 'company',
-        phone: '',
-        email: '',
-        website: '',
-        description: '',
-      
+  () => props.open,
+  async (val) => {
+    if (val) {
+      if (props.organization_id) {
+        isEdit.value = true
+        loading.value = true
+        try {
+          const { data } = await getOrganizationById(props.organization_id)
+          form.value = {
+            organization_number: data.organization_number || '',
+            full_name: data.full_name,
+            short_name: data.short_name,
+            organization_type: data.organization_type || '',
+            phone: data.phone || '',
+            email: data.email || '',
+            website: data.website || '',
+            description: data.description || '',
+          }
+        } catch {
+          message.error($t('l_Load_error'))
+        } finally {
+          loading.value = false
+        }
+      } else {
+        isEdit.value = false
+        form.value = {
+          organization_number: '',
+          full_name: '',
+          short_name: '',
+          organization_type: '',
+          phone: '',
+          email: '',
+          website: '',
+          description: '',
+        }
       }
     }
   },
@@ -108,29 +117,23 @@ watch(
 const handleSubmit = async () => {
   loading.value = true
   try {
-    // Очищаем пустые строки, заменяя их на null
-    const cleanedData: any = { ...form.value }
-    
-    // Очищаем пустые строки для опциональных полей
-    if (cleanedData.organization_number === '') cleanedData.organization_number = null
-    if (cleanedData.phone === '') cleanedData.phone = null
-    if (cleanedData.email === '') cleanedData.email = null
-    if (cleanedData.website === '') cleanedData.website = null
-    if (cleanedData.description === '') cleanedData.description = null
+    const cleanedData = { ...form.value }
+    for (const key in cleanedData) {
+      if (cleanedData[key] === '') cleanedData[key] = null
+    }
 
     if (!isEdit.value) {
       await createOrganization(cleanedData)
       message.success($t('l_Organization_created'))
-    } else {
-      if (props.organization && props.organization.id) {
-        await updateOrganization(props.organization.id, cleanedData)
-        message.success($t('l_Organization_updated'))
-      }
+    } else if (props.organization_id) {
+      await updateOrganization(props.organization_id, cleanedData)
+      message.success($t('l_Organization_updated'))
     }
+
     emit('update:open', false)
     emit('submit')
-  } catch (e) {
-    message.error($t('l_Save_error') || 'Error')
+  } catch {
+    message.error($t('l_Save_error'))
   } finally {
     loading.value = false
   }

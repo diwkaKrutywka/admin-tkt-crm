@@ -25,10 +25,24 @@
             <span
               class="icon material-symbols-outlined"
               style="color: black; font-size: 21px; cursor: pointer"
-              @click="onEdit(record)"
+              @click="onEdit(record.id)"
             >
               edit
             </span>
+            <a-popconfirm
+              placement="leftBottom"
+              :title="$t('l_Delete_confirm_organization')"
+              :ok-text="$t('l_Yes')"
+              :cancel-text="$t('l_No')"
+              @confirm="onDelete(record.id)"
+            >
+              <span
+                style="color: red; font-size: 21px; cursor: pointer;"
+                class="icon material-symbols-outlined"
+              >
+                delete
+              </span>
+            </a-popconfirm>
           </a-space>
         </template>
       </template>
@@ -36,7 +50,7 @@
 
     <AddEditOrganization
       :open="modalVisible"
-      :organization="editingOrganization"
+      :organization_id="editingOrganizationId"
       @update:open="modalVisible = $event"
       @submit="fetchOrganizations"
     />
@@ -46,10 +60,9 @@
 <script setup lang="ts">
 import { ref, onMounted, h } from 'vue'
 import { message } from 'ant-design-vue'
-import type { TableRenderProps } from '../../../types/table'
 import type { Organization } from '../../../types/ref'
 import { useI18n } from 'vue-i18n'
-import { getOrganizations } from '../../../api/ref'
+import { getOrganizations, deleteItems } from '../../../api/ref'
 import AddEditOrganization from './AddEditOrganization.vue'
 
 const { t: $t } = useI18n()
@@ -57,7 +70,7 @@ const { t: $t } = useI18n()
 const tableData = ref<Organization[]>([])
 const loading = ref(false)
 const modalVisible = ref(false)
-const editingOrganization = ref<Organization | null>(null)
+const editingOrganizationId = ref<string | null>(null)
 
 const pagination = ref({
   current: 1,
@@ -89,15 +102,10 @@ const columns = [
     title: $t('l_Organization_type'),
     dataIndex: 'organization_type',
     customRender: ({ text }: { text: string }) => {
-      if (text === 'private_clinic') {
-        return $t('l_Private_clinic')
-      } else if (text === 'clinic' || text === 'public_clinic') {
-        return $t('l_Public_clinic')
-      } else if (text === 'hospital') {
-        return $t('l_Hospital')
-      } else if (text === "company") {
-        return $t('l_Company')
-      }
+      if (text === 'private_clinic') return $t('l_Private_clinic')
+      if (text === 'public_clinic') return $t('l_Public_clinic')
+      if (text === 'hospital') return $t('l_Hospital')
+      if (text === 'government_agencyy') return $t('l_government_agency')
       return text
     },
   },
@@ -118,13 +126,13 @@ const fetchOrganizations = async () => {
   try {
     const params = {
       page: pagination.value.current,
-        page_size: pagination.value.pageSize,
+      page_size: pagination.value.pageSize,
     }
     const { data } = await getOrganizations(params)
     tableData.value = data.items
-      pagination.value.total = data.total
-  } catch (error) {
-    message.error($t('l_Load_error') || 'Failed to load organizations')
+    pagination.value.total = data.total
+  } catch {
+    message.error($t('l_Load_error'))
   } finally {
     loading.value = false
   }
@@ -137,13 +145,26 @@ const handleTableChange = (pag: any) => {
 }
 
 const onAdd = () => {
-  editingOrganization.value = null
+  editingOrganizationId.value = null
   modalVisible.value = true
 }
 
-const onEdit = (organization: Organization) => {
-  editingOrganization.value = organization
+const onEdit = (id: string) => {
+  editingOrganizationId.value = id
   modalVisible.value = true
+}
+
+const onDelete = async (id: string) => {
+  try {
+    loading.value = true
+    await deleteItems('organizations', id)
+    message.success($t('l_Delete_success'))
+    fetchOrganizations()
+  } catch {
+    message.error($t('l_Delete_error'))
+  } finally {
+    loading.value = false
+  }
 }
 
 onMounted(() => {

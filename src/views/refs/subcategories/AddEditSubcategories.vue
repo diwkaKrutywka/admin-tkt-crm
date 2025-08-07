@@ -1,25 +1,19 @@
 <template>
   <a-modal
     :open="open"
-    :title="isEdit ? $t('l_Edit_complaint_subcategory') : $t('l_Add_complaint_subcategory')"
+    :title="subtype_id ? $t('l_Edit_subtype') : $t('l_Add_subtype')"
     @ok="handleSubmit"
     @cancel="handleCancel"
-    :confirmLoading="loading"
-    destroyOnClose
+    :confirm-loading="loading"
+    :destroyOnClose="true"
+    width="600px"
   >
     <a-form :model="form" layout="vertical">
-      <a-form-item :label="$t('l_Complaint_category_id')" name="complaint_category_id" required>
-        <a-select
-          v-model:value="form.complaint_category_id"
-          :options="categoryOptions"
-          :placeholder="$t('l_Complaint_category_id')"
-        />
+      <a-form-item :label="$t('l_Name_kz')" name="name_kk" required>
+        <a-input v-model:value="form.name_kk" />
       </a-form-item>
       <a-form-item :label="$t('l_Name_ru')" name="name_ru" required>
         <a-input v-model:value="form.name_ru" />
-      </a-form-item>
-      <a-form-item :label="$t('l_Name_kz')" name="name_kk" required>
-        <a-input v-model:value="form.name_kk" />
       </a-form-item>
       <a-form-item :label="$t('l_Name_en')" name="name_en" required>
         <a-input v-model:value="form.name_en" />
@@ -28,104 +22,114 @@
         <a-input v-model:value="form.code" />
       </a-form-item>
       <a-form-item :label="$t('l_Description')" name="description">
-        <a-input v-model:value="form.description" />
+        <a-textarea v-model:value="form.description" />
+      </a-form-item>
+      <a-form-item :label="$t('l_Call_type')" name="call_type_id" required>
+        <a-select v-model:value="form.call_type_id" allowClear>
+          <a-select-option
+            v-for="type in callTypes"
+            :key="type.id"
+            :value="type.id"
+          >
+            {{ type.name }}
+          </a-select-option>
+        </a-select>
       </a-form-item>
     </a-form>
   </a-modal>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps, defineEmits, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import type { ComplaintSubcategory, ComplaintCategory } from '../../../types/ref'
-import { createComplaintSubcategory, updateComplaintSubcategory, getComplaintCategories } from '../../../api/ref'
 
-const props = defineProps({
-  open: Boolean,
-  subcategory: Object as () => ComplaintSubcategory | null,
-})
+import { getSubtypeById, createSubtype, updateSubtype, getCallTypes } from '../../../api/ref'
+
+const props = defineProps<{
+  open: boolean
+  subtype_id: string | null
+}>()
+
 const emit = defineEmits(['update:open', 'submit'])
-const { t: $t } = useI18n()
 
+const { t: $t } = useI18n()
 const loading = ref(false)
-const isEdit = ref(false)
+
 const form = ref({
-  complaint_category_id: '',
   name_kk: '',
   name_ru: '',
   name_en: '',
   code: '',
   description: '',
+  call_type_id: '',
 })
 
-const categoryOptions = ref<{ label: string, value: string }[]>([])
+const callTypes = ref<{ id: string; name: string }[]>([])
 
-onMounted(async () => {
+const fetchCallTypes = async () => {
   try {
-    const res = await getComplaintCategories()
-    categoryOptions.value = (res.data?.items || []).map((cat: ComplaintCategory) => ({
-      label: cat.name,
-      value: cat.id,
-    }))
-  } catch (e) {
-    categoryOptions.value = []
+    const { data } = await getCallTypes()
+    callTypes.value = data.items
+  } catch {
+    message.error($t('l_Load_error') || 'Failed to load call types')
   }
-})
+}
 
 watch(
-  () => props.subcategory,
-  (subcat) => {
-    if (subcat) {
-      isEdit.value = true
-      form.value = {
-        complaint_category_id: subcat.complaint_category_id,
-        name_kk: subcat.name_kk || '',
-        name_ru: subcat.name || '',
-        name_en: subcat.name_en || '',
-        code: subcat.code,
-        description: subcat.description || '',
-      }
-    } else {
-      isEdit.value = false
-      form.value = {
-        complaint_category_id: '',
-        name_kk: '',
-        name_ru: '',
-        name_en: '',
-        code: '',
-        description: '',
+  () => props.open,
+  async (val) => {
+    if (val) {
+      fetchCallTypes()
+      if (props.subtype_id) {
+        loading.value = true
+        try {
+          const { data } = await getSubtypeById(props.subtype_id)
+          form.value = {
+            name_kk: data.name_kk ?? '',
+            name_ru: data.name_ru ?? '',
+            name_en: data.name_en ?? '',
+            code: data.code ?? '',
+            description: data.description ?? '',
+            call_type_id: data.call_type_id ?? '',
+          }
+        } catch {
+          message.error($t('l_Load_error') || 'Load error')
+        } finally {
+          loading.value = false
+        }
+      } else {
+        resetForm()
       }
     }
-  },
-  { immediate: true }
+  }
 )
+
+const resetForm = () => {
+  form.value = {
+    name_kk: '',
+    name_ru: '',
+    name_en: '',
+    code: '',
+    description: '',
+    call_type_id: '',
+  }
+}
 
 const handleSubmit = async () => {
   loading.value = true
   try {
-    // Only send the required fields
-    const payload = {
-      complaint_category_id: form.value.complaint_category_id,
-      name_kk: form.value.name_kk,
-      name_ru: form.value.name_ru,
-      name_en: form.value.name_en,
-      code: form.value.code,
-      description: form.value.description,
-    }
-    if (!isEdit.value) {
-      await createComplaintSubcategory(payload)
-      message.success($t('l_Complaint_subcategory_created'))
+    if (props.subtype_id) {
+      await updateSubtype(props.subtype_id, form.value)
+      message.success($t('l_Updated_successfully') || 'Updated successfully')
     } else {
-      if (props.subcategory && props.subcategory.id) {
-        await updateComplaintSubcategory(props.subcategory.id, payload)
-        message.success($t('l_Complaint_subcategory_updated'))
-      }
+      await createSubtype(form.value)
+      message.success($t('l_Added_successfully') || 'Added successfully')
     }
     emit('update:open', false)
     emit('submit')
-  } catch (e) {
-    message.error($t('l_Save_error') || 'Error')
+  } catch (error) {
+    message.error($t('l_Save_error') || 'Save error')
   } finally {
     loading.value = false
   }
@@ -133,7 +137,6 @@ const handleSubmit = async () => {
 
 const handleCancel = () => {
   emit('update:open', false)
+  resetForm()
 }
 </script>
-
-<style scoped></style>

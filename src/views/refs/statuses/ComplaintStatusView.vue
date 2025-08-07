@@ -25,19 +25,33 @@
             <span
               class="icon material-symbols-outlined"
               style="color: black; font-size: 21px; cursor: pointer"
-              @click="onEdit(record)"
+              @click="onEdit(record.id)"
             >
               edit
             </span>
+            <a-popconfirm
+              placement="leftBottom"
+              :title="$t('l_Delete_confirm_status')"
+              :ok-text="$t('l_Yes')"
+              :cancel-text="$t('l_No')"
+              @confirm="onDelete(record.id)"
+            >
+              <span
+                style="color: red; font-size: 21px"
+                class="icon material-symbols-outlined"
+              >
+                delete
+              </span>
+            </a-popconfirm>
           </a-space>
         </template>
-
       </template>
     </a-table>
-    <!-- Модалка для добавления/редактирования — по запросу -->
+    
+    <!-- Модалка для добавления/редактирования -->
     <AddEditStatus
       :open="modalVisible"
-      :status="editingStatus"
+      :status_id="editingStatusId"
       @update:open="modalVisible = $event"
       @submit="fetchComplaintStatuses"
     />
@@ -50,7 +64,7 @@ import { message } from 'ant-design-vue'
 import type { TableRenderProps } from '../../../types/table'
 import type { ComplaintStatus } from '../../../types/ref'
 import { useI18n } from 'vue-i18n'
-import { getComplaintStatuses } from '../../../api/ref'
+import { getComplaintStatuses, deleteItems } from '../../../api/ref'
 import AddEditStatus from './AddEditStatus.vue'
 
 const { t: $t, locale } = useI18n()
@@ -58,7 +72,7 @@ const { t: $t, locale } = useI18n()
 const tableData = ref<ComplaintStatus[]>([])
 const loading = ref(false)
 const modalVisible = ref(false)
-const editingStatus = ref<ComplaintStatus | null>(null)
+const editingStatusId = ref<string | null>(null)
 
 const pagination = ref({
   current: 1,
@@ -82,10 +96,10 @@ const columns = [
     title: $t('l_Name'),
     key: 'name',
     customRender: ({ record }: { record: ComplaintStatus }) => {
-      if (locale.value === 'ru') return record.name || record.code
+      if (locale.value === 'ru') return record.name_ru || record.name || record.code
       if (locale.value === 'kk') return record.name_kk || record.code
       if (locale.value === 'en') return record.name_en || record.code
-      return record.name || record.code
+      return record.name_ru || record.name || record.code
     },
   },
   {
@@ -131,13 +145,26 @@ const handleTableChange = (pag: any) => {
 }
 
 const onAdd = () => {
-  editingStatus.value = null
+  editingStatusId.value = null
   modalVisible.value = true
 }
 
-const onEdit = (status: ComplaintStatus) => {
-  editingStatus.value = status
+const onEdit = (id: string) => {
+  editingStatusId.value = id
   modalVisible.value = true
+}
+
+const onDelete = async (id: string) => {
+  try {
+    loading.value = true
+    await deleteItems('complaint-statuses', id)
+    message.success($t('l_Delete_success') || 'Status deleted successfully')
+    fetchComplaintStatuses()
+  } catch (error) {
+    message.error($t('l_Delete_error') || 'Failed to delete status')
+  } finally {
+    loading.value = false
+  }
 }
 
 onMounted(() => {

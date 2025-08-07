@@ -50,7 +50,7 @@
   
       <add-edit-region
         v-model:open="modalVisible"
-        :region_id="editingRegion?.id"
+        :region_id="editingRegion?.id ?? null"
         @submit="fetchRegions"
       />
     </div>

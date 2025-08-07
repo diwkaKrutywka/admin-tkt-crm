@@ -1,12 +1,10 @@
 <template>
     <div>
-      <a-page-header :title="$t('l_Settings') + ' / ' + $t('l_Cities')">
+      <a-page-header :title="$t('l_Settings') + ' / ' + $t('l_Streets')">
         <template #extra>
           <a-button type="primary" @click="onAdd">
-            <span class="material-symbols-outlined">
-              add
-              <span class="ml-2">{{ $t('l_Add_city') }}</span>
-            </span>
+            <span class="material-symbols-outlined">add
+            <span class="ml-2">{{ $t('l_Add_street') }}</span></span>
           </a-button>
         </template>
       </a-page-header>
@@ -32,7 +30,7 @@
               </span>
               <a-popconfirm
                 placement="leftBottom"
-                :title="$t('l_Confirm_delete_city')"
+                :title="$t('l_Confirm_delete')"
                 :ok-text="$t('l_Yes')"
                 :cancel-text="$t('l_No')"
                 @confirm="onDelete(record.id)"
@@ -49,10 +47,10 @@
         </template>
       </a-table>
   
-      <add-edit-city
+      <add-edit-street
         v-model:visible="modalVisible"
-        :city_id="editingCity?.id ?? null"
-        @submit="fetchCities"
+        :street_id="editingStreet?.id ?? null"
+        @submit="fetchStreets"
       />
     </div>
   </template>
@@ -61,18 +59,18 @@
   import { ref, onMounted, h } from 'vue'
   import { message } from 'ant-design-vue'
   import { useI18n } from 'vue-i18n'
-  
-  import AddEditCity from './AddEditCity.vue'
-  import { getCities, deleteItems } from '../../../api/ref'
-  import type { City } from '../../../types/ref'
   import type { TableRenderProps } from '../../../types/table'
+  import type { Street } from '../../../types/ref'
+  
+  import AddEditStreet from './AddEditStreet.vue'
+  import { getStreets, deleteItems } from '../../../api/ref'
   
   const { t: $t } = useI18n()
   
-  const tableData = ref<City[]>([])
+  const tableData = ref<Street[]>([])
   const loading = ref(false)
   const modalVisible = ref(false)
-  const editingCity = ref<City | null>(null)
+  const editingStreet = ref<Street | null>(null)
   
   const pagination = ref({
     current: 1,
@@ -94,40 +92,14 @@
     },
     {
       title: $t('l_Name'),
-      dataIndex: 'name',
+      dataIndex: 'full_name',
     },
-    {
-      title: $t('l_City_code'),
-      dataIndex: 'city_code',
-    },
-    {
-      title: $t('l_City_type'),
-      dataIndex: 'city_type',
-    },
-    {
-      title: $t('l_Regional_center'),
-      dataIndex: 'is_regional_center',
-      customRender: ({ text }: TableRenderProps<City>) =>
-        text
-          ? h('span', { style: 'color: green' }, $t('l_Yes'))
-          : h('span', { style: 'color: red' }, $t('l_No')),
-    },
-    {
-      title: $t('l_District_center'),
-      dataIndex: 'is_district_center',
-      customRender: ({ text }: TableRenderProps<City>) =>
-        text
-          ? h('span', { style: 'color: green' }, $t('l_Yes'))
-          : h('span', { style: 'color: red' }, $t('l_No')),
-    },
-    {
-      title: $t('l_Postal_code'),
-      dataIndex: 'postal_code',
-    },
+   
+   
     {
       title: $t('l_Status'),
       dataIndex: 'is_active',
-      customRender: ({ text }: TableRenderProps<City>) =>
+      customRender: ({ text }: TableRenderProps<Street>) =>
         text
           ? h('span', { style: 'color: green' }, $t('l_Active'))
           : h('span', { style: 'color: red' }, $t('l_Inactive')),
@@ -140,18 +112,18 @@
     },
   ]
   
-  const fetchCities = async () => {
+  const fetchStreets = async () => {
     loading.value = true
     try {
       const params = {
         page: pagination.value.current,
         page_size: pagination.value.pageSize,
       }
-      const { data } = await getCities(params)
+      const { data } = await getStreets(params)
       tableData.value = data.items
       pagination.value.total = data.total
     } catch (error) {
-      message.error($t('l_Load_error') || 'Failed to load cities')
+      message.error($t('l_Load_error') || 'Failed to load streets')
     } finally {
       loading.value = false
     }
@@ -160,34 +132,34 @@
   const handleTableChange = (pag: any) => {
     pagination.value.current = pag.current
     pagination.value.pageSize = pag.pageSize
-    fetchCities()
+    fetchStreets()
   }
   
   const onDelete = async (id: string) => {
     try {
       loading.value = true
-      await deleteItems('cities', id)
-      message.success($t('l_Delete_success') || 'City deleted successfully')
-      fetchCities()
+      await deleteItems('streets', id)
+      message.success($t('l_Delete_success') || 'Street deleted successfully')
+      fetchStreets()
     } catch (error) {
-      message.error($t('l_Delete_error') || 'Failed to delete city')
+      message.error($t('l_Delete_error') || 'Failed to delete street')
     } finally {
       loading.value = false
     }
   }
   
   const onAdd = () => {
-    editingCity.value = null
+    editingStreet.value = null
     modalVisible.value = true
   }
   
-  const onEdit = (city: City) => {
-    editingCity.value = city
+  const onEdit = (street: Street) => {
+    editingStreet.value = street
     modalVisible.value = true
   }
   
   onMounted(() => {
-    fetchCities()
+    fetchStreets()
   })
   </script>
   

@@ -157,10 +157,10 @@ watch(
     if (id) {
       editingUser.value = id as string;
       modalVisible.value = true;
-      router.replace({ path: "/appeals" }); // убираем query
+      router.replace({ path: "/appeals" }); 
     }
   },
-  { immediate: true } // ← если хочешь, чтобы срабатывало и при первой загрузке
+  { immediate: true }
 );
 onMounted(async () => {
   await fetchUsers();
@@ -215,11 +215,11 @@ const columns = [
   },
   {
     title: t("l_Call_type_id"),
-    dataIndex: "call_type_id",
+    dataIndex: ["call_type","name"],
   },
   {
     title: t("l_Call_sub_type_id"),
-    dataIndex: "call_sub_type_id",
+    dataIndex: ["call_sub_type", "name"],
   },
 
   {
@@ -248,7 +248,7 @@ const columns = [
 
   {
     title: t("l_Manager"),
-    dataIndex: "employee_id",
+    dataIndex: ["employee", "name"],
   },
 
   {
@@ -259,7 +259,7 @@ const columns = [
 
       if (record.city_id) {
         parts.push(
-          h("div", [h("span", t("l_City") + ": "), h("strong", record.city_id)])
+          h("div", [h("span", t("l_City") + ": "), h("strong", record.city?.name)])
         );
       }
 
@@ -267,7 +267,7 @@ const columns = [
         parts.push(
           h("div", [
             h("span", t("l_District") + ": "),
-            h("strong", record.district_id),
+            h("strong", record.district?.name),
           ])
         );
       }
@@ -276,7 +276,7 @@ const columns = [
         parts.push(
           h("div", [
             h("span", t("l_Polyclinic") + ": "),
-            h("strong", record.healthcare_facility_id),
+            h("strong", record.healthcare_facility?.name),
           ])
         );
       }

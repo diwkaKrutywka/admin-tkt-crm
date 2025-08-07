@@ -48,27 +48,26 @@ const routes: RouteRecordRaw[] = [
             name: 'CitiesView',
             component: () => import('../views/refs/city/CityView.vue')
           },
-
-          // {
-          //   path: 'districts',
-          //   name: 'DistrictsView',
-          //   component: () => import('../views/refs/districts/DistrictsView.vue')
-          // },
-          // {
-          //   path: 'addresses',
-          //   name: 'AddressesView',
-          //   component: () => import('../views/refs/addresses/AddressesView.vue')
-          // },
-          // {
-          //   path: 'streets',
-          //   name: 'StreetsView',
-          //   component: () => import('../views/refs/streets/StreetsView.vue')
-          // },
-          // {
-          //   path: 'types',
-          //   name: 'CallTypesView',
-          //   component: () => import('../views/refs/types/CallTypesView.vue')
-          // },
+          {
+            path: 'districts',
+            name: 'DistrictsView',
+            component: () => import('../views/refs/districts/DistrictView.vue')
+          },
+          {
+            path: 'addresses',
+            name: 'AddressesView',
+            component: () => import('../views/refs/addresses/AddressView.vue')
+          },
+          {
+            path: 'streets',
+            name: 'StreetsView',
+            component: () => import('../views/refs/streets/StreetView.vue')
+          },
+          {
+            path: 'types',
+            name: 'CallTypesView',
+            component: () => import('../views/refs/call-types/CallTypeView.vue')
+          },
            {
              path: 'subtypes',
              name: 'CallSubtypesView',
@@ -89,6 +88,27 @@ const routes: RouteRecordRaw[] = [
             name: 'ComplaintSubcategoriesView',
             component: () => import('../views/refs/subcategories/ComplaintSubcategoriesView.vue')
            },
+          {
+            path: 'districts',
+            name: 'DistrictsView',
+            component: () => import('../views/refs/districts/DistrictView.vue')
+          },
+          {
+            path: 'addresses',
+            name: 'AddressesView',
+            component: () => import('../views/refs/addresses/AddressView.vue')
+          },
+          {
+            path: 'streets',
+            name: 'StreetsView',
+            component: () => import('../views/refs/streets/StreetView.vue')
+          },
+          {
+            path: 'types',
+            name: 'CallTypesView',
+            component: () => import('../views/refs/call-types/CallTypeView.vue')
+          },
+    
           {
             path: 'organizations',
             name: 'OrganizationsView',

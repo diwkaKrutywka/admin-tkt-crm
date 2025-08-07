@@ -164,7 +164,7 @@ export default {
   l_Display_name: "Көрсету аты",
   l_Add_organization: "Ұйым қосу",
   l_Short_name: "Қысқа атау",
-  l_Company: "Компания",
+  l_government_agency: "Мемлекеттік мекеме",
   l_Private_clinic: "Жеке емхана",
   l_Public_clinic: "Поликлиника",
   l_Hospital: "Аурухана",
@@ -197,5 +197,45 @@ export default {
   l_Complaint_statuses: "Апелляция статустары",
 
   // Call subtype translations
-  l_Add_call_subtype: "Қоңырау кіші түрін қосу",
+  l_Add_call_subtype: "Қоңырау түрін қосу",
+
+  l_Add_district: "Аудан қосу",
+  l_Edit_district: "Ауданды өңдеу",
+  l_District_code: "Аудан коды",
+  l_District_type: "Аудан түрі",
+  l_Administrative_center: "Әкімшілік орталық",
+  l_Delete_success: "Аудан сәтті жойылды",
+  l_Delete_error: "Ауданды жою сәтсіз аяқталды",
+  l_Load_error: "Аудандарды жүктеу сәтсіз аяқталды",
+  l_Confirm_delete: "Осы ауданды жойғыңыз келетініне сенімдісіз бе?",
+  
+  "l_Addresses": "Мекенжайлар",
+  "l_Add_address": "Мекенжай қосу",
+  "l_Edit_address": "Мекенжайды өңдеу",
+  "l_Street": "Көше",
+  "l_House_number": "Үй нөмірі",
+  "l_Block": "Блок",
+  "l_Apartment_number": "Пәтер нөмірі",
+  "l_Add_call_type": "Қоңырау түрін қосу",
+  "l_Confirm_delete_call_type": "Бұл қоңырау түрін жоюға сенімдісіз бе?",
+
+  "l_Complaint": "Шағым",
+  "l_Add_street": "Көше қосу",
+  "l_Edit_street": "Көшені өзгерту",
+  "l_Street_type": "Көше түрі",
+  "l_Street_code": "Көше коды",
+  "l_OSM_ID": "OSM ID",
+  "l_Geometry": "Геометрия",
+  "l_Custom": "Қолмен енгізілген",
+  "l_Confirm_delete_city":"Қаланы жоюды растаңыз",
+  "l_Add_subtype": "Ішкі санатты қосу",
+  "l_Subtypes": "Ішкі санаттар",
+  "l_Delete_confirm_organization": "Осы ұйымды жойғыңыз келетініне сенімдісіз бе?",
+  "l_Delete_confirm_subcategories": "Осы ішкі санатты жойғыңыз келетініне сенімдісіз бе?",
+  "l_Delete_confirm_categories": "Осы санаттарды жойғыңыз келетініне сенімдісіз бе?",
+  "l_Delete_confirm_status": "Осы мәртебені жойғыңыз келетініне сенімдісіз бе?",
+  "l_Delete_confirm_call-subtypes": "Осы өтініштің түршесін жойғыңыз келетініне сенімдісіз бе?",
+  "l_Edit_subtype": "Ішкі санатты өңдеу"
+
+
 };
