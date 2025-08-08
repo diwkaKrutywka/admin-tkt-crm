@@ -1,7 +1,7 @@
 <template>
   <a-modal
     v-model:open="visible"
-    :title="isEdit ? 'Edit User' : 'Add User'"
+    :title="isEdit ? $t('l_Edit_user') : $t('l_Add_user')"
     @ok="handleOk"
     :confirm-loading="loading"
     @cancel="handleCancel"
@@ -24,7 +24,7 @@
         <a-select v-model:value="form.user_role" :options="roleOptions" />
       </a-form-item>
 
-      <a-form-item label="Organization ID" name="organization_id">
+      <a-form-item :label="$t('l_Organization_ID')" name="organization_id">
         <a-input v-model:value="form.organization_id" />
       </a-form-item>
 

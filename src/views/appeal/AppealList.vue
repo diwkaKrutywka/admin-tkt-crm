@@ -95,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, h, onMounted } from "vue";
+import { ref, h, onMounted, watch } from "vue";
 import { message, Tag } from "ant-design-vue";
 import type { Appeal } from "../../types/appeal";
 import FilterAppeal from "./FilterAppeal.vue";
@@ -134,7 +134,22 @@ const currentFilters = ref<any>({});
 
 const route = useRoute();
 const { $formatIsoDate } = useGlobal();
-import { watch } from "vue";
+
+let searchTimeout: ReturnType<typeof setTimeout>;
+
+watch(search, (newValue) => {
+  clearTimeout(searchTimeout);
+  if (!newValue) {
+    currentFilters.value = {};
+    pagination.value.current = 1;
+    fetchUsers();
+  } else {
+    pagination.value.current = 1;
+    searchTimeout = setTimeout(() => {
+      fetchUsers();
+    }, 300);
+  }
+});
 
 watch(
   () => route.query.id,
@@ -297,9 +312,13 @@ const fetchUsers = async () => {
     const params: any = {
       page: pagination.value.current,
       page_size: pagination.value.pageSize,
-      search: search.value,
       ...currentFilters.value,
     };
+
+    
+    if (search.value.trim()) {
+      params.search = search.value.trim();
+    }
 
     if (params.status_in) {
       params.status__in = params.status_in;
@@ -309,7 +328,7 @@ const fetchUsers = async () => {
       params.status__in = statusFilter.value;
     }
 
-    // Удаляем пустые параметры
+    
     Object.keys(params).forEach(key => {
       if (params[key] === '' || params[key] == null) {
         delete params[key];
@@ -319,7 +338,11 @@ const fetchUsers = async () => {
     const { data } = await AppealApi<{
       items: Appeal[];
       total_count: number;
-    }>("", params, "GET");
+    }>(
+      "",
+      params,
+      "GET"
+    );
 
     tableData.value = Object.values(data.items);
     pagination.value.total = data.total_count;

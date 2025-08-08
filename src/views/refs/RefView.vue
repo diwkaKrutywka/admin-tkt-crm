@@ -46,7 +46,8 @@ const router = useRouter()
 const activeTab = ref('')
 
 watch(() => route.path, (newPath) => {
-  const tab = tabs.find(t => newPath.endsWith(t.path))
+  // Ищем точное совпадение пути, а не просто окончание
+  const tab = tabs.find(t => newPath === `/settings/${t.path}`)
   if (tab) {
     activeTab.value = tab.key
   }
@@ -60,4 +61,4 @@ watch(() => route.path, (newPath) => {
 }
 
   </script>
-  
+    

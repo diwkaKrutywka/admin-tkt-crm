@@ -45,6 +45,7 @@ const routes: RouteRecordRaw[] = [
             name: "RegionView",
             component: () => import("../views/refs/regions/RegionsView.vue"),
           },
+
           {
             path: "cities",
             name: "CitiesView",
@@ -71,6 +72,47 @@ const routes: RouteRecordRaw[] = [
             component: () =>
               import("../views/refs/call-types/CallTypeView.vue"),
           },
+           {
+             path: 'subtypes',
+             name: 'CallSubtypesView',
+             component: () => import('../views/refs/subtypes/CallSubtypesView.vue')
+           },
+           {
+             path: 'complaint_status',
+             name: 'ComplaintStatusView',
+             component: () => import('../views/refs/statuses/ComplaintStatusView.vue')
+           },
+           {
+             path: 'complaint_categories',
+             name: 'ComplaintCategoriesView',
+             component: () => import('../views/refs/categories/ComplaintCategoriesView.vue')
+           },
+           {
+            path: 'complaint_subcategories',
+            name: 'ComplaintSubcategoriesView',
+            component: () => import('../views/refs/subcategories/ComplaintSubcategoriesView.vue')
+           },
+          {
+            path: 'districts',
+            name: 'DistrictsView',
+            component: () => import('../views/refs/districts/DistrictView.vue')
+          },
+          {
+            path: 'addresses',
+            name: 'AddressesView',
+            component: () => import('../views/refs/addresses/AddressView.vue')
+          },
+          {
+            path: 'streets',
+            name: 'StreetsView',
+            component: () => import('../views/refs/streets/StreetView.vue')
+          },
+          {
+            path: 'types',
+            name: 'CallTypesView',
+            component: () => import('../views/refs/call-types/CallTypeView.vue')
+          },
+    
           {
             path: "/references",
             name: "References",

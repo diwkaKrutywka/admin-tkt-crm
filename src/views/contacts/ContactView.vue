@@ -177,10 +177,10 @@ const columns = [
   },
 ];
 const applyFilter = (filters: any) => {
-  // Преобразуем данные фильтра в правильный формат для API
+  
   const processedFilters: any = {};
   
-  // Обрабатываем order_by и order
+  
   if (filters.order_by) {
     processedFilters.order_by = filters.order_by;
   }
@@ -188,12 +188,12 @@ const applyFilter = (filters: any) => {
     processedFilters.order = filters.order;
   }
   
-  // Обрабатываем gender
+  
   if (filters.gender__eq) {
     processedFilters.gender__eq = filters.gender__eq;
   }
   
-  // Обрабатываем даты рождения
+  
   if (filters.birth_date__gte) {
     processedFilters.birth_date__gte = filters.birth_date__gte.format('YYYY-MM-DD');
   }
@@ -201,7 +201,7 @@ const applyFilter = (filters: any) => {
     processedFilters.birth_date__lte = filters.birth_date__lte.format('YYYY-MM-DD');
   }
   
-  // Обрабатываем даты создания
+  
   if (filters.created_at__gte) {
     processedFilters.created_at__gte = filters.created_at__gte.format('YYYY-MM-DD');
   }
@@ -223,18 +223,18 @@ const resetFilters = () => {
 const fetchUsers = async () => {
   loading.value = true;
   try {
-    // Собираем все параметры запроса
+    
     const queryParams: any = {
       page: pagination.value.current,
       page_size: pagination.value.pageSize,
     };
     
-    // Добавляем поисковый запрос, если есть
-    if (search.value) {
-      queryParams.q = search.value;
+    
+    if (search.value.trim()) {
+      queryParams.search = search.value.trim();
     }
     
-    // Добавляем фильтры, если есть
+    
     if (Object.keys(currentFilters.value).length > 0) {
       Object.assign(queryParams, currentFilters.value);
     }
@@ -285,15 +285,17 @@ onMounted(() => {
   fetchUsers();
 });
 
-// Следим за изменением поиска
+let searchTimeout: ReturnType<typeof setTimeout>;
+
 watch(search, (newValue) => {
+  clearTimeout(searchTimeout);
   if (!newValue) {
-    // Если поиск очищен, сбрасываем фильтры
     resetFilters();
   } else {
-    // Если есть поисковый запрос, обновляем данные
     pagination.value.current = 1;
-    fetchUsers();
+    searchTimeout = setTimeout(() => {
+      fetchUsers();
+    }, 300);
   }
 });
 </script>

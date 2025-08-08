@@ -1,6 +1,8 @@
-import type { AxiosRequestConfig, AxiosResponse, Method } from "axios";
-import http from "../utils/https";
-import type { City, Region, District, Street, Address, CallType, Organization } from "../types/ref";
+
+import type { AxiosRequestConfig, AxiosResponse, Method } from 'axios'
+import http from '../utils/https'
+import type { City, Region, District, Street, Address, CallType, Organization, ComplaintCategory, ComplaintStatus, ComplaintSubcategory, CallSubtype } from '../types/ref'
+// Типы для справочных данных
 
 
 export interface ApiResponse<T> {
@@ -53,30 +55,69 @@ export const getDistrictById = (id: string) => {
   return RefApi<District>(`districts/${id}`, { multilingual: true }, "GET");
 };
 
-// Создать район
-export const createDistrict = (data: Partial<District>) => {
-  return RefApi("districts/", data, "POST");
-};
+export const getOrganizations = (params?: { include_inactive?: boolean; district_id?: string ;  search?: string; page?: number; page_size?: number}) => {
+  return RefApi<ApiResponse<Organization>>('organizations/', params, 'GET')
+}
+export const getRegions = (params?: { include_inactive?: boolean; search?: string; page?: number; page_size?: number }) => {
+  return RefApi<ApiResponse<Region>>('regions/', params, 'GET')
+}
 
-// Обновить район
-export const updateDistrict = (id: string, data: Partial<District>) => {
-  return RefApi(`districts/${id}/`, data, "PUT");
-};
+export const createOrganization = (data: Partial<Omit<Organization, 'id' | 'created_at' | 'updated_at' | 'display_name' | 'is_active'>>) => {
+  return RefApi<Organization>('organizations/', data, 'POST')
+}
 
-export const getOrganizations = (params?: {
-  include_inactive?: boolean;
-  district_id?: string;
-}) => {
-  return RefApi<ApiResponse<Organization>>("organizations/", params, "GET");
-};
-export const getRegions = (params?: {
-  include_inactive?: boolean;
-  search?: string;
-  page?: number;
-  page_size?: number;
-}) => {
-  return RefApi<ApiResponse<Region>>("regions/", params, "GET");
-};
+export const updateOrganization = (id: string, data: Partial<Omit<Organization, 'id' | 'created_at' | 'updated_at' | 'display_name'>>) => {
+  return RefApi<Organization>(`organizations/${id}`, data, 'PUT')
+}
+
+export const getComplaintSubcategories = (params?: { include_inactive?: boolean }) => {
+  return RefApi<ApiResponse<ComplaintSubcategory>>('complaint-subcategories/', params, 'GET')
+}
+
+export const createComplaintSubcategory = (data: Partial<Omit<ComplaintSubcategory, 'id' | 'created_at' | 'updated_at' | 'is_active'>>) => {
+  return RefApi<ComplaintSubcategory>('complaint-subcategories/', data, 'POST')
+}
+
+export const updateComplaintSubcategory = (id: string, data: Partial<Omit<ComplaintSubcategory, 'id' | 'created_at' | 'updated_at' | 'is_active'>>) => {
+  return RefApi<ComplaintSubcategory>(`complaint-subcategories/${id}`, data, 'PUT')
+}
+
+export const getComplaintCategories = (params?: { include_inactive?: boolean }) => {
+  return RefApi<ApiResponse<ComplaintCategory>>('complaint-categories/', params, 'GET')
+}
+
+export const createComplaintCategory = (data: Partial<Omit<ComplaintCategory, 'id' | 'created_at' | 'updated_at' | 'is_active'>>) => {
+  return RefApi<ComplaintCategory>('complaint-categories/', data, 'POST')
+}
+
+export const updateComplaintCategory = (id: string, data: Partial<Omit<ComplaintCategory, 'id' | 'created_at' | 'updated_at' | 'is_active'>>) => {
+  return RefApi<ComplaintCategory>(`complaint-categories/${id}`, data, 'PUT')
+}
+
+export const getComplaintStatuses = (params?: { include_inactive?: boolean }) => {
+  return RefApi<ApiResponse<ComplaintStatus>>('complaint-statuses/', params, 'GET')
+}
+
+export const createComplaintStatus = (data: Partial<Omit<ComplaintStatus, 'id' | 'created_at' | 'updated_at' | 'is_active'>>) => {
+  return RefApi<ComplaintStatus>('complaint-statuses/', data, 'POST')
+}
+
+export const updateComplaintStatus = (id: string, data: Partial<Omit<ComplaintStatus, 'id' | 'created_at' | 'updated_at'>>) => {
+  return RefApi<ComplaintStatus>(`complaint-statuses/${id}`, data, 'PUT')
+}
+
+export const getCallSubtypes = (params?: { include_inactive?: boolean ; page?: number; page_size?: number }) => {
+  return RefApi<ApiResponse<CallSubtype>>('call-subtypes/', params, 'GET')
+}
+
+export const createCallSubtype = (data: Partial<Omit<CallSubtype, 'id' | 'created_at' | 'updated_at' | 'is_active'>>) => {
+  return RefApi<CallSubtype>('call-subtypes/', data, 'POST')
+}
+
+export const updateCallSubtype = (id: string, data: Partial<Omit<CallSubtype, 'id' | 'created_at' | 'updated_at' | 'is_active'>>) => {
+  return RefApi<CallSubtype>(`call-subtypes/${id}`, data, 'PUT')
+}
+
 // Добавить регион
 export const createRegion = (data: Partial<Region>) => {
   return RefApi("regions/", data, "POST");
@@ -89,11 +130,13 @@ export const updateRegion = (id: string, data: Partial<Region>) => {
 
 // Получить регион по ID (для редактирования)
 export const getRegionById = (id: string) => {
-  return RefApi<Region>(`regions/${id}`, { multilingual: true }, "GET");
-};
-export const deleteItems = (url: string, id: string) => {
-  return RefApi(`${url}/${id}`, undefined, "DELETE");
-};
+  return RefApi<Region>(`regions/${id}`, {multilingual:true}, 'GET')
+}
+
+export const deleteItems = (url:string, id: string) => {
+  return RefApi(`${url}/${id}`, undefined, 'DELETE')
+}
+
 export const createCity = (data: Partial<City>) => {
   return RefApi("cities/", data, "POST");
 };
@@ -105,18 +148,8 @@ export const updateCity = (id: string, data: Partial<City>) => {
 
 // Получить город по ID
 export const getCityById = (id: string) => {
-  return RefApi<City>(`cities/${id}`, { multilingual: true }, "GET");
-};
-// Получить список адресов
-export const getAddresses = (params?: {
-  include_inactive?: boolean;
-  page?: number;
-  page_size?: number;
-}) => {
-  return RefApi<ApiResponse<Address>>("addresses/", params, "GET");
-};
-
-// Получить адрес по ID
+  return RefApi<City>(`cities/${id}`, { multilingual: true }, 'GET')
+}
 export const getAddressById = (id: string) => {
   return RefApi<Address>(`addresses/${id}`, { multilingual: true }, "GET");
 };
@@ -154,7 +187,7 @@ export const createStreet = (data: Partial<Street>) => {
 
 // Обновить улицу
 export const updateStreet = (id: string, data: Partial<Street>) => {
-  return RefApi(`streets/${id}/`, data, "PUT");
+  return RefApi(`streets/${id}`, data, "PUT");
 };
 export const getCallTypes = (params?: {
   include_inactive?: boolean;
@@ -175,3 +208,40 @@ export const createCallType = (data: Partial<CallType>) => {
 export const updateCallType = (id: string, data: Partial<CallType>) => {
   return RefApi(`call-types/${id}`, data, "PUT");
 };
+
+
+// Создать район
+export const createDistrict = (data: Partial<District>) => {
+  return RefApi("districts/", data, "POST");
+};
+
+// Обновить район
+export const updateDistrict = (id: string, data: Partial<District>) => {
+  return RefApi(`districts/${id}`, data, "PUT");
+};
+
+export const getComplaintCategoryById = (id: string) => {
+  return RefApi<ComplaintCategory>(`complaint-categories/${id}`, { multilingual: true }, 'GET')
+}
+
+// Получить сабтип по ID
+export const getCallSubtypeById = (id: string) => {
+  return RefApi<CallSubtype>(`call-subtypes/${id}`, { multilingual: true }, 'GET')
+}
+export const getSubtypeById = (id: string) => {
+  return RefApi<CallSubtype>(`call-subtypes/${id}`, { multilingual: true }, 'GET')
+}
+export const createSubtype = (data: Partial<Omit<CallSubtype, 'id' | 'created_at' | 'updated_at' | 'is_active'>>) => {
+  return RefApi<CallSubtype>('call-subtypes/', data, 'POST')
+}
+export const updateSubtype = (id: string, data: Partial<Omit<CallSubtype, 'id' | 'created_at' | 'updated_at' | 'is_active'>>) => {
+  return RefApi<CallSubtype>(`call-subtypes/${id}`, data, 'PUT')
+}
+
+export const getComplaintStatusById = (id: string) => {
+  return RefApi<ComplaintStatus>(`complaint-statuses/${id}`, { multilingual: true }, 'GET')
+}
+
+export const getOrganizationById = (id: string) => {
+  return RefApi<Organization>(`organizations/${id}`, {}, 'GET')
+}
