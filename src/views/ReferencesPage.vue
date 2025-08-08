@@ -246,7 +246,7 @@ const getData = async (tab: string) => {
         if (currentTabRequest.value === 'call-subtypes/') {
             try {
                 const { data } = await referencesApi(
-                    'complaint-types/',
+                    'call-types/',
                     {},
                     "GET"
                 );
