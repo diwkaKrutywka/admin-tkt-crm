@@ -244,4 +244,7 @@ export default {
   l_Tickets: "Өтініштер есебі",
   l_Source: "Дереккөзі",
   l_Initiator: "Бастама көтеруші",
+  l_Client: "Қоңырау шалушы",
+  l_iin: "ЖСН",
+  l_Contact_info: "Клиенттің ақпараты",
 };

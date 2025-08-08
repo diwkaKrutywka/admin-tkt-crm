@@ -244,4 +244,7 @@ export default {
   l_Tickets: "Отчёт по обращениям",
   l_Source: "Источник",
   l_Initiator: "Инициатор",
+  l_Client: "Клиент",
+  l_iin: "ИИН",
+  l_Contact_info: "Данные клиента",
 };
