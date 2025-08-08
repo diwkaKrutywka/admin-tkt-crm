@@ -3,7 +3,7 @@
       <a-card class="w-full max-w-md shadow-md">
         <h2 class="text-2xl font-semibold mb-6 text-center">Вход</h2>
         <a-form layout="vertical" @submit.prevent="onLogin">
-          <a-form-item label="Email" name="email" :rules="[{ required: true, message: 'Введите email' }]">
+          <a-form-item label="Логин" name="username" :rules="[{ required: true, message: 'Введите email' }]">
             <a-input v-model:value="info.username" type="email" />
           </a-form-item>
   

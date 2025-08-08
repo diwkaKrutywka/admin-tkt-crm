@@ -247,4 +247,6 @@ export default {
   l_Client: "Қоңырау шалушы",
   l_iin: "ЖСН",
   l_Contact_info: "Клиенттің ақпараты",
+  l_Edit_user: "Қолданушының ақпаратын жаңарту",
+  l_Ticket_details:"Толық ақпарат",
 };
