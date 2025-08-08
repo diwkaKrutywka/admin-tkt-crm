@@ -84,6 +84,7 @@ import {
   getCities,
   getDistricts,
 } from "../../../api/ref";
+import type { Street } from "../../../types/ref";
 
 const { t: $t } = useI18n();
 
@@ -116,6 +117,7 @@ const form = ref({
   street_type: "",
   street_code: "",
   description: "",
+  display_order: 0,
   is_custom: true,
 });
 
@@ -168,7 +170,19 @@ const loadStreet = async (id: string) => {
   try {
     loading.value = true;
     const res = await getStreetById(id);
-    Object.assign(form.value, res);
+    const s = (res as any).data as Street;
+    form.value = {
+      name_kk: s.name_kk ?? "",
+      name_ru: s.name_ru ?? "",
+      name_en: s.name_en ?? "",
+      city_id: s.city_id ?? null,
+      district_ids: s.district_ids ?? [],
+      street_type: s.street_type ?? "",
+      street_code: s.street_code ?? "",
+      description: s.description ?? "",
+      display_order: s.display_order ?? 0,
+      is_custom: s.is_custom ?? true,
+    };
   } catch {
     message.error("Ошибка при загрузке данных улицы");
   } finally {
@@ -186,6 +200,7 @@ const resetForm = () => {
     street_type: "",
     street_code: "",
     description: "",
+    display_order: 0,
     is_custom: true,
   };
 };
@@ -207,11 +222,17 @@ const handleOk = async () => {
   await formRef.value?.validate();
   loading.value = true;
   try {
+    const buildPayload = (): Partial<Street> => {
+      const { city_id, ...rest } = form.value as any;
+      const payload: any = { ...rest };
+      if (city_id != null) payload.city_id = city_id;
+      return payload as Partial<Street>;
+    };
     if (isEdit.value && props.street_id) {
-      await updateStreet(props.street_id, form.value);
+      await updateStreet(props.street_id, buildPayload());
       message.success($t("l_Updated_successfully"));
     } else {
-      await createStreet(form.value);
+      await createStreet(buildPayload());
       message.success($t("l_Added_successfully"));
     }
     emit("submit");
