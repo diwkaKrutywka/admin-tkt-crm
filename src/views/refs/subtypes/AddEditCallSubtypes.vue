@@ -17,17 +17,23 @@
       <a-form-item :label="$t('l_Name_en')" name="name_en" required>
         <a-input v-model:value="form.name_en" :placeholder="$t('l_Name_en')" />
       </a-form-item>
-      <a-form-item :label="$t('l_Call_type_id')" name="call_type_id" required>
-        <a-input v-model:value="form.call_type_id" :placeholder="$t('l_Call_type_id')" />
+      <a-form-item :label="$t('l_Call_type')" name="call_type_id" required>
+        <a-select v-model:value="form.call_type_id" allowClear show-search option-filter-prop="label">
+          <a-select-option
+            v-for="type in callTypes"
+            :key="type.id"
+            :value="type.id"
+            :label="type.name"
+          >
+            {{ type.name }}
+          </a-select-option>
+        </a-select>
       </a-form-item>
       <a-form-item :label="$t('l_Code')" name="code" required>
         <a-input v-model:value="form.code" :placeholder="$t('l_Code')" />
       </a-form-item>
       <a-form-item :label="$t('l_Description')" name="description">
         <a-input v-model:value="form.description" :placeholder="$t('l_Description')" />
-      </a-form-item>
-      <a-form-item :label="$t('l_Is_active')" name="is_active">
-        <a-switch v-model:checked="form.is_active" />
       </a-form-item>
     </a-form>
   </a-modal>
@@ -37,8 +43,7 @@
 import { ref, watch, defineProps, defineEmits } from 'vue'
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import type { CallSubtype } from '../../../types/ref'
-import { createCallSubtype, updateCallSubtype, getCallSubtypeById } from '../../../api/ref'
+import { createCallSubtype, updateCallSubtype, getCallSubtypeById, getCallTypes } from '../../../api/ref'
 
 const props = defineProps({
   open: Boolean,
@@ -56,26 +61,37 @@ const form = ref({
   call_type_id: '',
   code: '',
   description: '',
-  is_active: true,
 })
+
+type CallTypeOption = { id: string; name: string }
+const callTypes = ref<CallTypeOption[]>([])
+
+const fetchCallTypes = async () => {
+  try {
+    const { data } = await getCallTypes()
+    callTypes.value = data.items
+  } catch {
+    message.error($t('l_Load_error') || 'Load error')
+  }
+}
 
 watch(
   () => props.open,
   async (val) => {
     if (val) {
+      await fetchCallTypes()
       if (props.subtype_id) {
         isEdit.value = true
         loading.value = true
         try {
           const { data } = await getCallSubtypeById(props.subtype_id)
           form.value = {
-            name_ru: data.name_ru || data.name || '',
+            name_ru: data.name_ru || '',
             name_kk: data.name_kk || '',
             name_en: data.name_en || '',
             call_type_id: data.call_type_id || '',
             code: data.code || '',
             description: data.description || '',
-            is_active: data.is_active ?? true,
           }
         } catch {
           message.error($t('l_Load_error') || 'Load error')
@@ -90,8 +106,7 @@ watch(
           name_en: '',
           call_type_id: '',
           code: '',
-          description: '',
-          is_active: true,
+          description: '',    
         }
       }
     }

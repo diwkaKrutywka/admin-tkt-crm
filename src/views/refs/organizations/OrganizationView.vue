@@ -2,6 +2,16 @@
   <div>
     <a-page-header :title="$t('l_Settings') + ' / ' + $t('l_Organizations')">
       <template #extra>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <a-input-search
+            v-model:value="search"
+            :placeholder="$t('l_Search_placeholder')"
+            style="width: 400px; vertical-align: middle;"
+            class="align-middle search-input"
+            @search="fetchOrganizations"
+            allowClear
+          />
+        </div>
         <a-button type="primary" @click="onAdd">
           <span class="material-symbols-outlined">add
             <span class="ml-2">{{ $t('l_Add_organization') }}</span>
@@ -58,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, h } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { message } from 'ant-design-vue'
 import type { Organization } from '../../../types/ref'
 import { useI18n } from 'vue-i18n'
@@ -71,6 +81,7 @@ const tableData = ref<Organization[]>([])
 const loading = ref(false)
 const modalVisible = ref(false)
 const editingOrganizationId = ref<string | null>(null)
+const search = ref<string>('')
 
 const pagination = ref({
   current: 1,
@@ -124,9 +135,12 @@ const columns = [
 const fetchOrganizations = async () => {
   loading.value = true
   try {
-    const params = {
+    const params: any = {
       page: pagination.value.current,
       page_size: pagination.value.pageSize,
+    }
+    if (search.value.trim()) {
+      params.search = search.value.trim()
     }
     const { data } = await getOrganizations(params)
     tableData.value = data.items
@@ -170,6 +184,31 @@ const onDelete = async (id: string) => {
 onMounted(() => {
   fetchOrganizations()
 })
+
+let searchTimeout: ReturnType<typeof setTimeout>
+watch(search, (newValue) => {
+  clearTimeout(searchTimeout)
+  pagination.value.current = 1
+  if (!newValue) {
+    fetchOrganizations()
+  } else {
+    searchTimeout = setTimeout(() => {
+      fetchOrganizations()
+    }, 300)
+  }
+})
 </script>
 
-<style scoped></style>
+<style scoped>
+.search-input :deep(.ant-input-search-button) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-input :deep(.ant-input-search-button .anticon) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+</style>
