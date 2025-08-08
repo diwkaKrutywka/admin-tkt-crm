@@ -119,7 +119,7 @@ const handleSubmit = async () => {
   try {
     const cleanedData = { ...form.value }
     for (const key in cleanedData) {
-      if (cleanedData[key] === '') cleanedData[key] = null
+      if (cleanedData[key as keyof typeof cleanedData] === '') cleanedData[key as keyof typeof cleanedData] = ''
     }
 
     if (!isEdit.value) {

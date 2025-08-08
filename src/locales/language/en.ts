@@ -225,7 +225,7 @@ export default {
   "l_Delete_confirm_categories": "Are you sure you want to delete these categories?",
   "l_Delete_confirm_status": "Are you sure you want to delete this status?",
   "l_Delete_confirm_call-subtypes": "Are you sure you want to delete this call subtype?",
-  "l_Edit_subtype": "Edit subtype"
-
-
-};
+  "l_Edit_subtype": "Edit subtype",
+    
+  
+  };

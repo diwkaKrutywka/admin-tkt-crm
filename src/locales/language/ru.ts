@@ -237,6 +237,8 @@ export default {
   "l_Delete_confirm_status": "Вы уверены, что хотите удалить этот статус?",
   "l_Delete_confirm_call-subtypes": "Вы уверены, что хотите удалить этот подтип обращения?",
   "l_Edit_subtype": "Редактировать подкатегорию",
-  "l_Edit_call_subtype": "Редактировать подтип обращения"
-
+  "l_Edit_call_subtype": "Редактировать подтип обращения",
+  "l_Department": "Отдел",
+  "l_Position": "Должность",
+  
 };

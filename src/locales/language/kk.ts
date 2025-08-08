@@ -235,7 +235,7 @@ export default {
   "l_Delete_confirm_categories": "Осы санаттарды жойғыңыз келетініне сенімдісіз бе?",
   "l_Delete_confirm_status": "Осы мәртебені жойғыңыз келетініне сенімдісіз бе?",
   "l_Delete_confirm_call-subtypes": "Осы өтініштің түршесін жойғыңыз келетініне сенімдісіз бе?",
-  "l_Edit_subtype": "Ішкі санатты өңдеу"
-
-
-};
+  "l_Edit_subtype": "Ішкі санатты өңдеу",
+  "l_Department": "Бөлім",
+  "l_Position": "Лақап",
+  };
