@@ -29,6 +29,13 @@ export function getMenuList(): MenuItem[] {
       children: [],
     },
     {
+      name: $t("l_Tickets"),
+      icon: "feedback",
+      routerPath: "/ticket",
+      expand: false,
+      children: [],
+    },
+    {
       name: $t("l_Users"),
       icon: "people",
       routerPath: "/user/all",
