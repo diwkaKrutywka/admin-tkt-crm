@@ -1,12 +1,4 @@
-interface Contact {
-    id: string;
-    caller_id: string;
-    full_name: string;
-    called_by: string;
-    iin: string;
-    birth_date: string;
-    gender: 'male' | 'female' | 'not_specified'; 
-  }
+
   
   export interface Appeal {
     id: string;

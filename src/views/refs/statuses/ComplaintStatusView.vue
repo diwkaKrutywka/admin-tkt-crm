@@ -1,10 +1,10 @@
 <template>
   <div>
-    <a-page-header :title="$t('l_Settings') + ' / ' + $t('l_Organizations')">
+    <a-page-header :title="$t('l_Settings') + ' / ' + $t('l_Complaint_statuses')">
       <template #extra>
         <a-button type="primary" @click="onAdd">
           <span class="material-symbols-outlined">add
-            <span class="ml-2">{{ $t('l_Add_organization') }}</span>
+            <span class="ml-2">{{ $t('l_Add_complaint_status') }}</span>
           </span>
         </a-button>
       </template>
@@ -31,13 +31,13 @@
             </span>
             <a-popconfirm
               placement="leftBottom"
-              :title="$t('l_Delete_confirm_organization')"
+              :title="$t('l_Delete_confirm_status')"
               :ok-text="$t('l_Yes')"
               :cancel-text="$t('l_No')"
               @confirm="onDelete(record.id)"
             >
               <span
-                style="color: red; font-size: 21px; cursor: pointer;"
+                style="color: red; font-size: 21px"
                 class="icon material-symbols-outlined"
               >
                 delete
@@ -47,12 +47,13 @@
         </template>
       </template>
     </a-table>
-
-    <AddEditOrganization
+    
+    <!-- Модалка для добавления/редактирования -->
+    <AddEditStatus
       :open="modalVisible"
-      :organization_id="editingOrganizationId"
+      :status_id="editingStatusId"
       @update:open="modalVisible = $event"
-      @submit="fetchOrganizations"
+      @submit="fetchComplaintStatuses"
     />
   </div>
 </template>
@@ -60,17 +61,18 @@
 <script setup lang="ts">
 import { ref, onMounted, h } from 'vue'
 import { message } from 'ant-design-vue'
-import type { Organization } from '../../../types/ref'
+import type { TableRenderProps } from '../../../types/table'
+import type { ComplaintStatus } from '../../../types/ref'
 import { useI18n } from 'vue-i18n'
-import { getOrganizations, deleteItems } from '../../../api/ref'
-import AddEditOrganization from './AddEditOrganization.vue'
+import { getComplaintStatuses, deleteItems } from '../../../api/ref'
+import AddEditStatus from './AddEditStatus.vue'
 
-const { t: $t } = useI18n()
+const { t: $t, locale } = useI18n()
 
-const tableData = ref<Organization[]>([])
+const tableData = ref<ComplaintStatus[]>([])
 const loading = ref(false)
 const modalVisible = ref(false)
-const editingOrganizationId = ref<string | null>(null)
+const editingStatusId = ref<string | null>(null)
 
 const pagination = ref({
   current: 1,
@@ -92,26 +94,25 @@ const columns = [
   },
   {
     title: $t('l_Name'),
-    dataIndex: 'full_name',
-  },
-  {
-    title: $t('l_Short_name'),
-    dataIndex: 'short_name',
-  },
-  {
-    title: $t('l_Organization_type'),
-    dataIndex: 'organization_type',
-    customRender: ({ text }: { text: string }) => {
-      if (text === 'private_clinic') return $t('l_Private_clinic')
-      if (text === 'public_clinic') return $t('l_Public_clinic')
-      if (text === 'hospital') return $t('l_Hospital')
-      if (text === 'government_agencyy') return $t('l_government_agency')
-      return text
+    key: 'name',
+    customRender: ({ record }: { record: ComplaintStatus }) => {
+      if (locale.value === 'ru') return record.name_ru || record.name || record.code
+      if (locale.value === 'kk') return record.name_kk || record.code
+      if (locale.value === 'en') return record.name_en || record.code
+      return record.name_ru || record.name || record.code
     },
   },
   {
-    title: $t('l_Display_name'),
-    dataIndex: 'display_name',
+    title: $t('l_Code'),
+    dataIndex: 'code',
+  },
+  {
+    title: $t('l_Status'),
+    dataIndex: 'is_final',
+    customRender: ({ text }: TableRenderProps<ComplaintStatus>) =>
+      text
+        ? h('span', { style: 'color: green' }, $t('l_Active'))
+        : h('span', { style: 'color: red' }, $t('l_Inactive')),
   },
   {
     title: $t('l_Actions'),
@@ -121,18 +122,17 @@ const columns = [
   },
 ]
 
-const fetchOrganizations = async () => {
+const fetchComplaintStatuses = async () => {
   loading.value = true
   try {
     const params = {
-      page: pagination.value.current,
-      page_size: pagination.value.pageSize,
+      include_inactive: true
     }
-    const { data } = await getOrganizations(params)
+    const { data } = await getComplaintStatuses(params)
     tableData.value = data.items
-    pagination.value.total = data.total
-  } catch {
-    message.error($t('l_Load_error'))
+    pagination.value.total = data.total ?? data.items.length
+  } catch (error) {
+    message.error($t('l_Load_error') || 'Failed to load complaint statuses')
   } finally {
     loading.value = false
   }
@@ -141,34 +141,34 @@ const fetchOrganizations = async () => {
 const handleTableChange = (pag: any) => {
   pagination.value.current = pag.current
   pagination.value.pageSize = pag.pageSize
-  fetchOrganizations()
+  fetchComplaintStatuses()
 }
 
 const onAdd = () => {
-  editingOrganizationId.value = null
+  editingStatusId.value = null
   modalVisible.value = true
 }
 
 const onEdit = (id: string) => {
-  editingOrganizationId.value = id
+  editingStatusId.value = id
   modalVisible.value = true
 }
 
 const onDelete = async (id: string) => {
   try {
     loading.value = true
-    await deleteItems('organizations', id)
-    message.success($t('l_Delete_success'))
-    fetchOrganizations()
-  } catch {
-    message.error($t('l_Delete_error'))
+    await deleteItems('complaint-statuses', id)
+    message.success($t('l_Delete_success') || 'Status deleted successfully')
+    fetchComplaintStatuses()
+  } catch (error) {
+    message.error($t('l_Delete_error') || 'Failed to delete status')
   } finally {
     loading.value = false
   }
 }
 
 onMounted(() => {
-  fetchOrganizations()
+  fetchComplaintStatuses()
 })
 </script>
 

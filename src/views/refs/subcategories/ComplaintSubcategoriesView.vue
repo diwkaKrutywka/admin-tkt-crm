@@ -1,10 +1,10 @@
 <template>
   <div>
-    <a-page-header :title="$t('l_Settings') + ' / ' + $t('l_Organizations')">
+    <a-page-header :title="$t('l_Settings') + ' / ' + $t('l_Subtypes')">
       <template #extra>
         <a-button type="primary" @click="onAdd">
           <span class="material-symbols-outlined">add
-            <span class="ml-2">{{ $t('l_Add_organization') }}</span>
+            <span class="ml-2">{{ $t('l_Add_subtype') }}</span>
           </span>
         </a-button>
       </template>
@@ -25,19 +25,19 @@
             <span
               class="icon material-symbols-outlined"
               style="color: black; font-size: 21px; cursor: pointer"
-              @click="onEdit(record.id)"
+              @click="onEdit(record)"
             >
               edit
             </span>
             <a-popconfirm
               placement="leftBottom"
-              :title="$t('l_Delete_confirm_organization')"
+              :title="$t('l_Delete_confirm_subcategories')"
               :ok-text="$t('l_Yes')"
               :cancel-text="$t('l_No')"
               @confirm="onDelete(record.id)"
             >
               <span
-                style="color: red; font-size: 21px; cursor: pointer;"
+                style="color: red; font-size: 21px"
                 class="icon material-symbols-outlined"
               >
                 delete
@@ -48,11 +48,10 @@
       </template>
     </a-table>
 
-    <AddEditOrganization
-      :open="modalVisible"
-      :organization_id="editingOrganizationId"
-      @update:open="modalVisible = $event"
-      @submit="fetchOrganizations"
+    <add-edit-subtype
+      v-model:open="modalVisible"
+      :subtype_id="editingSubtype?.id ?? null"
+      @submit="fetchSubtypes"
     />
   </div>
 </template>
@@ -60,17 +59,20 @@
 <script setup lang="ts">
 import { ref, onMounted, h } from 'vue'
 import { message } from 'ant-design-vue'
-import type { Organization } from '../../../types/ref'
 import { useI18n } from 'vue-i18n'
-import { getOrganizations, deleteItems } from '../../../api/ref'
-import AddEditOrganization from './AddEditOrganization.vue'
+
+import type { TableRenderProps } from '../../../types/table'
+import type { Subtype } from '../../../types/ref'
+
+import { getCallSubtypes, deleteItems } from '../../../api/ref'
+import AddEditSubtype from './AddEditSubcategories.vue'
 
 const { t: $t } = useI18n()
 
-const tableData = ref<Organization[]>([])
+const tableData = ref<Subtype[]>([])
 const loading = ref(false)
 const modalVisible = ref(false)
-const editingOrganizationId = ref<string | null>(null)
+const editingSubtype = ref<Subtype | null>(null)
 
 const pagination = ref({
   current: 1,
@@ -92,26 +94,23 @@ const columns = [
   },
   {
     title: $t('l_Name'),
-    dataIndex: 'full_name',
+    dataIndex: 'name',
   },
   {
-    title: $t('l_Short_name'),
-    dataIndex: 'short_name',
+    title: $t('l_Code'),
+    dataIndex: 'code',
   },
   {
-    title: $t('l_Organization_type'),
-    dataIndex: 'organization_type',
-    customRender: ({ text }: { text: string }) => {
-      if (text === 'private_clinic') return $t('l_Private_clinic')
-      if (text === 'public_clinic') return $t('l_Public_clinic')
-      if (text === 'hospital') return $t('l_Hospital')
-      if (text === 'government_agencyy') return $t('l_government_agency')
-      return text
-    },
+    title: $t('l_Description'),
+    dataIndex: 'description',
   },
   {
-    title: $t('l_Display_name'),
-    dataIndex: 'display_name',
+    title: $t('l_Status'),
+    dataIndex: 'is_active',
+    customRender: ({ text }: TableRenderProps<Subtype>) =>
+      text
+        ? h('span', { style: 'color: green' }, $t('l_Active'))
+        : h('span', { style: 'color: red' }, $t('l_Inactive')),
   },
   {
     title: $t('l_Actions'),
@@ -121,18 +120,18 @@ const columns = [
   },
 ]
 
-const fetchOrganizations = async () => {
+const fetchSubtypes = async () => {
   loading.value = true
   try {
     const params = {
       page: pagination.value.current,
       page_size: pagination.value.pageSize,
     }
-    const { data } = await getOrganizations(params)
+    const { data } = await getCallSubtypes(params)
     tableData.value = data.items
     pagination.value.total = data.total
-  } catch {
-    message.error($t('l_Load_error'))
+  } catch (error) {
+    message.error($t('l_Load_error') || 'Failed to load subtypes')
   } finally {
     loading.value = false
   }
@@ -141,35 +140,33 @@ const fetchOrganizations = async () => {
 const handleTableChange = (pag: any) => {
   pagination.value.current = pag.current
   pagination.value.pageSize = pag.pageSize
-  fetchOrganizations()
-}
-
-const onAdd = () => {
-  editingOrganizationId.value = null
-  modalVisible.value = true
-}
-
-const onEdit = (id: string) => {
-  editingOrganizationId.value = id
-  modalVisible.value = true
+  fetchSubtypes()
 }
 
 const onDelete = async (id: string) => {
   try {
     loading.value = true
-    await deleteItems('organizations', id)
-    message.success($t('l_Delete_success'))
-    fetchOrganizations()
-  } catch {
-    message.error($t('l_Delete_error'))
+    await deleteItems('call-subtypes', id)
+    message.success($t('l_Delete_success') || 'Subtype deleted successfully')
+    fetchSubtypes()
+  } catch (error) {
+    message.error($t('l_Delete_error') || 'Failed to delete subtype')
   } finally {
     loading.value = false
   }
 }
 
+const onAdd = () => {
+  editingSubtype.value = null
+  modalVisible.value = true
+}
+
+const onEdit = (subtype: Subtype) => {
+  editingSubtype.value = subtype
+  modalVisible.value = true
+}
+
 onMounted(() => {
-  fetchOrganizations()
+  fetchSubtypes()
 })
 </script>
-
-<style scoped></style>
