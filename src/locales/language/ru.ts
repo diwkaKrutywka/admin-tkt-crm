@@ -244,4 +244,10 @@ export default {
   l_Tickets: "Отчёт по обращениям",
   l_Source: "Источник",
   l_Initiator: "Инициатор",
+  l_Client: "Клиент",
+  l_iin: "ИИН",
+  l_Contact_info: "Данные клиента",
+  l_Title:"Название",
+  l_Edit_user:"Обновить пользователя",
+  l_Ticket_details:"Детали карты обращений",
 };

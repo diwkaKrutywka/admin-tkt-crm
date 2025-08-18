@@ -233,4 +233,8 @@ export default {
   l_Tickets: "Appeals Dashboard",
   l_Source: "Source",
   l_Initiator: "Initiator",
+  l_Client:"Client",
+  l_iin:"IIN",
+  l_Contact_info:"Contact info",
+  l_Ticket_details:"Ticket detail",
 };

@@ -10,8 +10,18 @@
     <a-form :model="form" ref="formRef" layout="vertical">
       <a-form-item label="Reason" name="reason">
         <a-textarea v-model:value="form.reason" />
-      </a-form-item> 
-
+      </a-form-item>
+      <a-form-item label="Call Type" name="call_type_id">
+        <a-select
+          v-model:value="form.call_type_id"
+          :options="callTypeOptions"
+          placeholder="Выберите тип звонка"
+          :loading="callTypeLoading"
+          show-search
+          option-filter-prop="label"
+          @focus="fetchCallTypes"
+        />
+      </a-form-item>
 
       <a-form-item label="Full Name" name="full_name">
         <a-input v-model:value="form.full_name" />
@@ -36,139 +46,161 @@
   </a-modal>
 </template>
 <script setup lang="ts">
-import { ref, reactive, computed, watch } from 'vue'
-import type { FormInstance} from 'ant-design-vue'
-import { message } from 'ant-design-vue'
-import dayjs from 'dayjs'
-import { AppealApi } from '../../api/appeal'
-import { toRaw } from 'vue'
-import { useNotificationStore } from '../../store/index'
+import { ref, reactive, computed, watch } from "vue";
+import type { FormInstance } from "ant-design-vue";
+import { message } from "ant-design-vue";
+import dayjs from "dayjs";
+import { AppealApi } from "../../api/appeal";
+import { toRaw } from "vue";
+import { useNotificationStore } from "../../store/index";
 
-const notificationStore = useNotificationStore()
+const notificationStore = useNotificationStore();
 interface Contact {
- 
-  reason: string
-  full_name: string
-  birth_date: any // using any for compatibility with dayjs object
-  iin: string
-  gender: string
-  home_address: string
+  reason: string;
+  full_name: string;
+  birth_date: any; // using any for compatibility with dayjs object
+  iin: string;
+  gender: string;
+  call_type_id: string;
+  home_address: string;
 }
 
 const props = defineProps<{
-  open: boolean
-  id?: string
-}>()
+  open: boolean;
+  id?: string;
+}>();
 
 const emit = defineEmits<{
-  (e: 'update:open', val: boolean): void
-  (e: 'submit', payload: Contact): void
-}>()
+  (e: "update:open", val: boolean): void;
+  (e: "submit", payload: Contact): void;
+}>();
 
 const visible = computed({
   get: () => props.open,
-  set: (val: boolean) => emit('update:open', val),
-})
+  set: (val: boolean) => emit("update:open", val),
+});
 
-const isEdit = computed(() => !!props.id)
+const isEdit = computed(() => !!props.id);
+import { getCallTypes } from "../../api/ref"; // твой путь к API
+
+const callTypeOptions = ref<{ label: string; value: string }[]>([]);
+const callTypeLoading = ref(false);
+
+const fetchCallTypes = async () => {
+  callTypeLoading.value = true;
+  try {
+    const res = await getCallTypes({ include_inactive: false });
+    if (res?.data?.items) {
+      callTypeOptions.value = res.data.items.map((item: any) => ({
+        label: item.name, // или нужное поле
+        value: item.id, // или нужный ключ
+      }));
+    }
+  } catch (err) {
+    message.error("Не удалось загрузить Call Types");
+  } finally {
+    callTypeLoading.value = false;
+  }
+};
 
 const form = reactive<Contact>({
-
-  reason: '',
-  full_name: '',
+  reason: "",
+  full_name: "",
   birth_date: null,
-  iin: '',
-  gender: 'not_specified',
-  home_address: '',
-})
+  iin: "",
+  gender: "not_specified",
+  call_type_id: "",
+  home_address: "",
+});
 
 const genderOptions = [
-  { label: 'Мужчина', value: 'male' },
-  { label: 'Женщина', value: 'female' },
-  { label: 'Не указано', value: 'not_specified' },
-]
+  { label: "Мужчина", value: "male" },
+  { label: "Женщина", value: "female" },
+  { label: "Не указано", value: "not_specified" },
+];
 
-const formRef = ref<FormInstance>()
-const loading = ref(false)
+const formRef = ref<FormInstance>();
+const loading = ref(false);
 
 const fetchUser = async () => {
-  if (!props.id) return
-  loading.value = true
-console.log(props.id)
+  if (!props.id) return;
+  loading.value = true;
+  console.log(props.id);
   try {
-    const res = await AppealApi(`${props.id}`, {}, 'GET')
-    const user = res.data
+    const res = await AppealApi(`${props.id}`, {}, "GET");
+    const user = res.data;
 
     Object.assign(form, {
-     reason: user.reason,
+      reason: user.reason,
       full_name: user?.contact?.full_name,
-      birth_date: user?.contact?.birth_date ? dayjs(user?.contact?.birth_date) : null,
+      birth_date: user?.contact?.birth_date
+        ? dayjs(user?.contact?.birth_date)
+        : null,
       iin: user?.contact?.iin,
       gender: user?.contact?.gender,
       home_address: user?.contact?.home_address,
-    })
+    });
   } catch (err) {
-    message.error('Failed to load user data')
+    message.error("Failed to load user data");
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 watch(
   () => props.open,
   async (val) => {
     if (val && props.id) {
-      await fetchUser()
+      await fetchUser();
     } else if (val) {
       Object.assign(form, {
-   
-        reason: '',
-        full_name: '',
+        reason: "",
+        full_name: "",
         birth_date: null,
-        iin: '',
-        gender: 'not_specified',
-        home_address: '',
-      })
+        iin: "",
+        gender: "not_specified",
+        home_address: "",
+      });
     }
   },
   { immediate: true }
-)
+);
 
 const handleOk = async () => {
   try {
-    await formRef.value?.validate()
-    loading.value = true
+    await formRef.value?.validate();
+    loading.value = true;
 
-    const payload = { ...toRaw(form) }
+    const payload = { ...toRaw(form) };
 
     if (payload.birth_date) {
-      payload.birth_date = dayjs(payload.birth_date).format('YYYY-MM-DD')
+      payload.birth_date = dayjs(payload.birth_date).format("YYYY-MM-DD");
     }
 
     if (isEdit.value && props.id) {
-      await AppealApi(`${props.id}`, payload, 'PUT')
-      message.success('Contact updated successfully')
-      emit('submit', payload as Contact)
-      notificationStore.removeMessageByAppealId(props.id)
+      await AppealApi(`${props.id}`, payload, "PUT");
+      message.success("Contact updated successfully");
+      emit("submit", payload as Contact);
+      notificationStore.removeMessageByAppealId(props.id);
     } else {
-      const res = await AppealApi('', payload, 'POST')
-      message.success('User created successfully')
-      emit('submit', res.data)
+      const res = await AppealApi("", payload, "POST");
+      message.success("User created successfully");
+      emit("submit", res.data);
     }
 
-    visible.value = false
+    visible.value = false;
   } catch (err: any) {
     if (err?.response?.data?.detail) {
-      message.error(err.response.data.detail)
+      message.error(err.response.data.detail);
     } else {
-      message.error('Please fix validation errors or check API.')
+      message.error("Please fix validation errors or check API.");
     }
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const handleCancel = () => {
-  visible.value = false
-}
+  visible.value = false;
+};
 </script>

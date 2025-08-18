@@ -49,7 +49,8 @@ const userStore = useUserStore()
 const notificationStore = useNotificationStore()
 
 onMounted(() => {
-  const clientId = userStore.user?.user?.employee_id || 'test-client-1'
+  const clientId = userStore.user?.agent_id || 'test-client-1'
+ // console.log(userStore.user?.agent_id)
   if (clientId) {
     initWebSocket(clientId, (message) => {
       console.log(message)
