@@ -45,11 +45,6 @@
             </a-popconfirm>
           </a-space>
         </template>
-        <template v-else-if="column.dataIndex === 'is_active'">
-          <span :style="{ color: record.is_active ? 'green' : 'red' }">
-            {{ record.is_active ? $t('l_Active') : $t('l_Inactive') }}
-          </span>
-        </template>
       </template>
     </a-table>
     
@@ -103,10 +98,6 @@ const columns = [
   {
     title: $t('l_Code'),
     dataIndex: 'code',
-  },
-  { 
-    title: $t('l_Status'),
-    dataIndex: 'is_active',
   },
   {
     title: $t('l_Actions'),
