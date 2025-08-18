@@ -14,7 +14,7 @@
     <div class="flex-1">
       <slot name="content">
         <div class="text-gray-700 text-sm leading-relaxed">
-          <slot></slot>
+         
         </div>
       </slot>
     </div>
