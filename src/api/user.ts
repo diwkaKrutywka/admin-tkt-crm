@@ -7,7 +7,7 @@ export function UserApi<T = any>(
   method: Method = 'POST'
 ): Promise<AxiosResponse<T>> {
   const config: AxiosRequestConfig = {
-    url: `auth/api/v1/auth/users/${url}`,
+    url: `auth/api/v1/users/${url}`,
     method,
   }
 

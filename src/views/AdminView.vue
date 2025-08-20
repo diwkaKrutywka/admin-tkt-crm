@@ -14,7 +14,7 @@
         </div>
         <div class="flex border border-gray-100  pt-3 pb-3 border-b px-3">
           <p class="font-manrope text-sm text-gray-400 font-light my-auto">
-           version : 1.0.0
+            version : 1.0.0
           </p>
         </div>
       </div>
@@ -28,7 +28,7 @@
         </div>
       </div>
     </div>
-  
+
   </div>
 </template>
 
@@ -48,21 +48,20 @@ const isDrawerOpen = ref(false)
 const userStore = useUserStore()
 const notificationStore = useNotificationStore()
 
-onMounted(() => {
-  const clientId = userStore.user?.agent_id || 'test-client-1'
- // console.log(userStore.user?.agent_id)
-  if (clientId) {
-    initWebSocket(clientId, (message) => {
-      console.log(message)
-      if(message.type === 'appeal_created'){
-      notificationStore.addMessage(message)
-      }
-    })
-  }
-})
+// onMounted(() => {
+//   const clientId = userStore.user?.agent_id || 'test-client-1'
+//  // console.log(userStore.user?.agent_id)
+//   if (clientId) {
+//     initWebSocket(clientId, (message) => {
+//       console.log(message)
+//       if(message.type === 'appeal_created'){
+//       notificationStore.addMessage(message)
+//       }
+//     })
+//   }
+// })
 
 onBeforeUnmount(() => {
   closeWebSocket()
 })
 </script>
-
