@@ -1,13 +1,62 @@
 import type { AxiosRequestConfig, AxiosResponse, Method } from "axios";
 import http from "../utils/https";
-import type { City, Organization } from "../types/ref";
+import type { Organization } from "../types/ref";
 // Типы для справочных данных
 
-export interface ApiResponse<T> {
+// Contact interface
+export interface Contact {
   id: string;
-  date: string; // e.g., "2025-08-19T07:22:25.090Z"
-  status: string;
-  reason: string;
+  caller_id: string;
+  full_name: string;
+  called_by: string;
+  iin: string | null;
+  birth_date: string | null; // Format: "YYYY-MM-DD"
+  gender: "male" | "female" | "not_specified";
+  home_address: string | null;
+}
+
+// Reference data interfaces
+export interface City {
+  id: string;
+  name: string;
+}
+
+export interface District {
+  id: string;
+  name: string;
+}
+
+export interface HealthcareFacility {
+  id: string;
+  name: string;
+}
+
+export interface CallType {
+  id: string;
+  name: string;
+}
+
+export interface CallSubType {
+  id: string;
+  name: string;
+}
+
+export interface AppealCategory {
+  id: string;
+  name: string;
+}
+
+export interface AppealSubCategory {
+  id: string;
+  name: string;
+}
+
+// Main appeal item interface
+export interface AppealItem {
+  id: string;
+  date: string; // Format: "2025-07-30T12:49:13.222720Z"
+  status: "new" | "in_progress" | "completed" | "cancelled" | string;
+  reason: string | null;
   contact_id: string;
   employee_id: string;
   city_id: string;
@@ -18,59 +67,64 @@ export interface ApiResponse<T> {
   appeal_category_id: string;
   appeal_sub_category_id: string;
 
-  contact: {
-    id: string;
-    caller_id: string;
-    full_name: string;
-    called_by: string;
-    iin: string;
-    birth_date: string; // e.g., "2025-08-19"
-    gender: "male" | "female" | "not_specified";
-  };
-
-  city: {
-    id: string;
-    name: string;
-  };
-
-  district: {
-    id: string;
-    name: string;
-  };
-
-  healthcare_facility: {
-    id: string;
-    name: string;
-  };
-
-  call_type: {
-    id: string;
-    name: string;
-  };
-
-  call_sub_type: {
-    id: string;
-    name: string;
-  };
-
-  appeal_category: {
-    id: string;
-    name: string;
-  };
-
-  appeal_sub_category: {
-    id: string;
-    name: string;
-  };
+  // Nested objects
+  contact: Contact;
+  city: City;
+  district: District;
+  healthcare_facility: HealthcareFacility;
+  call_type: CallType;
+  call_sub_type: CallSubType;
+  appeal_category: AppealCategory | null;
+  appeal_sub_category: AppealSubCategory | null;
 }
+
+// Paginated response interface
+export interface PaginatedAppealsResponse {
+  total: number;
+  page: number;
+  page_size: number;
+  items: AppealItem[];
+}
+
+// Generic paginated response interface (reusable)
+export interface PaginatedResponse<T> {
+  total: number;
+  page: number;
+  page_size: number;
+  items: T[];
+}
+
+// Usage examples:
+// const appealsResponse: PaginatedAppealsResponse = ...
+// const genericResponse: PaginatedResponse<AppealItem> = ...
+
+// API function type
+export type GetAppealsFunction = (params?: {
+  page?: number;
+  page_size?: number;
+  status?: string;
+  bp_giid?: string;
+  [key: string]: any;
+}) => Promise<AxiosResponse<PaginatedAppealsResponse>>;
+
+// Update your existing API function
+export const getAppealBpGiidInterface = (params?: {
+  bp_giid?: string;
+  page?: number;
+  page_size?: number;
+  status?: string;
+}): Promise<AxiosResponse<PaginatedAppealsResponse>> => {
+  return RefApi<PaginatedAppealsResponse>("", {}, params, "GET");
+};
 
 export function RefApi<T = any>(
   url: string,
   data?: Record<string, any>,
+  params?: Record<string, any>,
   method: Method = "POST"
 ): Promise<AxiosResponse<T>> {
   const axiosConfig: AxiosRequestConfig = {
-    url: `appeal/api/v1/appeals/q${url}`,
+    url: `appeal/api/v1/appeals/${url}`,
     method,
   };
 
@@ -85,16 +139,6 @@ export function RefApi<T = any>(
 
 // API методы для справочных данных
 export const getAppealBpGiid = (params?: { bp_giid?: string }) => {
-  return RefApi<ApiResponse<any>>("", params, "GET");
+  return RefApi<PaginatedAppealsResponse>("", {}, params, "GET");
 };
-
-export const createOrganization = (
-  data: Partial<
-    Omit<
-      Organization,
-      "id" | "created_at" | "updated_at" | "display_name" | "is_active"
-    >
-  >
-) => {
-  return RefApi<Organization>("organizations/", data, "POST");
-};
+ 
