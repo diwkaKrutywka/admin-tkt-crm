@@ -7,7 +7,7 @@
       @cancel="handleCancel"
       destroyOnClose
     >
-      <a-form :model="form" :rules="rules" ref="formRef" layout="vertical">
+      <a-form :model="form" ref="formRef" layout="vertical">
         <a-form-item label="Full Name" name="full_name">
           <a-input v-model:value="form.full_name" />
         </a-form-item>
