@@ -42,15 +42,15 @@ import type { FormInstance } from "ant-design-vue";
 import { message } from "ant-design-vue";
 import dayjs from "dayjs";
 import { AppealApi } from "../../api/appeal";
-import { toRaw } from "vue";
-import { useNotificationStore } from "../../store/index";
+// import { toRaw } from "vue";
+// import { useNotificationStore } from "../../store/index";
 import { useRoute } from "vue-router";
 import { useUserStore } from '../../store/index'
 import { getAppealBpGiid } from '../../api/brightPattern'
 const userStore = useUserStore()
 
 const route = reactive(useRoute())
-const notificationStore = useNotificationStore();
+//const notificationStore = useNotificationStore();
 
 
 const props = defineProps<{
@@ -61,14 +61,14 @@ const props = defineProps<{
 const isEdit = computed(() => !!props.id);
 
 
-const callTypeOptions = ref<{ label: string; value: string }[]>([]);
+//const callTypeOptions = ref<{ label: string; value: string }[]>([]);
 const callTypeLoading = ref(false);
 
 
 const form = reactive({
     reason: "",
     full_name: "",
-    birth_date: '',
+    birth_date: null as any,
     iin: "",
     gender: "not_specified",
     // call_type_id: "",
@@ -85,17 +85,27 @@ const formRef = ref<FormInstance>();
 const loading = ref(false);
 
 const handleOk = async () => {
-    form.birth_date = dayjs(form.birth_date).format('YYYY-MM-DD');
     try {
-        console.log(appealId.value,'asdasdas');
+        const requestData = {
+            trigger: "submit",
+            reason: form.reason,
+            full_name: form.full_name,
+            birth_date: form.birth_date ? dayjs(form.birth_date).format('YYYY-MM-DD') : null,
+            iin: form.iin,
+            gender: form.gender,
+            home_address: form.home_address
+        };
 
-        await AppealApi(`${appealId.value}`, form, "PATCH");
+        console.log(appealId.value, 'appeal id');
+        console.log(requestData, 'request data');
+
+        await AppealApi(`${appealId.value}`, requestData, "PATCH");
 
         alert('Обращение заполнено')
     } catch (err) {
-        message.error("Не удалось загрузить Call Types");
+        message.error("Не удалось обновить обращение");
     } finally {
-        callTypeLoading.value = false;
+        loading.value = false;
     }
 };
 
