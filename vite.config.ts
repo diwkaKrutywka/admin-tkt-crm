@@ -6,7 +6,7 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   server: {
     allowedHosts: [
-      ".ngrok-free.app", // разрешаем все поддомены ngrok
+      ".ngrok-free.app", // разрешаем все поддомены ngrok 
     ],
   },
   plugins: [vue(), tailwindcss()],
