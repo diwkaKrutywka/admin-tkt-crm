@@ -1,0 +1,24 @@
+services:
+  front:
+    image: ${IMAGE_REGISTRY_URL}:dev
+    ports:
+      - "3000:80"
+    environment:
+      - VITE_BASE_API_URL=${VITE_BASE_API_URL}
+      - IMAGE_REGISTRY_URL=${IMAGE_REGISTRY_URL}
+    env_file:
+      - stack.env
+    networks:
+     - frontend-net
+    deploy:
+     replicas: 1
+     restart_policy:
+       condition: on-failure
+     placement:
+       constraints:
+         - node.role == worker
+
+networks:
+ frontend-net:
+   external:
+     true
