@@ -1,47 +1,21 @@
-version: '3.8'
-
 services:
-  # Frontend приложение
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        # Переменные для сборки
-        VITE_BASE_URL: ${VITE_BASE_URL}
+  front:
+    image: ${IMAGE_REGISTRY_URL}
     ports:
-      - "3000:80"
+      - "8088:80"
     environment:
-      # Переменные окружения для runtime
-      - VITE_BASE_URL=${VITE_BASE_URL}
-    volumes:
-      # Монтируем .env файл для локальной разработки
-      - ./.env:/app/.env:ro
-    restart: unless-stopped
+      - VITE_BASE_API_URL=${BASE_API_URL}
     networks:
-      - app-network
-
-  # Для разработки - можно раскомментировать
-  # frontend-dev:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.dev
-  #   ports:
-  #     - "3001:3000"
-  #   volumes:
-  #     - .:/app
-  #     - /app/node_modules
-  #   environment:
-  #     - NODE_ENV=development
-  #     - VITE_BASE_URL=${VITE_BASE_URL}
-  #   command: npm run dev
-  #   networks:
-  #     - app-network
+     - frontend-net
+    deploy:
+     replicas: 1
+     restart_policy:
+       condition: on-failure
+     placement:
+       constraints:
+         - node.role == worker
 
 networks:
-  app-network:
-    driver: bridge
-
-volumes:
-  # Если понадобятся именованные volumes
-  # app-data:
+ frontend-net:
+   external:
+     true

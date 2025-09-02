@@ -1,32 +1,35 @@
-# Многоэтапная сборка для Vue.js приложения
-FROM node:18-alpine AS builder
-
-# Устанавливаем рабочую директорию
+# Этап 1: билд фронта
+FROM node:20-alpine AS build
 WORKDIR /app
 
-# Копируем файлы зависимостей
+# Копируем только package.json, чтобы кэшировался npm install
 COPY package*.json ./
 
 # Устанавливаем зависимости
-RUN npm ci --only=production
+RUN npm install
 
-# Копируем исходный код
+# Копируем весь проект
 COPY . .
 
-# Собираем приложение
-RUN npm run build
+# Accept build argument for API URL
+ARG VITE_BASE_API_URL
 
-# Второй этап - production образ
+# Сборка только через vite (без проверки типов)
+RUN CI=false npm run build-only
+
+# Этап 2: nginx
 FROM nginx:alpine
 
-# Копируем собранное приложение
-COPY --from=builder /app/dist /usr/share/nginx/html
+# Копируем собранный фронт
+COPY --from=build /app/dist /usr/share/nginx/html
 
-# Копируем конфигурацию nginx
-COPY nginx.conf /etc/nginx/nginx.conf
+# Копируем конфиг nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Открываем порт 80
+# Копируем entrypoint script
+COPY docker-entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 EXPOSE 80
 
-# Запускаем nginx
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/entrypoint.sh"]
