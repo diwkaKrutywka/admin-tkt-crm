@@ -51,14 +51,14 @@ export const getCities = (params?: {
 }) => {
   return RefApi<ApiResponse<City>>("cities/", params, "GET");
 };
-export const getAddresses = (params?: {
-  include_inactive?: boolean;
-  search?: string;
-  page?: number;
-  page_size?: number;
-}) => {
-  return RefApi<ApiResponse<Address>>("addresses/", params, "GET");
-};
+// export const getAddresses = (params?: {
+//   include_inactive?: boolean;
+//   search?: string;
+//   page?: number;
+//   page_size?: number;
+// }) => {
+//   return RefApi<ApiResponse<Address>>("addresses/", params, "GET");
+// };
 export const getDistricts = (params?: {
   include_inactive?: boolean;
   city_id?: string;
