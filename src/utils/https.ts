@@ -1,57 +1,60 @@
-import axios from 'axios'
-import { notification } from 'ant-design-vue'
-import config from '../config'
-import { useUserStore } from '../store/index'
-import { useLanguageStore } from '../store/index'
+import axios from "axios";
+import { notification } from "ant-design-vue";
+import config from "../config";
+import { useUserStore } from "../store/index";
+import { useLanguageStore } from "../store/index";
 
 // Создание базового инстанса
 const Service = axios.create({
   baseURL: config.baseURL,
   timeout: 30000,
   headers: {
-    'ngrok-skip-browser-warning': '69420',
-    'Content-Type': 'application/json;charset=UTF-8',
+    "ngrok-skip-browser-warning": "69420",
+    "Content-Type": "application/json;charset=UTF-8",
   },
-})
+});
 
 // 🧩 Request Interceptor: добавляем токен и язык
 Service.interceptors.request.use((config) => {
-  const userStore = useUserStore()
-  const languageStore = useLanguageStore()
+  const userStore = useUserStore();
+  const languageStore = useLanguageStore();
 
   // Токен
   if (userStore.accessToken) {
-    config.headers.Authorization = `Bearer ${userStore.accessToken}`
+    config.headers.Authorization = `Bearer ${userStore.accessToken}`;
   }
 
   // Язык
   if (languageStore.currentLang) {
-    config.headers['Accept-Language'] = languageStore.currentLang as 'kk' | 'ru' | 'en'
+    config.headers["Accept-Language"] = languageStore.currentLang as
+      | "kk"
+      | "ru"
+      | "en";
   }
 
-  return config
-})
+  return config;
+});
 
 // 🔁 Response Interceptor: обработка 401 и рефреш токена
-let isRefreshing = false
-let failedQueue: any[] = []
+let isRefreshing = false;
+let failedQueue: any[] = [];
 
 const processQueue = (error: any, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
-      prom.reject(error)
+      prom.reject(error);
     } else {
-      prom.resolve(token)
+      prom.resolve(token);
     }
-  })
-  failedQueue = []
-}
+  });
+  failedQueue = [];
+};
 
 Service.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const userStore = useUserStore()
-    const originalRequest = error.config
+    const userStore = useUserStore();
+    const originalRequest = error.config;
 
     if (
       error.response &&
@@ -59,25 +62,29 @@ Service.interceptors.response.use(
       !originalRequest._retry
     ) {
       if (!userStore.refreshToken) {
-        notification.error({ message: 'Сессия истекла. Выполните вход снова.' })
-        userStore.clearUser()
-        window.location.href = '/login'
-        return Promise.reject(error)
+        notification.error({
+          message: "Сессия истекла. Выполните вход снова.",
+        });
+        userStore.clearUser();
+
+        // window.location.href = "/login";
+
+        return Promise.reject(error);
       }
 
       if (isRefreshing) {
         return new Promise(function (resolve, reject) {
-          failedQueue.push({ resolve, reject })
+          failedQueue.push({ resolve, reject });
         })
           .then((token) => {
-            originalRequest.headers.Authorization = `Bearer ${token}`
-            return Service(originalRequest)
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return Service(originalRequest);
           })
-          .catch((err) => Promise.reject(err))
+          .catch((err) => Promise.reject(err));
       }
 
-      originalRequest._retry = true
-      isRefreshing = true
+      originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
         const response = await axios.post(
@@ -85,10 +92,10 @@ Service.interceptors.response.use(
           {
             refresh_token: userStore.refreshToken,
           }
-        )
+        );
 
-        const newAccessToken = response.data.access_token
-        const newRefreshToken = response.data.refresh_token
+        const newAccessToken = response.data.access_token;
+        const newRefreshToken = response.data.refresh_token;
 
         userStore.setUser({
           ...userStore.user,
@@ -96,24 +103,26 @@ Service.interceptors.response.use(
           refresh_token: newRefreshToken,
           session_token: userStore.sessionToken,
           user: userStore.user,
-        })
+        });
 
-        processQueue(null, newAccessToken)
+        processQueue(null, newAccessToken);
 
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
-        return Service(originalRequest)
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return Service(originalRequest);
       } catch (err) {
-        processQueue(err, null)
-        userStore.clearUser()
-        window.location.href = '/login'
-        return Promise.reject(err)
+        processQueue(err, null);
+        userStore.clearUser();
+
+        // window.location.href = "/login";
+
+        return Promise.reject(err);
       } finally {
-        isRefreshing = false
+        isRefreshing = false;
       }
     }
 
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
-)
+);
 
-export default Service
+export default Service;
