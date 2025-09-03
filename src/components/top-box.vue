@@ -157,10 +157,10 @@
 <script setup lang="ts">
 import { defineEmits } from "vue";
 import ChangeLanguageBox from "./change-language-box.vue";
-import MenuBox from "./menu-bar.vue";
+
 import { useUserStore } from "../store/index";
 import { storeToRefs } from "pinia";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 const { t: $t } = useI18n();
@@ -170,7 +170,7 @@ const notificationStore = useNotificationStore();
 const emit = defineEmits(["toggle-drawer"]);
 const userStore = useUserStore();
 const userInfo = storeToRefs(userStore);
-const hasLogin = computed(() => !!userStore.user?.full_name);
+
 const isUserDropdownOpen = ref(false);
 const toggleUserDropdown = () => {
   isUserDropdownOpen.value = !isUserDropdownOpen.value;

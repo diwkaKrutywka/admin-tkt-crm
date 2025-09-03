@@ -265,7 +265,7 @@ export const getAddresses = (params?: {
   page?: number;
   page_size?: number;
 }) => {
-  return RefApi<ApiResponse<City>>("addresses/", params, "GET");
+  return RefApi<ApiResponse<Address>>("addresses/", params, "GET");
 };
 
 

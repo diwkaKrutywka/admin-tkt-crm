@@ -12,6 +12,13 @@ interface User {
   [key: string]: any; // For other optional props
 }
 
+interface UserPayload {
+  access_token: string;
+  refresh_token: string;
+  session_token?: string;
+  user: User;
+}
+
 export const useUserStore = defineStore("user", {
   state: () => ({
     accessToken: "",
@@ -20,25 +27,42 @@ export const useUserStore = defineStore("user", {
     user: null as User | null,
   }),
   actions: {
+    init() {
+      // Инициализируем токены из localStorage при создании store
+      this.getUserInfo();
+    },
     getUserInfo() {
       if (localStorage.getItem("accessToken")) {
         this.accessToken = localStorage.getItem("accessToken") as string;
         this.refreshToken = localStorage.getItem("refreshToken") as string;
+        this.sessionToken = localStorage.getItem("sessionToken") as string;
       }
     },
-    setUser(payload: any) {
+    setUser(payload: UserPayload) {
       this.accessToken = payload.access_token;
       this.refreshToken = payload.refresh_token;
-      this.sessionToken = payload.session_token;
+      this.sessionToken = payload.session_token || "";
       this.user = payload.user;
       localStorage.setItem("accessToken", payload.access_token);
       localStorage.setItem("refreshToken", payload.refresh_token);
+      if (payload.session_token) {
+        localStorage.setItem("sessionToken", payload.session_token);
+      }
     },
     clearUser() {
       this.accessToken = "";
       this.refreshToken = "";
       this.sessionToken = "";
       this.user = null;
+      // Очищаем localStorage
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("sessionToken");
+    },
+    logout() {
+      this.clearUser();
+      // Возвращаем true для индикации того, что нужно перенаправить
+      return true;
     },
   },
 });

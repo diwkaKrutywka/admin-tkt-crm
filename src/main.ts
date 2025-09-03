@@ -4,7 +4,7 @@ import router from './router/index'
 import i18n from './locales'
 import Antd from 'ant-design-vue'
 import { createPinia } from 'pinia'
-import { useLanguageStore } from './store/index'
+import { useLanguageStore, useUserStore } from './store/index'
 
 import 'ant-design-vue/dist/reset.css'
 import './assets/global.css'
@@ -21,8 +21,12 @@ const app = createApp(App)
 const pinia = createPinia()
 app.use(pinia)
 
-// 👉 Теперь получаем доступ к languageStore
+// 👉 Теперь получаем доступ к store
 const langStore = useLanguageStore()
+const userStore = useUserStore()
+
+// 👉 Инициализируем userStore (загружаем токены из localStorage)
+userStore.init()
 
 // 👉 Синхронизируем i18n с текущим языком из store
 i18n.global.locale.value = langStore.currentLang as any

@@ -44,6 +44,16 @@
         </div>
       </div>
     </div>
+
+    <!-- Кнопка выхода -->
+    <div
+      class="flex items-center gap-2 p-2 cursor-pointer mx-1 rounded overflow-hidden transition-all duration-200
+        hover:bg-red-100 hover:text-red-500 mt-auto"
+      @click="handleLogout"
+    >
+      <div class="text-xl material-symbols-outlined">logout</div>
+      <div class="text-ellipsis whitespace-nowrap overflow-hidden">Выход</div>
+    </div>
   </div>
 </template>
 
@@ -52,29 +62,20 @@
   import { ref, computed, onMounted } from 'vue'
   import { useRoute, useRouter } from 'vue-router'
   import { getMenuList } from '../common/menu-list'
-import type { MenuItem } from '../common/menu-list'
+  import { useAuth } from '../composables/useAuth'
+  import type { MenuItem } from '../common/menu-list'
 
   const router = useRouter()
   const route = useRoute()
+  const { logout } = useAuth()
 
-  const expandAll = ref(false)
   const openPathList = ref<string[]>([])
   const menuList = ref<MenuItem[]>([])
   
   // Получаем путь текущего маршрута
   const menuPath = computed(() => route.path)
   
-  // Получаем список всех путей с вложенными дочерними пунктами
-  const ExpandMenuIdList = computed(() =>
-    menuList.value
-      .filter((item) => item.children.length > 0)
-      .map((item) => item.routerPath)
-  )
-  
-  function onSetExpand() {
-    expandAll.value = !expandAll.value
-    openPathList.value = expandAll.value ? [...ExpandMenuIdList.value] : []
-  }
+
   
   function toggleMenu(path: string) {
     const index = openPathList.value.indexOf(path)
@@ -87,6 +88,10 @@ import type { MenuItem } from '../common/menu-list'
   
   function onClickMenu(path: string) {
     router.push(path)
+  }
+
+  function handleLogout() {
+    logout()
   }
   
   onMounted(() => {

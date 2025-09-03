@@ -171,7 +171,7 @@ const resetForm = () => {
     name_kk: "",
     name_ru: "",
     name_en: "",
-    region_id: null,
+    region_id: '',
     city_code: "",
     city_type: "city",
     is_regional_center: false,

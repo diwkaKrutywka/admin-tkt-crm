@@ -9,20 +9,14 @@
       width="600px"
     >
       <a-form :model="form" layout="vertical">
-        <a-form-item :label="$t('l_Name_kz')" name="name_kk" required>
-          <a-input v-model:value="form.name_kk" />
-        </a-form-item>
-        <a-form-item :label="$t('l_Name_ru')" name="name_ru" required>
-          <a-input v-model:value="form.name_ru" />
-        </a-form-item>
-        <a-form-item :label="$t('l_Name_en')" name="name_en" required>
-          <a-input v-model:value="form.name_en" />
+        <a-form-item :label="$t('l_Name')" name="name" required>
+          <a-input v-model:value="form.name" />
         </a-form-item>
         <a-form-item :label="$t('l_Region_code')" name="region_code" required>
           <a-input v-model:value="form.region_code" />
         </a-form-item>
-        <a-form-item :label="$t('l_Display_order')" name="display_order">
-          <a-input-number v-model:value="form.display_order" style="width: 100%" />
+        <a-form-item :label="$t('l_Admin_code')" name="admin_code" required>
+          <a-input v-model:value="form.admin_code" />
         </a-form-item>
         <a-form-item :label="$t('l_Capital_city')" name="capital_city">
           <a-input v-model:value="form.capital_city" />
@@ -55,13 +49,11 @@
   const loading = ref(false)
   
   const form = ref({
-    name_kk: '',
-    name_ru: '',
-    name_en: '',
+    name: '',
     region_code: '',
-    display_order: 0,
-    capital_city: '',
+    admin_code: '',
     region_type: 'oblast',
+    capital_city: '',
   })
   
   watch(
@@ -73,13 +65,11 @@
           try {
             const { data } = await getRegionById(props.region_id)
             form.value = {
-              name_kk: data.name_kk ?? '',
-              name_ru: data.name_ru ?? '',
-              name_en: data.name_en ?? '',
+              name: data.name ?? '',
               region_code: data.region_code ?? '',
-              display_order: data.display_order ?? 0,
-              capital_city: data.capital_city ?? '',
+              admin_code: data.admin_code ?? '',
               region_type: data.region_type ?? 'oblast',
+              capital_city: data.capital_city ?? '',
             }
           } catch (error) {
             message.error($t('l_Load_error') || 'Load error')
@@ -95,13 +85,11 @@
   
   const resetForm = () => {
     form.value = {
-      name_kk: '',
-      name_ru: '',
-      name_en: '',
+      name: '',
       region_code: '',
-      display_order: 0,
-      capital_city: '',
+      admin_code: '',
       region_type: 'oblast',
+      capital_city: '',
     }
   }
   

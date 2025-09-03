@@ -45,7 +45,7 @@
 import { ref, watch, defineProps, defineEmits } from 'vue'
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import type { Organization } from '../../../types/ref'
+
 import {
   createOrganization,
   updateOrganization,

@@ -37,7 +37,7 @@ Service.interceptors.request.use((config) => {
 
 // 🔁 Response Interceptor: обработка 401 и рефреш токена
 let isRefreshing = false;
-let failedQueue: any[] = [];
+let failedQueue: Array<{ resolve: (value: any) => void; reject: (reason?: any) => void }> = [];
 
 const processQueue = (error: any, token: string | null = null) => {
   failedQueue.forEach((prom) => {
@@ -52,7 +52,7 @@ const processQueue = (error: any, token: string | null = null) => {
 
 Service.interceptors.response.use(
   (response) => response,
-  async (error) => {
+  async (error: any) => {
     const userStore = useUserStore();
     const originalRequest = error.config;
 
@@ -61,17 +61,26 @@ Service.interceptors.response.use(
       error.response.status === 401 &&
       !originalRequest._retry
     ) {
+      // Если это запрос на refresh токен, то сразу выходим
+      if (originalRequest.url?.includes('/refresh')) {
+        userStore.logout();
+        // Перенаправляем на страницу входа
+        window.location.href = '/login';
+        return Promise.reject(error);
+      }
+
+      // Если нет refresh токена, то выходим
       if (!userStore.refreshToken) {
         notification.error({
           message: "Сессия истекла. Выполните вход снова.",
         });
-        userStore.clearUser();
-
-        // window.location.href = "/login";
-
+        userStore.logout();
+        // Перенаправляем на страницу входа
+        window.location.href = '/login';
         return Promise.reject(error);
       }
 
+      // Если уже идет процесс обновления токена, добавляем в очередь
       if (isRefreshing) {
         return new Promise(function (resolve, reject) {
           failedQueue.push({ resolve, reject });
@@ -97,13 +106,15 @@ Service.interceptors.response.use(
         const newAccessToken = response.data.access_token;
         const newRefreshToken = response.data.refresh_token;
 
-        userStore.setUser({
-          ...userStore.user,
-          access_token: newAccessToken,
-          refresh_token: newRefreshToken,
-          session_token: userStore.sessionToken,
-          user: userStore.user,
-        });
+        if (userStore.user) {
+          userStore.setUser({
+            ...userStore.user,
+            access_token: newAccessToken,
+            refresh_token: newRefreshToken,
+            session_token: userStore.sessionToken,
+            user: userStore.user,
+          });
+        }
 
         processQueue(null, newAccessToken);
 
@@ -111,10 +122,15 @@ Service.interceptors.response.use(
         return Service(originalRequest);
       } catch (err) {
         processQueue(err, null);
-        userStore.clearUser();
-
-        // window.location.href = "/login";
-
+        
+        // Если refresh токен тоже недействителен, очищаем стор и перенаправляем на логин
+        notification.error({
+          message: "Сессия истекла. Выполните вход снова.",
+        });
+        userStore.logout();
+        // Перенаправляем на страницу входа
+        window.location.href = '/login';
+        
         return Promise.reject(err);
       } finally {
         isRefreshing = false;

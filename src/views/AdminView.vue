@@ -34,19 +34,16 @@
 
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onBeforeUnmount } from 'vue'
 import MenuBox from '../components/menu-bar.vue'
 import TopBox from '../components/top-box.vue'
-import { initWebSocket, closeWebSocket } from '../services/ws'
-import { useUserStore } from '../store/index'
-import { useNotificationStore } from '../store/index'
+import { closeWebSocket } from '../services/ws'
+
 
 // Drawer
 const isDrawerOpen = ref(false)
 
-// WebSocket setup
-const userStore = useUserStore()
-const notificationStore = useNotificationStore()
+
 
 // onMounted(() => {
 //   const clientId = userStore.user?.agent_id || 'test-client-1'

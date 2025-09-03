@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, h, onMounted, watch, computed } from "vue";
+import { ref, h, onMounted, watch } from "vue";
 import { Avatar, message, Tag } from "ant-design-vue";
 import { SafetyOutlined } from "@ant-design/icons-vue";
 import type { Contact } from "../../types/contacts";
@@ -69,11 +69,8 @@ import EditContact from "./EditContact.vue";
 import { ContactApi } from "../../api/contact"; // ← your API utility
 import { useI18n } from "vue-i18n";
 const { t: $t } = useI18n();
-const open = ref<boolean>(false);
 const filterModalVisible = ref<boolean>(false);
-const reason = ref<string>("");
 const search = ref<string>("");
-const lockingStatus = ref<string>("");
 const currentFilters = ref<any>({});
 const tableData = ref<Contact[]>([]);
 const loading = ref(false);

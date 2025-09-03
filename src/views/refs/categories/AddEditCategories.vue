@@ -31,7 +31,7 @@
 import { ref, watch, defineProps, defineEmits } from 'vue'
 import { message } from 'ant-design-vue'
 import { useI18n } from 'vue-i18n'
-import type { ComplaintCategory } from '../../../types/ref'
+
 import { createComplaintCategory, updateComplaintCategory, getComplaintCategoryById } from '../../../api/ref'
 
 const props = defineProps({

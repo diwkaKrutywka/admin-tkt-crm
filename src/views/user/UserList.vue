@@ -137,6 +137,7 @@ const { t: $t } = useI18n();
 
 import FilterModal from "./FilterUser.vue";
 import { UserApi } from "../../api/user"; // ← your API utility
+import { useGlobal } from "../../composables/useGlobal";
 const open = ref<boolean>(false);
 const reason = ref<string>("");
 const search = ref<string>("");
@@ -149,7 +150,6 @@ const filterModalVisible = ref(false);
 const editingUser = ref<User | null>(null);
 const lockingUserId = ref<string | null>(null);
 const currentFilters = ref<any>({});
-import { useGlobal } from "../../composables/useGlobal";
 // Pagination
 const pagination = ref({
   current: 1,
@@ -386,12 +386,7 @@ const applyFilter = (filters: any) => {
   fetchUsers();
 };
 
-const resetFilters = () => {
-  currentFilters.value = {};
-  search.value = '';
-  pagination.value.current = 1;
-  fetchUsers();
-};
+
 
 // Fetch on mount
 onMounted(() => {

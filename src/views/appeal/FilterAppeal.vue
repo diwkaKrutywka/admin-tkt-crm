@@ -79,7 +79,7 @@
               :key="organization.id" 
               :value="organization.id"
             >
-              {{ organization.name }}
+              {{ organization.display_name }}
             </a-select-option>
           </a-select>
         </a-form-item>
@@ -131,7 +131,8 @@
   import { ref, reactive, computed, watch, onMounted } from 'vue'
   import { message } from 'ant-design-vue'
   import { useI18n } from 'vue-i18n'
-  import { getCities, getDistricts, getOrganizations, type City, type District, type Organization } from '../../api/ref'
+  import { getCities, getDistricts, getOrganizations } from '../../api/ref'
+  import type { City, District, Organization } from '../../types/ref'
   
   const { t: $t } = useI18n()
   

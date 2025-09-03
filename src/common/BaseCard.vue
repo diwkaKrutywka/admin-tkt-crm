@@ -29,7 +29,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-const props = defineProps<{
+defineProps<{
   bigCard?: boolean
   title?: string
   subtitle?: any

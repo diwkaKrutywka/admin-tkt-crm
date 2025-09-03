@@ -42,15 +42,15 @@ import type { FormInstance } from "ant-design-vue";
 import { message } from "ant-design-vue";
 import dayjs from "dayjs";
 import { AppealApi } from "../../api/appeal";
-import { toRaw } from "vue";
-import { useNotificationStore } from "../../store/index";
+
+
 import { useRoute } from "vue-router";
 import { useUserStore } from '../../store/index'
 import { getAppealBpGiid } from '../../api/brightPattern'
 const userStore = useUserStore()
 
 const route = reactive(useRoute())
-const notificationStore = useNotificationStore();
+
 
 
 const props = defineProps<{
@@ -61,7 +61,7 @@ const props = defineProps<{
 const isEdit = computed(() => !!props.id);
 
 
-const callTypeOptions = ref<{ label: string; value: string }[]>([]);
+
 const callTypeLoading = ref(false);
 
 
@@ -119,8 +119,8 @@ onMounted(async () => {
         form.reason = resItem.reason as string
         form.full_name = resItem.contact.full_name
         form.birth_date = resItem.contact.birth_date
-            ? dayjs(resItem.contact.birth_date)
-            : null;
+            ? dayjs(resItem.contact.birth_date).format('YYYY-MM-DD')
+            : '';
 
         form.iin = resItem.contact.iin as string
         form.gender = resItem.contact.gender

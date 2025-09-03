@@ -104,7 +104,7 @@
           {{ appealData.contact.iin || $t('l_Not_specified_m') }}
         </a-descriptions-item>
         <a-descriptions-item :label="$t('l_Birth_date')">
-          {{ formatDate(appealData.contact.birth_date) }}
+          {{ appealData.contact.birth_date ? formatDate(appealData.contact.birth_date) : $t('l_Not_specified_m') }}
         </a-descriptions-item>
         <a-descriptions-item :label="$t('l_Gender')">
           <a-tag :color="getGenderColor(appealData.contact.gender)">

@@ -1,6 +1,24 @@
 <template>
   <div>
-    <a-page-header :title="$t('l_Tickets')"> </a-page-header>
+    <a-page-header :title="$t('l_Tickets')">
+      <template #extra>
+        <div style="display: flex; justify-content: center; align-items: center;">
+          <a-input-search
+            v-model:value="search"
+            :placeholder="$t('l_Search_placeholder')"
+            style="width: 400px; vertical-align: middle;"
+            class="align-middle search-input"
+            @search="fetchTickets"
+            allowClear
+          />
+        </div>
+        <a-button @click="openFilter">
+          <span class="material-symbols-outlined">
+            filter_alt <span class="ml-2"> {{ $t("l_Filter") }}</span>
+          </span>
+        </a-button>
+      </template>
+    </a-page-header>
 
     <a-table
       bordered
@@ -72,6 +90,56 @@
       v-model:open="detailModalVisible"
       :ticket-id="selectedTicketId"
     />
+
+    <!-- Filter Modal -->
+    <a-modal
+      v-model:open="filterModalVisible"
+      :title="$t('l_Filter_tickets')"
+      @ok="handleFilterOk"
+      @cancel="handleFilterCancel"
+      destroyOnClose
+      :width="600"
+    >
+      <a-form :model="filterForm" layout="vertical">
+        <a-form-item :label="$t('l_Status')" name="status">
+          <a-select 
+            v-model:value="filterForm.status" 
+            :placeholder="$t('l_Select_status')"
+            allow-clear
+          >
+            <a-select-option value="open">Открыт</a-select-option>
+            <a-select-option value="in_progress">В работе</a-select-option>
+            <a-select-option value="closed">Закрыт</a-select-option>
+          </a-select>
+        </a-form-item>
+        
+        <a-form-item :label="$t('l_Source')" name="source">
+          <a-select 
+            v-model:value="filterForm.source" 
+            :placeholder="$t('l_Select_source')"
+            allow-clear
+          >
+            <a-select-option value="incoming_call">Входящий звонок</a-select-option>
+            <a-select-option value="email">Email</a-select-option>
+            <a-select-option value="web_form">Веб форма</a-select-option>
+          </a-select>
+        </a-form-item>
+      </a-form>
+
+      <template #footer>
+        <a-space>
+          <a-button @click="resetFilterForm">
+            {{ $t('l_Reset_filter') }}
+          </a-button>
+          <a-button @click="handleFilterCancel">
+            {{ $t('l_Cancel') }}
+          </a-button>
+          <a-button type="primary" @click="handleFilterOk">
+            {{ $t('l_Apply_filter') }}
+          </a-button>
+        </a-space>
+      </template>
+    </a-modal>
   </div>
 </template>
 
@@ -111,6 +179,12 @@ const selectedTicketId = ref<string | null>(null);
 const currentFilters = ref<any>({});
 const router = useRouter();
 const route = useRoute();
+
+// Filter form data
+const filterForm = ref({
+  status: '',
+  source: ''
+});
 
 watch(
   () => route.query.id,
@@ -320,11 +394,7 @@ const handleTableChange = (pag: any) => {
   fetchTickets();
 };
 
-const handleStatusChange = (value: string) => {
-  statusFilter.value = value;
-  pagination.value.current = 1;
-  fetchTickets();
-};
+
 
 const applyFilter = (filters: any) => {
   currentFilters.value = filters;
@@ -334,6 +404,27 @@ const applyFilter = (filters: any) => {
 
 const openFilter = () => {
   filterModalVisible.value = true;
+};
+
+const handleFilterOk = () => {
+  const filters: any = {};
+  if (filterForm.value.status) filters.status = filterForm.value.status;
+  if (filterForm.value.source) filters.source = filterForm.value.source;
+  
+  applyFilter(filters);
+  filterModalVisible.value = false;
+};
+
+const handleFilterCancel = () => {
+  filterModalVisible.value = false;
+};
+
+const resetFilterForm = () => {
+  filterForm.value.status = '';
+  filterForm.value.source = '';
+  currentFilters.value = {};
+  pagination.value.current = 1;
+  fetchTickets();
 };
 
 const openDetail = (id: string) => {

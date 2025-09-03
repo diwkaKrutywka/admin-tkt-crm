@@ -91,7 +91,7 @@
     street_id: '',
     house_number: '',
     block: '',
-    apartment_number: null,
+    apartment_number: undefined,
   })
   
   const regions = ref<any[]>([])
@@ -107,7 +107,7 @@
       street_id: '',
       house_number: '',
       block: '',
-      apartment_number: null,
+      apartment_number: undefined,
     }
   }
   
@@ -116,8 +116,8 @@
     regions.value = data.items || []
   }
   
-  const fetchCities = async (region_id?: string) => {
-    const { data } = await getCities(region_id ? { region_id } : {})
+  const fetchCities = async () => {
+    const { data } = await getCities()
     cities.value = data.items || []
   }
   
@@ -163,7 +163,7 @@
               street_id: data.street_id ?? '',
               house_number: data.house_number ?? '',
               block: data.block ?? '',
-              apartment_number: data.apartment_number ?? null,
+              apartment_number: data.apartment_number ?? undefined,
             }
             await fetchCities(data.region_id)
             await fetchDistricts(data.city_id)
