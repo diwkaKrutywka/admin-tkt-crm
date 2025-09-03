@@ -91,7 +91,7 @@
     street_id: '',
     house_number: '',
     block: '',
-    apartment_number: undefined,
+    apartment_number: undefined as number | undefined,
   })
   
   const regions = ref<any[]>([])
@@ -136,7 +136,7 @@
     form.value.district_id = ''
     cities.value = []
     districts.value = []
-    await fetchCities(form.value.region_id)
+    await fetchCities()
   }
   
   const onCityChange = async () => {
@@ -165,7 +165,7 @@
               block: data.block ?? '',
               apartment_number: data.apartment_number ?? undefined,
             }
-            await fetchCities(data.region_id)
+            await fetchCities()
             await fetchDistricts(data.city_id)
           } catch (error) {
             message.error($t('l_Load_error') || 'Load error')

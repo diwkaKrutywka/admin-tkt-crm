@@ -1,13 +1,6 @@
 <template>
-  <a-modal
-    :title="isEdit ? $t('l_Edit_city') : $t('l_Add_city')"
-    :visible="visible"
-    @ok="handleOk"
-    @cancel="handleCancel"
-    :confirm-loading="loading"
-    destroy-on-close
-    width="600px"
-  >
+  <a-modal :title="isEdit ? $t('l_Edit_city') : $t('l_Add_city')" :visible="visible" @ok="handleOk"
+    @cancel="handleCancel" :confirm-loading="loading" destroy-on-close width="600px">
     <a-form layout="vertical" :model="form" :rules="rules" ref="formRef">
       <a-form-item :label="$t('l_Name_kz')" name="name_kk">
         <a-input v-model:value="form.name_kk" />
@@ -22,14 +15,8 @@
       </a-form-item>
 
       <a-form-item :label="$t('l_Region')" name="region_id">
-        <a-select
-          v-model:value="form.region_id"
-          :options="regionOptions"
-          :loading="regionsLoading"
-          show-search
-          option-filter-prop="label"
-          @focus="loadRegions"
-        />
+        <a-select v-model:value="form.region_id" :options="regionOptions" :loading="regionsLoading" show-search
+          option-filter-prop="label" @focus="loadRegions" />
       </a-form-item>
 
       <a-form-item :label="$t('l_City_code')" name="city_code">
@@ -47,28 +34,20 @@
       <a-form-item>
         <a-row :gutter="[20, 0]" align="middle">
           <a-col>
-            <a-form-item
-              :label="$t('l_Regional_center')"
-              name="is_regional_center"
-              :colon="false"
-              style="margin-bottom: 0"
-            >
+            <a-form-item :label="$t('l_Regional_center')" name="is_regional_center" :colon="false"
+              style="margin-bottom: 0">
               <a-switch v-model:checked="form.is_regional_center" />
             </a-form-item>
           </a-col>
 
           <a-col>
-            <a-form-item
-              :label="$t('l_District_center')"
-              name="is_district_center"
-              :colon="false"
-              style="margin-bottom: 0"
-            >
+            <a-form-item :label="$t('l_District_center')" name="is_district_center" :colon="false"
+              style="margin-bottom: 0">
               <a-switch v-model:checked="form.is_district_center" />
             </a-form-item>
           </a-col>
 
-          
+
         </a-row>
       </a-form-item>
 
@@ -77,11 +56,7 @@
       </a-form-item>
 
       <a-form-item :label="$t('l_Display_order')" name="display_order">
-        <a-input-number
-          v-model:value="form.display_order"
-          :min="0"
-          style="width: 100%"
-        />
+        <a-input-number v-model:value="form.display_order" :min="0" style="width: 100%" />
       </a-form-item>
     </a-form>
   </a-modal>
@@ -115,7 +90,7 @@ const form = ref({
   name_kk: "",
   name_ru: "",
   name_en: "",
-  region_id: null as string | null,
+  region_id: undefined as string | undefined,
   city_code: "",
   city_type: "city",
   is_regional_center: false,
@@ -139,7 +114,7 @@ const loadRegions = async () => {
   try {
     regionsLoading.value = true;
     const { data } = await getRegions({
-    
+
       page: 1,
       page_size: 100,
     });
@@ -178,7 +153,7 @@ const resetForm = () => {
     is_district_center: false,
     postal_code: "",
     display_order: 0,
-   
+
   };
 };
 

@@ -4,8 +4,6 @@ import kk from './language/kk'
 import ru from './language/ru'
 import en from './language/en'
 
-type MessageSchema = typeof kk
-
 // Определим доступные языки
 const messages = {
   kk,
@@ -13,10 +11,10 @@ const messages = {
   en
 }
 
-const i18n = createI18n<[MessageSchema], 'kk' | 'ru' | 'en'>({
+const i18n = createI18n({
   legacy: false,
   globalInjection: true,
-  locale: 'kk', // временно, позже установим из Pinia
+  locale: 'kk',
   fallbackLocale: 'kk',
   warnHtmlMessage: false,
   messages
