@@ -14,7 +14,7 @@ RUN npm ci --only=production
 COPY . .
 
 # Собираем приложение
-RUN npm run build:docker
+RUN npm run build
 
 # Второй этап - production образ
 FROM nginx:alpine
