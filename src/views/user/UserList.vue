@@ -40,11 +40,7 @@
       <template #bodyCell="{ record, column, index }">
         <template v-if="column.key === 'Action'">
           <a-space>
-            <span
-              style="color: black; font-size: 21px"
-              class="icon material-symbols-outlined"
-              @click="onEdit(index)"
-            >
+            <span style="color: black; font-size: 21px" class="icon material-symbols-outlined" @click="onEdit(index)">
               edit
             </span>
             <a-popconfirm
@@ -123,9 +119,8 @@
     </a-form>
   </a-modal>
 </template>
-
 <script setup lang="ts">
-import { ref, h, onMounted } from "vue";
+import { ref, h, computed, onMounted } from "vue";
 import { Avatar, message, Tag } from "ant-design-vue";
 import { SafetyOutlined, BankOutlined } from "@ant-design/icons-vue";
 import type { User } from "../../types/user";
@@ -315,6 +310,8 @@ const fetchUsers = async () => {
 
     tableData.value = Object.values(data.items);
     pagination.value.total = data.total;
+    userStore.setUsersList(data);
+
   } catch (error) {
     message.error("Не удалось загрузить список пользователей");
     console.error(error);

@@ -66,9 +66,7 @@ Service.interceptors.response.use(
           message: "Сессия истекла. Выполните вход снова.",
         });
         userStore.clearUser();
-
-        // window.location.href = "/login";
-
+        window.location.href = "/login";
         return Promise.reject(error);
       }
 
@@ -112,9 +110,7 @@ Service.interceptors.response.use(
       } catch (err) {
         processQueue(err, null);
         userStore.clearUser();
-
-        // window.location.href = "/login";
-
+        window.location.href = "/login";
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
