@@ -1,6 +1,6 @@
 import type { AxiosRequestConfig, AxiosResponse, Method } from "axios";
 import http from "../utils/https";
-
+import type { Organization } from "../types/ref";
 // Типы для справочных данных
 
 // Contact interface
@@ -120,7 +120,7 @@ export const getAppealBpGiidInterface = (params?: {
 export function RefApi<T = any>(
   url: string,
   data?: Record<string, any>,
-  _params?: Record<string, any>,
+  params?: Record<string, any>,
   method: Method = "POST"
 ): Promise<AxiosResponse<T>> {
   const axiosConfig: AxiosRequestConfig = {

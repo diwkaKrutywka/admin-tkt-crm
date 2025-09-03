@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <a-modal :open="true" :title="isEdit ? 'Update Appeal' : 'Add Contact'" @ok="handleOk"
             :confirm-loading="loading" @cancel="handleCancel" destroyOnClose>
             <a-form :model="form" ref="formRef" layout="vertical">
@@ -122,7 +121,7 @@ onMounted(async () => {
 
     try {
         const res = await getAppealBpGiid({
-            bp_giid: route.query.bp_giid as string
+            bp_giid: 'route.query.bp_giid as string'
         });
         const resItem = res.data.items[0]
         form.reason = resItem.reason as string

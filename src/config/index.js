@@ -1,14 +1,12 @@
-//const isRealTest = true
-
 function getBaseUrl() {
-  return "https://tight-wahoo-separately.ngrok-free.app/";
-    // return "http://10.100.0.12:8002/";
-}
- 
-
-const baseUrl = {
-  nakedBaseURL: getBaseUrl(),
-  baseURL: getBaseUrl(),
-};
-
-export default baseUrl;
+    // Используем переменную окружения, если доступна, иначе fallback
+    return import.meta.env.VITE_BASE_URL || "";
+    // return "http://10.100.0.61:8030/";
+  }
+  
+  const baseUrl = {
+    baseURL: getBaseUrl(),
+  };
+  
+  export default baseUrl;
+  
