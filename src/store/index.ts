@@ -1,10 +1,10 @@
 import { defineStore } from "pinia";
 import type {
   UserDto,
-  UserView,
+  // UserView,
   pagination,
 } from "../interfaces/user.interface";
-import { paginationConfig } from "ant-design-vue/es/pagination";
+// import { paginationConfig } from "ant-design-vue/es/pagination";
 interface User {
   id: string;
   username: string;
@@ -25,6 +25,7 @@ interface UserPayload {
 
 export const useUserStore = defineStore("user", {
   state: () => ({
+    userViews: [],
     pagination: {} as pagination,
     statisticsDashboardData: [],
     informationDashboardData: [],
@@ -115,4 +116,4 @@ export const useNotificationStore = defineStore("notification", {
       );
     },
   },
-})
+});

@@ -35,7 +35,7 @@
                                 v-model:value="activeTabFields[key]" class="w-full">
                                 <a-select-option v-for="(name, index) in currentTab === $t(`l_Call_subtypes`)
                                     ? store.callTypeNames : currentTab === $t(`l_Complaint_subcategory`)
-                                        ? store.complaintCategoryNames : ''" :key="index" :value="name.id">{{ name.name
+                                        ? store.complaintCategoryNames : ''" :key="index" :value="index">{{ name
                                         }}</a-select-option>
 
                             </a-select>
@@ -49,7 +49,7 @@
                 </BaseModal>
             </div>
             <a-table bordered :dataSource="refTable" :columns="columns" rowKey="id">
-                <template #bodyCell="{ column, record, index }">
+                <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'Action'">
                         <a-space>
                             <span style="color: black; font-size: 21px" class="icon material-symbols-outlined "
@@ -208,13 +208,13 @@ const submitData = async () => {
 
     isSubmitting.value = true;
     try {
-        const { data } = await referencesApi(
+        await referencesApi(
             selectedItemId.value ? currentTabRequest.value + selectedItemId.value : currentTabRequest.value,
             JSON.parse(JSON.stringify(activeTabFields.value)),
             currentModal.value === 'create' ? 'POST' : currentModal.value === 'edit' ? 'PUT' : 'DELETE'
         );
 
-        isModalOpen.value = false; 
+        isModalOpen.value = false;
     } catch (error) {
         console.error(error);
     } finally {

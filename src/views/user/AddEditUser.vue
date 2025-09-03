@@ -51,7 +51,7 @@
 import { ref, reactive, computed, watch } from "vue";
 import type { FormInstance } from "ant-design-vue";
 import { message } from "ant-design-vue";
-import { UserApi } from "../../api/user";
+import { UserApi } from "../../api/users";
 import { toRaw } from "vue";
 interface User {
   username: string;

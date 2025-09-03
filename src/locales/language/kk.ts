@@ -148,12 +148,9 @@ export default {
   l_Districts: "Аудандар",
   l_Addressses: "Мекенжайлар",
   l_Streets: "Көшелер",
-  l_Call_types: "Өтініш түрлері",
-  l_Call_subtypes: "Өтініштің ішкі түрлері",
   l_Statuses: "Күйі",
   l_Categories: "Санаттар",
   l_Subcategories: "Ішкі санаттар",
-  l_Organizations: "Ұйымдар",
   l_Add_region: "Аймақ қосу",
   l_Edit_region: "Аймақты өңдеу",
   l_Name_kz: "Атауы (қазақша)",
@@ -211,7 +208,6 @@ export default {
   l_Complaint_status_created: "Апелляция статусы сәтті қосылды",
   l_Complaint_status_updated: "Апелляция статусы сәтті жаңартылды",
   l_Is_final: "Соңғы статус",
-  l_Complaint_statuses: "Апелляция статустары",
 
   // Call subtype translations
   l_Add_call_subtype: "Қоңырау түрін қосу",

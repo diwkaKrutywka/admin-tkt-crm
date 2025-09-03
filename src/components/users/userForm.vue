@@ -1,45 +1,21 @@
 <!-- EditUserModal.vue -->
 <template>
-  <a-modal
-    :visible="visible"
-    title="Редактировать пользователя"
-    :width="600"
-    @cancel="handleCancel"
-    :footer="null"
-  >
+  <a-modal :visible="visible" title="Редактировать пользователя" :width="600" @cancel="handleCancel" :footer="null">
     <div class="mb-4">
       <p class="text-gray-600">Изменение данных пользователя</p>
     </div>
 
-    <a-form
-      ref="formRef"
-      :model="formData"
-      :rules="rules"
-      layout="vertical"
-      @finish="handleSubmit"
-    >
+    <a-form ref="formRef" :model="formData" :rules="rules" layout="vertical" @finish="handleSubmit">
       <!-- ФИО -->
       <a-form-item label="ФИО" name="full_name">
-        <a-input
-          v-model:value="formData.full_name"
-          placeholder="Введите полное имя"
-          size="large"
-        />
+        <a-input v-model:value="formData.full_name" placeholder="Введите полное имя" size="large" />
       </a-form-item>
 
       <!-- Организация -->
       <a-form-item label="Организация" name="organization_id">
-        <a-select
-          v-model:value="formData.organization_id"
-          placeholder="Выберите организацию"
-          size="large"
-          @change="handleOrganizationChange"
-        >
-          <a-select-option
-            v-for="org in organizations"
-            :key="org.id"
-            :value="org.id"
-          >
+        <a-select v-model:value="formData.organization_id" placeholder="Выберите организацию" size="large"
+          @change="handleOrganizationChange">
+          <a-select-option v-for="org in organizations" :key="org.id" :value="org.id">
             {{ org.name }}
           </a-select-option>
         </a-select>
@@ -47,40 +23,24 @@
 
       <!-- Название организации (readonly, заполняется автоматически) -->
       <a-form-item label="Название организации" name="organization_name">
-        <a-input
-          v-model:value="formData.organization_name"
-          placeholder="Автоматически заполняется"
-          size="large"
-          :disabled="true"
-        />
+        <a-input v-model:value="formData.organization_name" placeholder="Автоматически заполняется" size="large"
+          :disabled="true" />
       </a-form-item>
 
       <!-- Отдел -->
       <a-form-item label="Отдел" name="department">
-        <a-input
-          v-model:value="formData.department"
-          placeholder="Введите название отдела"
-          size="large"
-        />
+        <a-input v-model:value="formData.department" placeholder="Введите название отдела" size="large" />
       </a-form-item>
 
       <!-- Должность -->
       <a-form-item label="Должность" name="position">
-        <a-input
-          v-model:value="formData.position"
-          placeholder="Введите должность"
-          size="large"
-        />
+        <a-input v-model:value="formData.position" placeholder="Введите должность" size="large" />
       </a-form-item>
 
       <!-- Статус активности -->
       <a-form-item label="Статус" name="is_active">
-        <a-switch
-          v-model:checked="formData.is_active"
-          checked-children="Активен"
-          un-checked-children="Неактивен"
-          size="default"
-        />
+        <a-switch v-model:checked="formData.is_active" checked-children="Активен" un-checked-children="Неактивен"
+          size="default" />
       </a-form-item>
 
       <!-- Кнопки -->
@@ -88,12 +48,7 @@
         <a-button @click="handleCancel" size="large">
           Отмена
         </a-button>
-        <a-button
-          type="primary"
-          html-type="submit"
-          size="large"
-          :loading="loading"
-        >
+        <a-button type="primary" html-type="submit" size="large" :loading="loading">
           Сохранить изменения
         </a-button>
       </div>
@@ -102,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, watch } from 'vue'
 import type { FormInstance } from 'ant-design-vue'
 import type { Rule } from 'ant-design-vue/es/form'
 import type { EditUserRequest, Organization } from '../../interfaces/userForm'

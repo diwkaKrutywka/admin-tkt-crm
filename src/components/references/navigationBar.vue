@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, defineEmits } from "vue";
+import { ref, computed, defineEmits } from "vue";
 import { useReferencesStore } from '../../store/references.ts'
 import i18n from "../../locales"
 

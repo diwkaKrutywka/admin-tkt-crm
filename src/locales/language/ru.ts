@@ -149,12 +149,9 @@ export default {
   l_Districts: "Районы",
   l_Addressses: "Адреса",
   l_Streets: "Улицы",
-  l_Call_types: "Типы обращений",
-  l_Call_subtypes: "Подтипы обращений",
   l_Statuses: "Статусы",
   l_Categories: "Категории",
   l_Subcategories: "Подкатегории",
-  l_Organizations: "Организации",
   l_Add_region: "Добавить регион",
   l_Edit_region: "Редактировать регион",
   l_Name_kz: "Название (казахский)",
@@ -213,7 +210,6 @@ export default {
   l_Complaint_status_created: "Статус обращения успешно добавлен",
   l_Complaint_status_updated: "Статус обращения успешно обновлен",
   l_Is_final: "Конечный статус",
-  l_Complaint_statuses: "Статусы обращений",
 
   // Call subtype translations
   l_Add_call_subtype: "Добавить подтип обращения",

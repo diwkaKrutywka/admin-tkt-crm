@@ -3,14 +3,9 @@
     <a-page-header :title="$t('l_Users')">
       <template #extra>
         <div style="display: flex; justify-content: center; align-items: center;">
-          <a-input-search
-            v-model:value="search"
-            :placeholder="$t('l_Search_placeholder')"
-            style="width: 400px; vertical-align: middle;"
-            class="align-middle search-input"
-            @search="fetchUsers"
-            allowClear
-          />
+          <a-input-search v-model:value="search" :placeholder="$t('l_Search_placeholder')"
+            style="width: 400px; vertical-align: middle;" class="align-middle search-input" @search="fetchUsers"
+            allowClear />
         </div>
         <a-button @click="openFilter">
           <span class="material-symbols-outlined">
@@ -23,53 +18,30 @@
           </span>
         </a-button>
       </template>
-      <br/>
+      <br />
     </a-page-header>
 
     <!-- <filter-user></filter-user> -->
 
-    <a-table
-      bordered
-      :dataSource="tableData"
-      :columns="columns"
-      :pagination="pagination"
-      rowKey="id"
-      :loading="loading"
-      @change="handleTableChange"
-    >
+    <a-table bordered :dataSource="tableData" :columns="columns" :pagination="pagination" rowKey="id" :loading="loading"
+      @change="handleTableChange">
       <template #bodyCell="{ record, column, index }">
         <template v-if="column.key === 'Action'">
           <a-space>
             <span style="color: black; font-size: 21px" class="icon material-symbols-outlined" @click="onEdit(index)">
               edit
             </span>
-            <a-popconfirm
-              v-if="!record.is_locked"
-              placement="leftBottom"
-              title="Сіз расымен қолданушыны тоқтатқыңыз келеді ме?"
-              :ok-text="$t('l_Yes')"
-              :cancel-text="$t('l_No')"
-              @confirm="onDeactivate(index, 'true')"
-            >
-              <span
-                style="color: rgb(0, 100, 250); font-size: 21px"
-                class="icon material-symbols-outlined"
-              >
+            <a-popconfirm v-if="!record.is_locked" placement="leftBottom"
+              title="Сіз расымен қолданушыны тоқтатқыңыз келеді ме?" :ok-text="$t('l_Yes')" :cancel-text="$t('l_No')"
+              @confirm="onDeactivate(index, 'true')">
+              <span style="color: rgb(0, 100, 250); font-size: 21px" class="icon material-symbols-outlined">
                 lock_open_right
               </span>
             </a-popconfirm>
-            <a-popconfirm
-              v-if="record.is_locked"
-              placement="leftBottom"
-              title="Сіз расымен қолданушыны қайта қосқыңыз келеді ме?"
-              :ok-text="$t('l_Yes')"
-              :cancel-text="$t('l_No')"
-              @confirm="onDeactivate(index, 'false')"
-            >
-              <span
-                style="color: rgb(0, 100, 250); font-size: 21px"
-                class="icon material-symbols-outlined"
-              >
+            <a-popconfirm v-if="record.is_locked" placement="leftBottom"
+              title="Сіз расымен қолданушыны қайта қосқыңыз келеді ме?" :ok-text="$t('l_Yes')" :cancel-text="$t('l_No')"
+              @confirm="onDeactivate(index, 'false')">
+              <span style="color: rgb(0, 100, 250); font-size: 21px" class="icon material-symbols-outlined">
                 lock
               </span>
             </a-popconfirm>
@@ -92,26 +64,14 @@
       </template>
     </a-table>
 
-    <add-edit-user
-      v-model:open="modalVisible"
-      :user_id="editingUser?.id"
-      @submit="fetchUsers"
-    />
+    <add-edit-user v-model:open="modalVisible" :user_id="editingUser?.id" @submit="fetchUsers" />
 
     <!-- Filter Modal -->
-    <filter-modal
-      v-model:open="filterModalVisible"
-      @filter="applyFilter"
-    />
+    <filter-modal v-model:open="filterModalVisible" @filter="applyFilter" />
   </div>
 
-  <a-modal
-    v-model:open="open"
-    :title="!lockingStatus ? $t('l_Lock_user') : $t('l_Unlock_user')"
-    :ok-text="!lockingStatus ? $t('l_Lock') : $t('l_Unlock')"
-    :cancel-text="$t('l_Cancel')"
-    @ok="lockUser"
-  >
+  <a-modal v-model:open="open" :title="!lockingStatus ? $t('l_Lock_user') : $t('l_Unlock_user')"
+    :ok-text="!lockingStatus ? $t('l_Lock') : $t('l_Unlock')" :cancel-text="$t('l_Cancel')" @ok="lockUser">
     <a-form layout="vertical">
       <a-form-item :label="$t('l_Reason')">
         <a-input v-model:value="reason" />
@@ -120,7 +80,7 @@
   </a-modal>
 </template>
 <script setup lang="ts">
-import { ref, h, computed, onMounted } from "vue";
+import { ref, h, onMounted } from "vue";
 import { Avatar, message, Tag } from "ant-design-vue";
 import { SafetyOutlined, BankOutlined } from "@ant-design/icons-vue";
 import type { User } from "../../types/user";
@@ -131,7 +91,7 @@ import { useI18n } from "vue-i18n";
 const { t: $t } = useI18n();
 
 import FilterModal from "./FilterUser.vue";
-import { UserApi } from "../../api/user"; // ← your API utility
+import { UserApi } from "../../api/users"; // ← your API utility
 import { useGlobal } from "../../composables/useGlobal";
 const open = ref<boolean>(false);
 const reason = ref<string>("");
@@ -262,22 +222,22 @@ const fetchUsers = async () => {
     // Добавляем фильтры если есть
     if (currentFilters.value) {
       const filters = currentFilters.value;
-      
+
       // Organization ID
       if (filters.organization_id && filters.organization_id.trim()) {
         params.organization_id = filters.organization_id.trim();
       }
-      
+
       // User Role
       if (filters.user_role && filters.user_role.trim()) {
         params.user_role = filters.user_role;
       }
-      
+
       // Is Active
       if (filters.is_active !== null && filters.is_active !== undefined) {
         params.is_active = filters.is_active === 'true';
       }
-      
+
       // Create Date Range
       if (filters.create_date && filters.create_date.length === 2) {
         const [startDate, endDate] = filters.create_date;
@@ -288,7 +248,7 @@ const fetchUsers = async () => {
           params.created_at_to = endDate.format('YYYY-MM-DD');
         }
       }
-      
+
       // Last Login Range
       if (filters.last_login && filters.last_login.length === 2) {
         const [startDate, endDate] = filters.last_login;
@@ -310,7 +270,7 @@ const fetchUsers = async () => {
 
     tableData.value = Object.values(data.items);
     pagination.value.total = data.total;
-    userStore.setUsersList(data);
+    // userStore.setUsersList(data);
 
   } catch (error) {
     message.error("Не удалось загрузить список пользователей");

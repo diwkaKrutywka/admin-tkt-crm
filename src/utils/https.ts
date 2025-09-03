@@ -37,7 +37,10 @@ Service.interceptors.request.use((config) => {
 
 // 🔁 Response Interceptor: обработка 401 и рефреш токена
 let isRefreshing = false;
-let failedQueue: Array<{ resolve: (value: any) => void; reject: (reason?: any) => void }> = [];
+let failedQueue: Array<{
+  resolve: (value: any) => void;
+  reject: (reason?: any) => void;
+}> = [];
 
 const processQueue = (error: any, token: string | null = null) => {
   failedQueue.forEach((prom) => {
@@ -62,10 +65,10 @@ Service.interceptors.response.use(
       !originalRequest._retry
     ) {
       // Если это запрос на refresh токен, то сразу выходим
-      if (originalRequest.url?.includes('/refresh')) {
+      if (originalRequest.url?.includes("/refresh")) {
         userStore.logout();
         // Перенаправляем на страницу входа
-        window.location.href = '/login';
+        window.location.href = "/login";
         return Promise.reject(error);
       }
 
@@ -76,7 +79,7 @@ Service.interceptors.response.use(
         });
         userStore.logout();
         // Перенаправляем на страницу входа
-        window.location.href = '/login';
+        window.location.href = "/login";
         return Promise.reject(error);
       }
 
@@ -122,15 +125,15 @@ Service.interceptors.response.use(
         return Service(originalRequest);
       } catch (err) {
         processQueue(err, null);
-        
+
         // Если refresh токен тоже недействителен, очищаем стор и перенаправляем на логин
         notification.error({
           message: "Сессия истекла. Выполните вход снова.",
         });
         userStore.logout();
         // Перенаправляем на страницу входа
-        window.location.href = '/login';
-        
+        window.location.href = "/login";
+
         return Promise.reject(err);
       } finally {
         isRefreshing = false;

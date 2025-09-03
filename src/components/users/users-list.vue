@@ -36,7 +36,7 @@
                 showSizeChanger: true,
                 pageSizeOptions: ['10', '20', '50', '100'],
                 showQuickJumper: true,
-                showTotal: total => `Всего ${total} записей`,
+                showTotal: (total: number) => `Всего ${total} записей`,
                 onChange: onPageChange
 
             }">
@@ -73,16 +73,22 @@ import { useUserStore } from '../../store/index';
 import { h } from 'vue';
 import { Avatar, Tag } from "ant-design-vue";
 import { SafetyOutlined, BankOutlined } from '@ant-design/icons-vue';
-import { UserApi } from '../../api/users';
 import { useRouter } from "vue-router";
-import { Button, Tooltip } from 'ant-design-vue';
-import { EditOutlined, DeleteOutlined, UserDeleteOutlined, EllipsisOutlined } from '@ant-design/icons-vue';
+// import { UserApi } from '../../api/users';
+
+
 
 
 const userStore = useUserStore();
 const tableData = computed(() => userStore.userViews);
 const router = useRouter()
 const loading = ref(false);
+const onRecover = (userId: string) => {
+    console.log('Восстановить пользователя с ID:', userId);
+
+    // Логика восстановления по ID пользователя
+};
+
 // Пагинация
 const currentPage = ref(1);
 const pageSize = ref(5);
@@ -102,7 +108,7 @@ const columns = [
     {
         title: 'Пользователь',
         dataIndex: 'fullName',
-        customRender: ({ text }) => {
+        customRender: ({ text }: { text: string }) => {
             const initials = text
                 .split(' ')
                 .map((word) => word[0])
@@ -126,7 +132,7 @@ const columns = [
         title: 'Роль',
         dataIndex: 'role',
         key: 'role',
-        customRender: ({ text }) => {
+        customRender: ({ text }: { text: string }) => {
             return h(
                 'div',
                 { class: 'inline-flex items-center px-3 py-1 rounded-full border border-gray-300 text-gray-800 text-sm gap-2' },
@@ -141,7 +147,7 @@ const columns = [
         title: 'Организация',
         dataIndex: 'organization',
         key: 'organization',
-        customRender: ({ text }) => {
+        customRender: ({ text }: { text: string }) => {
             return h('div', { class: 'flex items-center gap-2 text-gray-800' }, [
                 h(BankOutlined),
                 h('span', text),
@@ -152,7 +158,7 @@ const columns = [
         title: 'Статус',
         dataIndex: 'isActive',
         key: 'isActive',
-        customRender: ({ text }) => {
+        customRender: ({ text }: { text: string }) => {
             return text
                 ? h(Tag, { color: 'green' }, () => 'Активен')
                 : h(Tag, { color: 'red' }, () => 'Неактивен');
@@ -163,7 +169,7 @@ const columns = [
         title: 'Последний вход',
         dataIndex: 'lastLogin',
         key: 'lastLogin',
-        customRender: ({ text }) => {
+        customRender: ({ text }: { text: string }) => {
             if (!text) return '-';
 
             const date = new Date(text);
@@ -206,8 +212,8 @@ const emit = defineEmits(['openEditModal'])
 
 const handleSearch = async () => {
     try {
-        const res = await users(`?search=${searchQuery.value}`, null, 'GET');
-        userStore.setUsersList(res);
+        // const res = await UserApi(`?search=${searchQuery.value}`, undefined, 'GET');
+        // userStore.setUsersList(res);
 
     } catch (error) {
         console.error('Ошибка запроса:', error);
@@ -222,8 +228,8 @@ async function onPageChange(page: number, size: number) {
     router.push({ query: { page: page } })
     try {
 
-        const res = await users(`?page=${page}&page_size=5`, null, 'GET');
-        userStore.setUsersList(res);
+        // const res = await users(`?page=${page}&page_size=5`, null, 'GET');
+        // userStore.setUsersList(res);
 
     } catch (error) {
         console.error('Ошибка запроса:', error);
@@ -236,22 +242,22 @@ async function onPageChange(page: number, size: number) {
 
 
 // Добавьте функции-обработчики
-function handleEdit(record) {
+function handleEdit(record: any) {
 
     emit('openEditModal', record)
 
     // Ваша логика редактирования
 }
 
-function handleDeactivate(record) {
-    console.log('Деактивировать:', record);
-    // Ваша логика деактивации
-}
+// function handleDeactivate(record: any) {
+//     console.log('Деактивировать:', record);
+//     // Ваша логика деактивации
+// }
 
-function handleDelete(record) {
-    console.log('Удалить:', record);
-    // Ваша логика удаления
-}
+// function handleDelete(record: any) {
+//     console.log('Удалить:', record);
+//     // Ваша логика удаления
+// }
 
 
 </script>

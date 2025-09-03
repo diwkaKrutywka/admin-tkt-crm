@@ -8,13 +8,13 @@ WORKDIR /app
 COPY package*.json ./
 
 # Устанавливаем зависимости
-RUN npm ci 
+RUN npm ci --only=production
 
 # Копируем исходный код
 COPY . .
 
 # Собираем приложение
-RUN npm run build:docker
+RUN npm run build
 
 # Второй этап - production образ
 FROM nginx:alpine
