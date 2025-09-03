@@ -33,6 +33,6 @@ deploy-to-portainer:
     - shell
   image: curlimages/curl:latest
   script:
-    - curl -k -X POST "http://78.40.109.183:9000/api/stacks/webhooks/7a58aafe-a868-4810-8cc8-a7fc693b48fc"
+    - curl -k -X POST "http://78.40.109.183:9000/api/stacks/webhooks/d5a20e95-8381-413d-b2f0-a019a3cfa911"
   only:
     - dev
