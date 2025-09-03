@@ -1,0 +1,38 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+  IMAGE: $CI_REGISTRY_IMAGE
+  BRANCH_TAG: $CI_COMMIT_BRANCH
+  COMMIT_TAG: $CI_COMMIT_SHA
+
+build-image:
+  stage: build
+  tags:
+    - docker
+    - shell
+  before_script:
+    - echo "$CI_JOB_TOKEN" | docker login -u "$CI_REGISTRY_USER" --password-stdin $CI_REGISTRY
+  script:
+    - docker build -f Dockerfile -t $IMAGE:$COMMIT_TAG .
+    - docker push $IMAGE:$COMMIT_TAG
+    - docker tag $IMAGE:$COMMIT_TAG $IMAGE:$BRANCH_TAG
+    - docker push $IMAGE:$BRANCH_TAG
+  after_script:
+    - docker logout $CI_REGISTRY
+  only:
+    - main
+    - dev
+
+deploy-to-portainer:
+  stage: deploy
+  tags:
+    - shell
+  image: curlimages/curl:latest
+  script:
+    - curl -k -X POST "http://78.40.109.183:9000/api/stacks/webhooks/d5a20e95-8381-413d-b2f0-a019a3cfa911"
+  only:
+    - dev

@@ -42,6 +42,6 @@ networks:
   app-network:
     driver: bridge
 
-volumes:
+# volumes:
   # Если понадобятся именованные volumes
   # app-data:

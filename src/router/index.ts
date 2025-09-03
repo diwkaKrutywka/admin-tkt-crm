@@ -50,6 +50,11 @@ const routes: RouteRecordRaw[] = [
         meta: { requiresAuth: true },
       },
       {
+        path: "main",
+        name: "MainView",
+        component: () => import("../views/main/MainView.vue"),
+      },
+      {
         path: "ticket",
         name: "TicketView",
         component: () => import("../views/ticket/TicketView.vue"),
@@ -94,11 +99,36 @@ const routes: RouteRecordRaw[] = [
             meta: { requiresAuth: true },
           },
           {
-            path: "types",
+            path: "/types",
             name: "CallTypesView",
             component: () =>
               import("../views/refs/call-types/CallTypeView.vue"),
             meta: { requiresAuth: true },
+          },
+           {
+             path: 'subtypes',
+             name: 'CallSubtypesView',
+             component: () => import('../views/refs/subtypes/CallSubtypesView.vue')
+           },
+           {
+             path: 'complaint_status',
+             name: 'ComplaintStatusView',
+             component: () => import('../views/refs/statuses/ComplaintStatusView.vue')
+           },
+           {
+             path: 'complaint_categories',
+             name: 'ComplaintCategoriesView',
+             component: () => import('../views/refs/categories/ComplaintCategoriesView.vue')
+           },
+           {
+            path: 'complaint_subcategories',
+            name: 'ComplaintSubcategoriesView',
+            component: () => import('../views/refs/subcategories/ComplaintSubcategoriesView.vue')
+           },
+          {
+            path: 'districts',
+            name: 'DistrictsView',
+            component: () => import('../views/refs/districts/DistrictView.vue')
           },
           {
             path: "subtypes",
@@ -166,15 +196,6 @@ const routes: RouteRecordRaw[] = [
         ],
       },
     ],
-  },
-  {
-    path: "/bp",
-    name: "BusinessProcess",
-    component: () => import("../views/brightPattern/FormView.vue"),
-    // Можно добавить мета-информацию для валидации query параметров
-    meta: {
-      requiresQuery: ["bp_giid"], // Обязательные query параметры
-    },
   },
   {
     path: "/login",
