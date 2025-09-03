@@ -1,5 +1,5 @@
 # Многоэтапная сборка для Vue.js приложения
-FROM node:18-alpine AS builder
+FROM node:22-alpine AS builder
 
 # Устанавливаем рабочую директорию
 WORKDIR /app
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Устанавливаем зависимости
-RUN npm ci --only=production
+RUN npm ci
 
 # Копируем исходный код
 COPY . .
