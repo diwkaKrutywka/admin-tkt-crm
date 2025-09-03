@@ -66,13 +66,22 @@ const callTypeLoading = ref(false);
 
 
 const form = reactive({
-    reason: "",
+    // Contact info
     full_name: "",
     birth_date: '',
     iin: "",
     gender: "not_specified",
-    // call_type_id: "",
     home_address: "",
+    // Call info  
+    reason: "",
+    call_type_id: "",
+    call_subtype_id: "",
+    appeal_category_id: "", // TODO: if call_type.code == "CT_8"
+    appeal_sub_category_id: "",
+    // Organization info (not required if call_type.code != "CT_8" or != "CT_4")
+    city_id: "",
+    district_id: "",
+    healthcare_facility_id: "",
 });
 const appealId = ref('')
 const genderOptions = [
@@ -89,7 +98,7 @@ const handleOk = async () => {
     try {
         console.log(appealId.value,'asdasdas');
 
-        await AppealApi(`${appealId.value}`, form, "PATCH");
+        await AppealApi(`946ef0c1-8dd2-40ca-8099-4e47f9842960`, form, "PATCH");
 
         alert('Обращение заполнено')
     } catch (err) {
