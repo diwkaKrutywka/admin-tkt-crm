@@ -131,11 +131,12 @@ export function RefApi<T = any>(
   if (["POST", "PUT", "PATCH"].includes(method.toUpperCase())) {
     axiosConfig.data = data;
   } else if (method.toUpperCase() === "GET") {
-    axiosConfig.params = data;
+    axiosConfig.params = params;   // ✅ теперь берём правильный объект
   }
 
   return http(axiosConfig);
 }
+
 
 // API методы для справочных данных
 export const getAppealBpGiid = (params?: { bp_giid?: string }) => {
